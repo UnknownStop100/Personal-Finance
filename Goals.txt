@@ -1,0 +1,2 @@
+Create a Calculator layout that holds a cetrain style that is easy to use.
+Make it usable on all devices the produce severalcalculators.
