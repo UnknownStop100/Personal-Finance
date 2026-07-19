@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div>Home Page</div>
+        <div>Nav Bar</div>
+        <div>About</div>
+        <div>Settings</div>
+    </header>
+    <div id="main-content">
+        <aside id="left-sidebar">
+            Left Sidebar
+        </aside>
+        <main>
+            <h2>Investment Calculator</h2>
+            <div id="main-calculator">
+                <div>
+                    <h3>Input Fields:</h3>
+                    <label for="current-savings">Current Savings:</label>
+                    <br>
+                    <input type="number" id="current-savings" placeholder="Current Savings">
+                    <br>
+                    <label for="contribution-frequency">Contribution Frequency:</label>
+                    <br>
+                    <select id="contribution-frequency">
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                    <br>
+                    <label for="contribution-amount">Contribution Amount:</label>
+                    <br>
+                    <input type="number" id="contribution-amount" placeholder="Contribution Amount">
+                    <br>
+                    <label for="ROI">Return on Investment (ROI):</label>
+                    <br>
+                    <input type="number" id="ROI" placeholder="Return on Investment">
+                    <br>
+                    <label for="investment-duration">Investment Duration (years):</label>
+                    <br>
+                    <input type="number" id="investment-duration" placeholder="Investment Duration">
+                    <br>
+                    <br>
+                    <button id="calculate-btn">Calculate</button>
+                </div>
+                <div>
+                    <canvas id="investment-graph"></canvas>
+                </div>
+            </div>
+        </main>
+        <aside id="right-sidebar">
+            right Sidebar
+        </aside>
+    </div>
+    <article>
+        <h3>How this works</h3>
+        <p>This is a simple investment calculator that helps you estimate the future value of your investments based on
+            your current savings, contribution amount, and expected return on investment.</p>
+    </article>
+    <footer>
+        copyright © 2024 Investment Calculator. All rights reserved.
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
