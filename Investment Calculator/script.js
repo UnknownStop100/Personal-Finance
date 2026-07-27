@@ -12,6 +12,7 @@ investmentduration=1;
 let drawline=false;
 let drawlinex=0;
 let mousepoint=0;
+let characters=["","k","m","b","t","qd","qt","st"];
 
 //resize canvas elements to line up
 resizewindow=function(){
@@ -62,7 +63,18 @@ drawGraph = function () {
         }
     }
     for(let i=0;i<ypoints.length;i++){
-        ypoints[4-i].innerHTML="$"+Math.round(max/4*i);
+        let num=Math.round(max/4*i);
+        let point=0;
+        while(num>1000){
+            num/=1000;
+            point++;
+        }
+        if(point<characters.length){
+            ypoints[4-i].innerHTML=`$${Math.round(num)}${characters[point]}`;
+        }
+        else{
+            ypoints[4-1].innerHTML="NaN";
+        }
     }
     let xpoints=xlabel.children;
     for(let i=0;i<xpoints.length;i++){
@@ -148,16 +160,38 @@ drawGraph = function () {
         else{
             infobox.style.left=pixelsperpoint*(mousepoint+1)+"px";
         }
-        infobox.innerHTML="$"+Math.round(newpoints[mousepoint]/ratio);
+        let point=mousepoint;
+        if(point>newpoints.length){
+            point=newpoints.length
+        }
+        else if(point<0){
+            point=0;
+        }
+        let inputvalue="<inline>";
+            inputvalue+="$"+Math.round(newpoints[point]/ratio);
+        inputvalue+="<br>";
+        inputvalue+="Y";
+        inputvalue+=Math.floor(point/24)
+        if(point%2){
+            inputvalue+=" End";
+        }
+        else{
+            inputvalue+=" Start";
+        }
+        inputvalue+=" M";
+        inputvalue+=Math.floor((point%24)/2)+1;
+        inputvalue+="</inline>"
+        infobox.innerHTML=inputvalue;
+
+        
     }
     else{
         infobox.style.display="none";
     }
 }
 
-drawGraph();
 
-
+//update variables with new values when called
 updateValues = function(){
     currentsavings=Number(document.getElementById("current-savings").value);
     contributionamount=Number(document.getElementById("contribution-amount").value);
@@ -181,9 +215,25 @@ updateValues = function(){
     graphdraw=true;
     drawGraph();
 }
+updateROIview = function(){
+    let ROI=document.getElementById("ROI")
+    let length=ROI.value.length;
+    let a=ROI.value;
+    if(length>2){
+        ROI.value=a.slice(0,-1);
+    }
+    length=ROI.value.length;
+    let spacing=7.5*length+4;
+    document.getElementById("ending-percentage").style.left=spacing+"px";
+
+}
+document.getElementById("ROI").addEventListener('input', (e)=>{
+    updateROIview();
+});
 /*document.getElementById("calculate-btn").addEventListener("click", ()=>{
     updateValues();
 });*/
+//if a key is clicked the canvas area is pressed update the graph
 document.getElementById("main-calculator").addEventListener('keyup',(e)=>{
     updateValues()
 });
@@ -192,6 +242,9 @@ document.getElementById("main-calculator").addEventListener('click',()=>{
 });
 canvas.addEventListener('mousemove',(event)=>{
     drawlinex=event.offsetX;
+    //removes NAN from accuring on the entry boundry of the graph
+    if(drawlinex<1)
+        drawlinex=1;
     drawGraph();
 });
 canvas.addEventListener('mouseenter',(event)=>{
@@ -203,3 +256,6 @@ canvas.addEventListener('mouseleave',(event)=>{
     drawline=false;
     drawGraph();
 });
+
+updateValues();
+drawGraph();

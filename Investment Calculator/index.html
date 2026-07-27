@@ -26,7 +26,10 @@
                     <h3>Input Fields:</h3>
                     <label for="current-savings">Current Savings:</label>
                     <br>
-                    <input type="number" id="current-savings" placeholder="$">
+                    <div id="input-div">
+                    <input type="number" id="current-savings" value="0">
+                    <div id="starting-dollar">$</div>
+                    </div>
                     <br>
                     <label for="contribution-frequency">Contribution Frequency:</label>
                     <br>
@@ -36,23 +39,31 @@
                         <option value="yearly">Yearly</option>
                     </select>
                     <br>
+                    <br>
                     <label for="contribution-amount">Contribution Amount:</label>
                     <br>
-                    <input type="number" id="contribution-amount" placeholder="$">
+                    <div id="input-div">
+                    <input type="number" id="contribution-amount" value="500">
+                    <div id="starting-dollar">$</div>
+                    </div>
                     <br>
                     <label for="ROI">Return on Investment (ROI):</label>
                     <br>
-                    <input type="number" id="ROI" placeholder="%">
+                    <div id="input-div">
+                    <input type="number" id="ROI" value="8">
+                    <div id="ending-percentage">%</div>
+                    </div>
                     <br>
                     <label for="investment-duration">Investment Duration (years):</label>
                     <br>
-                    <input type="number" id="investment-duration" placeholder="Years">
+                    <input type="number" id="investment-duration" value="20">
                     <br>
                     <br>
                     <!--<button id="calculate-btn">Calculate</button>-->
                 </div>
                 <div id="canvas-div">
                     <canvas id="investment-graph"></canvas>
+                    <div id="xlabel">Years</div>
                     <div id="xpoints">
                         <div>0</div>
                         <div>0</div>
@@ -60,6 +71,7 @@
                         <div>0</div>
                         <div>0</div>
                     </div>
+                    <div id="ylabel">Value</div>
                     <div id="ypoints">
                         <div>0</div>
                         <div>0</div>
@@ -68,7 +80,6 @@
                         <div>0</div>
                     </div>
                     <div id="infobox">
-                        hello
                     </div>
                 </div>
             </div>

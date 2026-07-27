@@ -31,13 +31,6 @@ header > div:last-child{
     display: grid;
     grid-template-columns: 20% 60% 20%;
     text-align: center;
-    /*grid-template-columns: 20% 60% 20%;
-    grid-auto-flow: column;
-    justify-content: space-between;
-    align-content: start;
-    align-items: center;
-    align-items: center;
-    height: 100vh;*/
 }
 main{
     margin:10px;
@@ -47,19 +40,20 @@ main{
 }
 #main-calculator{
     display: grid;
-    grid-template-columns: 40% 60%;
+    grid-template-columns: 30% 70%;
 }
 #main-calculator > div:first-child{
     text-align: left;
     margin-left: 20px;
 }
 #canvas-div{
-    margin:40px;
+    margin:60px;
     position: relative;
 }
 canvas{
     border: 1px solid #ccc;
     background-color: #fff;
+    margin: 0px;
 }
 #xpoints{
     position:absolute;
@@ -85,6 +79,21 @@ canvas{
     grid-auto-flow: row;
     text-align:right;
 }
+#xlabel{
+    position: absolute;
+    width:100%;
+    bottom:-40px;
+}
+#ylabel{
+    position:absolute;
+    display: flex;
+    height:100%;
+    top:-3px;
+    left:-80px;
+    align-items: center;
+    display: none;
+    
+}
 #infobox{
     position: absolute;
     background-color: white;
@@ -92,5 +101,30 @@ canvas{
     border-radius: 3px;
     padding:3px;
     z-index:100;
+    pointer-events: none;
+    white-space: nowrap;
+}
+#contribution-amount, #current-savings{
+    padding-left:10px
+}
+#input-div{
+    position: relative;
+}
+#starting-dollar{
+    position:absolute;
+    top:2px;
+    left:4px;
+    font-size: 14px;
+    align-items: center;
+    height: 100%;
+    pointer-events: none;
+}
+#ending-percentage{
+    position:absolute;
+    top:2px;
+    left:11px;
+    font-size: 14px;
+    align-items: center;
+    height: 100%;
     pointer-events: none;
 }
