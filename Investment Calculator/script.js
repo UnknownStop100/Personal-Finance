@@ -17,16 +17,17 @@ let characters=["","k","m","b","t","qd","qt","st"];
 //resize canvas elements to line up
 resizewindow=function(){
     //get the size canvas should be set to
-    canvassize = document.getElementById('canvas-div').clientWidth;
+    canvassize = document.getElementById('canvas-div').clientWidth-50;
     //adjust canvas size
     canvas.width = canvassize;
     canvas.height = canvassize;
     //change the label location to match new size
     ylabel.style.height = canvassize / 4 * 5 + "px";
     ylabel.style.top = -canvassize / 8 + "px";
-    ylabel.style.right = canvassize+"px";
+    ylabel.style.right = canvassize+30+"px";
     xlabel.style.width = canvassize / 4 * 5 + "px";
-    xlabel.style.left = -canvassize / 8 + "px"; 
+    xlabel.style.left = -canvassize / 8 +25+ "px"; 
+    xlabel.style.bottom= "25px"
 }
 //resize canvas when user loads page so it matches the screen
 resizewindow();
@@ -154,11 +155,12 @@ drawGraph = function () {
     if(drawline){
         infobox.style.display="revert";
         infobox.style.bottom=newpoints[mousepoint]+"px";
+        let thewidth=infobox.style.offsetWidth;
         if(mousepoint%2===0){
-            infobox.style.left=pixelsperpoint*mousepoint+"px";
+            infobox.style.left=pixelsperpoint*mousepoint-50+"px";
         }
         else{
-            infobox.style.left=pixelsperpoint*(mousepoint+1)+"px";
+            infobox.style.left=pixelsperpoint*(mousepoint+1)-50+"px";
         }
         let point=mousepoint;
         if(point>newpoints.length){
@@ -168,7 +170,13 @@ drawGraph = function () {
             point=0;
         }
         let inputvalue="<inline>";
-            inputvalue+="$"+Math.round(newpoints[point]/ratio);
+        let pointratio=0;
+        let displayvalue=newpoints[point]/ratio;
+        while(displayvalue>1000){
+            displayvalue/=1000;
+            pointratio++;
+        }
+            inputvalue+="$"+Math.round(displayvalue*100)/100+characters[pointratio];
         inputvalue+="<br>";
         inputvalue+="Y";
         inputvalue+=Math.floor(point/24)
@@ -223,12 +231,17 @@ updateROIview = function(){
         ROI.value=a.slice(0,-1);
     }
     length=ROI.value.length;
-    let spacing=7.5*length+4;
+    let spacing=7*length+8;
     document.getElementById("ending-percentage").style.left=spacing+"px";
 
 }
 document.getElementById("ROI").addEventListener('input', (e)=>{
     updateROIview();
+});
+document.getElementById("investment-duration").addEventListener('input', (e)=>{
+    if(document.getElementById("investment-duration").value<1){
+        document.getElementById("investment-duration").value=1;
+    }
 });
 /*document.getElementById("calculate-btn").addEventListener("click", ()=>{
     updateValues();
