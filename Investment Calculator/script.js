@@ -1,23 +1,59 @@
-//let canvassize = document.getElementById('canvas-div').clientWidth;
+import { numberInput } from "../Modules/Input/input.js";
+import { valueInputs } from "../Modules/Input/input.js";
+
+let roi=.08,
+contributionfrequency=12,
+contributionamount=500,
+currentsavings=0,
+investmentduration=20;
+
+let currentSavings=numberInput(0,1000000000,document.getElementById("inputs"),"Current Savings",0,"$","",updateCurrentSavings);
+document.getElementById("inputs").appendChild(document.createElement("br"));
+let contributionFrequency=valueInputs("Contribution Frequency",["Monthly","Quarterly","Yearly"],[12,4,1],document.getElementById("inputs"),updateContributionFrequency);
+document.getElementById("inputs").appendChild(document.createElement("br"));
+document.getElementById("inputs").appendChild(document.createElement("br"));
+let contributionAmount=numberInput(0,1000000000,document.getElementById("inputs"),"Contribution Amount",500,"$","",updateContributionAmount);
+document.getElementById("inputs").appendChild(document.createElement("br"));
+let returnOnInvestment=numberInput(0,100,document.getElementById("inputs"),"Return on Investment (ROI)",8,"","%",updateReturnOnInvestment);
+document.getElementById("inputs").appendChild(document.createElement("br"));
+let investmentDuration=numberInput(1,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration);
+function updateCurrentSavings(){
+document.getElementById("inputs").appendChild(document.createElement("br"));
+currentsavings=Number(currentSavings.value);
+drawGraph();
+}
+function updateContributionFrequency(){
+    contributionfrequency=Number(contributionFrequency.value);
+    drawGraph();
+}
+function updateContributionAmount(){
+    contributionamount=Number(contributionAmount.value);
+    drawGraph();
+}
+function updateReturnOnInvestment(){
+    roi=Number(returnOnInvestment.value)/100;
+    drawGraph();
+}
+function updateInvestmentDuration(){
+    investmentduration=Number(investmentDuration.value);
+    drawGraph();
+}
+
+
 let xlabel = document.getElementById("xpoints");
 let ylabel = document.getElementById("ypoints");
 let canvas = document.getElementById('investment-graph');
 let infobox=document.getElementById("infobox");
 //calculation variables
-let roi=0,
-contributionfrequency=12,
-contributionamount=10,
-currentsavings=10,
-investmentduration=1;
 let drawline=false;
 let drawlinex=0;
 let mousepoint=0;
 let characters=["","k","m","b","t","qd","qt","st"];
 
 //resize canvas elements to line up
-resizewindow=function(){
+let resizewindow=function(){
     //get the size canvas should be set to
-    canvassize = document.getElementById('canvas-div').clientWidth-50;
+    let canvassize = document.getElementById('canvas-div').clientWidth-50;
     //adjust canvas size
     canvas.width = canvassize;
     canvas.height = canvassize;
@@ -37,7 +73,7 @@ window.addEventListener('resize', function () {
     resizewindow();
     drawGraph();
 });
-actualpoints = function (ROI, iterations, iterationsperyear,initalmoney,iterationcontribution) {
+let actualpoints = function (ROI, iterations, iterationsperyear,initalmoney,iterationcontribution) {
     let points=[];
     let price=initalmoney;
     let iterationroi=(ROI+1)**(1/iterationsperyear);
@@ -50,7 +86,7 @@ actualpoints = function (ROI, iterations, iterationsperyear,initalmoney,iteratio
     }
     return points;
 }
-drawGraph = function () {
+let drawGraph = function () {
     ctx.clearRect(0,0,canvas.width,canvas.height);
     let base = 1.01;
     let start = 1;
@@ -197,62 +233,6 @@ drawGraph = function () {
         infobox.style.display="none";
     }
 }
-
-
-//update variables with new values when called
-updateValues = function(){
-    currentsavings=Number(document.getElementById("current-savings").value);
-    contributionamount=Number(document.getElementById("contribution-amount").value);
-    roi=Number(document.getElementById("ROI").value)/100;
-    currentsavings=Number(document.getElementById("current-savings").value);
-    investmentduration=Number(document.getElementById("investment-duration").value);
-    let frequency=document.getElementById("contribution-frequency").value;
-    switch(frequency){
-        case "monthly":
-            contributionfrequency=12;
-            break;
-        case "quarterly":
-            contributionfrequency=4;
-            break;
-        case "yearly":
-            contributionfrequency=1;
-            break;
-        default:
-            break;
-    }
-    graphdraw=true;
-    drawGraph();
-}
-updateROIview = function(){
-    let ROI=document.getElementById("ROI")
-    let length=ROI.value.length;
-    let a=ROI.value;
-    if(length>2){
-        ROI.value=a.slice(0,-1);
-    }
-    length=ROI.value.length;
-    let spacing=7*length+8;
-    document.getElementById("ending-percentage").style.left=spacing+"px";
-
-}
-document.getElementById("ROI").addEventListener('input', (e)=>{
-    updateROIview();
-});
-document.getElementById("investment-duration").addEventListener('input', (e)=>{
-    if(document.getElementById("investment-duration").value<1){
-        document.getElementById("investment-duration").value=1;
-    }
-});
-/*document.getElementById("calculate-btn").addEventListener("click", ()=>{
-    updateValues();
-});*/
-//if a key is clicked the canvas area is pressed update the graph
-document.getElementById("main-calculator").addEventListener('keyup',(e)=>{
-    updateValues()
-});
-document.getElementById("main-calculator").addEventListener('click',()=>{
-    updateValues()
-});
 canvas.addEventListener('mousemove',(event)=>{
     drawlinex=event.offsetX;
     //removes NAN from accuring on the entry boundry of the graph
@@ -269,6 +249,4 @@ canvas.addEventListener('mouseleave',(event)=>{
     drawline=false;
     drawGraph();
 });
-
-updateValues();
 drawGraph();

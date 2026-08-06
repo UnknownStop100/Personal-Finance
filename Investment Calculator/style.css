@@ -4,6 +4,8 @@ body{
     padding: 0;
     background-color:rgb(174, 207, 205)
 }
+h2{
+}
 header{
     /*display: flex;
     width: 100%;
@@ -11,11 +13,11 @@ header{
     align-items: center;*/
     display: grid;
     grid-template-columns: 15% 55% 15% 15%;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #999;
 }
 header > div{
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
     width: 100%;
     text-align: center;
     padding-bottom:10px;
@@ -32,6 +34,8 @@ main{
     background-color:#f6f6f6;
     border-radius: 5px;
     box-shadow: 1px 1px 1px #ccc;
+    margin-top:20px;
+    padding-top:1px;
 }
 @media screen and (min-width: 100px){
     #main-calculator{
