@@ -1,6 +1,10 @@
 import { numberInput } from "../Modules/Input/input.js";
 import { valueInputs } from "../Modules/Input/input.js";
+import { graph } from "../Modules/Graph.js";
 
+///////////////////////////
+//handles inputs
+///////////////////////////
 let roi=.08,
 contributionfrequency=12,
 contributionamount=500,
@@ -12,11 +16,13 @@ document.getElementById("inputs").appendChild(document.createElement("br"));
 let contributionFrequency=valueInputs("Contribution Frequency",["Monthly","Quarterly","Yearly"],[12,4,1],document.getElementById("inputs"),updateContributionFrequency);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let contributionAmount=numberInput(0,1000000000,document.getElementById("inputs"),"Contribution Amount",500,"$","",updateContributionAmount);
+let contributionAmount=numberInput(-1000000,1000000000,document.getElementById("inputs"),"Contribution Amount",500,"$","",updateContributionAmount);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 let returnOnInvestment=numberInput(0,100,document.getElementById("inputs"),"Return on Investment (ROI)",8,"","%",updateReturnOnInvestment);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let investmentDuration=numberInput(1,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration);
+let investmentDuration=numberInput(0,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration);
+document.getElementById("inputs").appendChild(document.createElement("br"));
+
 function updateCurrentSavings(){
 document.getElementById("inputs").appendChild(document.createElement("br"));
 currentsavings=Number(currentSavings.value);
@@ -36,10 +42,27 @@ function updateReturnOnInvestment(){
 }
 function updateInvestmentDuration(){
     investmentduration=Number(investmentDuration.value);
+    if(investmentduration===0){
+        investmentduration=1;
+    }
     drawGraph();
 }
-
-
+///////////////////////////
+//handles inputs
+///////////////////////////
+let actualpoints = function (ROI, iterations, iterationsperyear,initalmoney,iterationcontribution) {
+    let points=[];
+    let price=initalmoney;
+    let iterationroi=(ROI+1)**(1/iterationsperyear);
+        points.push(price);
+    for(let i=0;i<iterations;i++){
+        price*=iterationroi;
+        points.push(price);
+        price+=iterationcontribution;
+        points.push(price);
+    }
+    return points;
+}
 let xlabel = document.getElementById("xpoints");
 let ylabel = document.getElementById("ypoints");
 let canvas = document.getElementById('investment-graph');
@@ -73,27 +96,42 @@ window.addEventListener('resize', function () {
     resizewindow();
     drawGraph();
 });
-let actualpoints = function (ROI, iterations, iterationsperyear,initalmoney,iterationcontribution) {
-    let points=[];
-    let price=initalmoney;
-    let iterationroi=(ROI+1)**(1/iterationsperyear);
-        points.push(price);
-    for(let i=0;i<iterations;i++){
-        price*=iterationroi;
-        points.push(price);
-        price+=iterationcontribution;
-        points.push(price);
+let drawthegraph = function (points,pixelsperpoint,canvaselement) {
+
+    ctx.setLineDash([5, 0]);
+    ctx.beginPath();
+    ctx.strokeStyle = 'black';
+    ctx.moveTo(0, canvaselement.height);
+    for (let i = 0; i < points.length; i++) {
+        ctx.lineTo(i*pixelsperpoint, canvaselement.height - points[i]);
+        i++
+        ctx.lineTo((i+1)*pixelsperpoint, canvaselement.height - points[i]);
     }
-    return points;
+    ctx.stroke();
+
+
+    ctx.beginPath();
+    ctx.moveTo(0, canvaselement.height);
+    for (let i = 0; i < points.length; i++) {
+        ctx.lineTo(i*pixelsperpoint, canvaselement.height - points[i]);
+        i++
+        ctx.lineTo((i+1)*pixelsperpoint, canvaselement.height - points[i]);
+    }
+    ctx.lineTo(canvaselement.width, canvaselement.height);
+    ctx.lineTo(0, canvaselement.height);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(0, 123, 255, 0.2)";
+    ctx.fill();
 }
+
 let drawGraph = function () {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
     let base = 1.01;
     let start = 1;
     let newpoints = actualpoints(roi,contributionfrequency*investmentduration,contributionfrequency,currentsavings,contributionamount);
-
     let ypoints=ylabel.children;
     let max=newpoints[0];
+    //graph(canvas,ylabel,xlabel,newpoints);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     for(let i=0;i<newpoints.length;i++){
         if(newpoints[i]>max){
             max=newpoints[i];
@@ -107,7 +145,7 @@ let drawGraph = function () {
             point++;
         }
         if(point<characters.length){
-            ypoints[4-i].innerHTML=`$${Math.round(num)}${characters[point]}`;
+            ypoints[4-i].innerHTML=`$${Math.round(num*10)/10}${characters[point]}`;
         }
         else{
             ypoints[4-1].innerHTML="NaN";
@@ -128,6 +166,7 @@ let drawGraph = function () {
     for (let i = 0; i < newpoints.length; i++) {
         newpoints[i] *= ratio;
     }
+    drawthegraph(newpoints,pixelsperpoint,canvas);
 
     if(drawline){
         ctx.beginPath();
@@ -162,31 +201,6 @@ let drawGraph = function () {
 }
     ctx.stroke();
 
-
-    ctx.setLineDash([5, 0]);
-    ctx.beginPath();
-    ctx.strokeStyle = 'black';
-    ctx.moveTo(0, canvas.height);
-    for (let i = 0; i < newpoints.length; i++) {
-        ctx.lineTo(i*pixelsperpoint, canvas.height - newpoints[i]);
-        i++
-        ctx.lineTo((i+1)*pixelsperpoint, canvas.height - newpoints[i]);
-    }
-    ctx.stroke();
-
-
-    ctx.beginPath();
-    ctx.moveTo(0, canvas.height);
-    for (let i = 0; i < newpoints.length; i++) {
-        ctx.lineTo(i*pixelsperpoint, canvas.height - newpoints[i]);
-        i++
-        ctx.lineTo((i+1)*pixelsperpoint, canvas.height - newpoints[i]);
-    }
-    ctx.lineTo(canvas.width, canvas.height);
-    ctx.lineTo(0, canvas.height);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(0, 123, 255, 0.2)";
-    ctx.fill();
 
     if(drawline){
         infobox.style.display="revert";
