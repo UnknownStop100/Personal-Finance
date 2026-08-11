@@ -1,6 +1,5 @@
 import { numberInput } from "../Modules/Input/input.js";
 import { valueInputs } from "../Modules/Input/input.js";
-import { graph } from "../Modules/Graph.js";
 
 ///////////////////////////
 //handles inputs
@@ -21,6 +20,7 @@ document.getElementById("inputs").appendChild(document.createElement("br"));
 let returnOnInvestment=numberInput(0,100,document.getElementById("inputs"),"Return on Investment (ROI)",8,"","%",updateReturnOnInvestment);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 let investmentDuration=numberInput(0,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration);
+document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
 
 function updateCurrentSavings(){

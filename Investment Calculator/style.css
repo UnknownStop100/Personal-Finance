@@ -1,6 +1,6 @@
 body{
     font-family: Arial, Helvetica, sans-serif;
-    margin: 1px;
+    margin: 0px;
     padding: 0;
     background-color:rgb(174, 207, 205)
 }
@@ -14,6 +14,8 @@ header{
     display: grid;
     grid-template-columns: 15% 55% 15% 15%;
     border-bottom: 1px solid #999;
+    background-color: #fff;
+    margin: 0px;
 }
 header > div{
     border-left: 1px solid #999;
@@ -69,6 +71,7 @@ main{
     margin-left:50px;
     padding-bottom:50px;
     position: relative;
+    margin-top: 20px;
 }
 canvas{
     border: 1px solid #ccc;
@@ -160,4 +163,80 @@ select{
 footer{
     width: 100%;
     background-color: white;
+}
+
+#how-it-works {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Heading styles */
+#how-it-works h2 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+  color: #2c3e50;
+}
+
+#how-it-works h3 {
+  font-size: 1.5em;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: #34495e;
+}
+
+/* Paragraph styles */
+#how-it-works p {
+  margin-bottom: 1em;
+}
+
+/* Ordered list styles */
+#how-it-works ol {
+  padding-left: 20px;
+  margin-bottom: 1em;
+}
+
+#how-it-works ol li {
+  margin-bottom: 0.75em;
+}
+
+/* Unordered list styles */
+#how-it-works ul {
+  padding-left: 20px;
+  list-style-type: disc;
+  margin-bottom: 1em;
+}
+
+#how-it-works ul li {
+  margin-bottom: 0.5em;
+}
+
+/* Emphasis styles */
+#how-it-works strong {
+  font-weight: bold;
+}
+
+#how-it-works em {
+  font-style: italic;
+}
+
+/* Optional: Add some responsiveness */
+@media (max-width: 600px) {
+  #how-it-works {
+    padding: 15px;
+  }
+
+  #how-it-works h2 {
+    font-size: 1.75em;
+  }
+
+  #how-it-works h3 {
+    font-size: 1.25em;
+  }
 }
