@@ -310,4 +310,27 @@ canvas.addEventListener('mouseleave',(event)=>{
     drawline=false;
     drawGraph();
 });
+canvas.addEventListener('touchstart', (event) => {
+    // 1. Optional: update the X coordinate immediately on first touch
+    const rect = canvas.getBoundingClientRect();
+    let touchX = event.touches[0].clientX - rect.left;
+    
+    if (touchX < 1) touchX = 1;
+    drawlinex = touchX;
+
+    // 2. Set your flag to true and draw
+    drawline = true; 
+    drawGraph();
+});
+window.addEventListener('touchstart', (event) => {
+    // Check if the element touched is NOT the canvas
+    if (event.target !== canvas) {
+        drawline = false;
+        drawGraph();
+    }
+});
+canvas.addEventListener('touchcancel',(event)=>{
+    drawline=false;
+    drawGraph();
+});
 drawGraph();
