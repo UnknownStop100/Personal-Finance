@@ -1,6 +1,15 @@
 import { numberInput } from "../Modules/Input/input.js";
 import { valueInputs } from "../Modules/Input/input.js";
-
+import { createFooter } from "../Footer/script.js";
+import { createHeader } from "../Header/script.js";
+import { titleGenerator } from "../Calculator Title/script.js";
+const body = document.querySelector('body');
+const header = createHeader();
+const footer = createFooter();
+const title = titleGenerator("Finance calculator", "Investment Calculator", "Plot future investment growth using compound interest and regular contributions.")
+body.prepend(title);
+body.prepend(header);
+body.appendChild(footer);
 ///////////////////////////
 //handles inputs
 ///////////////////////////
@@ -24,24 +33,23 @@ document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
 
 function updateCurrentSavings(){
-document.getElementById("inputs").appendChild(document.createElement("br"));
-currentsavings=Number(currentSavings.value);
+currentsavings=Number(currentSavings.value.replaceAll(",",""));
 drawGraph();
 }
 function updateContributionFrequency(){
-    contributionfrequency=Number(contributionFrequency.value);
+    contributionfrequency=Number(contributionFrequency.value.replaceAll(",",""));
     drawGraph();
 }
 function updateContributionAmount(){
-    contributionamount=Number(contributionAmount.value);
+    contributionamount=Number(contributionAmount.value.replaceAll(",",""));
     drawGraph();
 }
 function updateReturnOnInvestment(){
-    roi=Number(returnOnInvestment.value)/100;
+    roi=Number(returnOnInvestment.value.replaceAll(",",""))/100;
     drawGraph();
 }
 function updateInvestmentDuration(){
-    investmentduration=Number(investmentDuration.value);
+    investmentduration=Number(investmentDuration.value.replaceAll(",",""));
     if(investmentduration===0){
         investmentduration=1;
     }
@@ -76,17 +84,21 @@ let characters=["","k","m","b","t","qd","qt","st"];
 //resize canvas elements to line up
 let resizewindow=function(){
     //get the size canvas should be set to
-    let canvassize = document.getElementById('canvas-div').clientWidth-50;
+    let canvaswidth = (document.getElementById('canvas-div').clientWidth-100)*.9;
+    let canvasheight = canvaswidth;
     //adjust canvas size
-    canvas.width = canvassize;
-    canvas.height = canvassize;
+    canvas.width = canvaswidth;
+    canvas.height = canvasheight;
     //change the label location to match new size
-    ylabel.style.height = canvassize / 4 * 5 + "px";
-    ylabel.style.top = -canvassize / 8 + "px";
-    ylabel.style.right = canvassize+30+"px";
-    xlabel.style.width = canvassize / 4 * 5 + "px";
-    xlabel.style.left = -canvassize / 8 +25+ "px"; 
-    xlabel.style.bottom= "25px"
+    ylabel.style.height = canvasheight / 4 * 5 + "px";
+    ylabel.style.top = `${50-canvasheight/4*5/10}px`;
+    //50 for padding then the width of the canvas then 5 for extra space and the border width
+    ylabel.style.right = `${50+canvaswidth+5}px`;
+    xlabel.style.width = canvaswidth/4*5 + "px";
+    //50 is padding for the div and then go back by half the element width then a 1 for the border width
+    xlabel.style.right = `${50-canvaswidth/4*5/10+1}px`;
+    xlabel.style.bottom= `${50-22}px`
+    document.getElementById("xlabel").style.width=`${(document.getElementById('canvas-div').clientWidth-100)*.9+100}px`;
 }
 //resize canvas when user loads page so it matches the screen
 resizewindow();
@@ -96,11 +108,15 @@ window.addEventListener('resize', function () {
     resizewindow();
     drawGraph();
 });
-let drawthegraph = function (points,pixelsperpoint,canvaselement) {
+let drawthegraph = function (points,pixelsperpoint,canvaselement,min,max,linecolor="black",infillcolor="rgba(0, 123, 255, 0.2)") {
 
+    let ratio = canvas.height / max;
+    for (let i = 0; i < points.length; i++) {
+        points[i] *= ratio;
+    }
     ctx.setLineDash([5, 0]);
     ctx.beginPath();
-    ctx.strokeStyle = 'black';
+    ctx.strokeStyle = linecolor;
     ctx.moveTo(0, canvaselement.height);
     for (let i = 0; i < points.length; i++) {
         ctx.lineTo(i*pixelsperpoint, canvaselement.height - points[i]);
@@ -120,7 +136,7 @@ let drawthegraph = function (points,pixelsperpoint,canvaselement) {
     ctx.lineTo(canvaselement.width, canvaselement.height);
     ctx.lineTo(0, canvaselement.height);
     ctx.closePath();
-    ctx.fillStyle = "rgba(0, 123, 255, 0.2)";
+    ctx.fillStyle = infillcolor;
     ctx.fill();
 }
 
@@ -128,6 +144,7 @@ let drawGraph = function () {
     let base = 1.01;
     let start = 1;
     let newpoints = actualpoints(roi,contributionfrequency*investmentduration,contributionfrequency,currentsavings,contributionamount);
+    let newpoints2 = actualpoints(0,contributionfrequency*investmentduration,contributionfrequency,currentsavings,contributionamount);
     let ypoints=ylabel.children;
     let max=newpoints[0];
     //graph(canvas,ylabel,xlabel,newpoints);
@@ -161,12 +178,10 @@ let drawGraph = function () {
     if(drawline){
         mousepoint=Math.floor(drawlinex/pixelsperpoint);
     }
-
+    //draw the graph
     let ratio = canvas.height / max;
-    for (let i = 0; i < newpoints.length; i++) {
-        newpoints[i] *= ratio;
-    }
-    drawthegraph(newpoints,pixelsperpoint,canvas);
+    drawthegraph(newpoints,pixelsperpoint,canvas,0,max);
+    //drawthegraph(newpoints2,pixelsperpoint,canvas,0,max,"rgba(0,0,0,.75)","rgba(0, 255, 76, 0.05)");
 
     if(drawline){
         ctx.beginPath();
@@ -204,14 +219,9 @@ let drawGraph = function () {
 
     if(drawline){
         infobox.style.display="revert";
-        infobox.style.bottom=newpoints[mousepoint]+"px";
+        //take into account the point height and the bottom padding ie 50
+        infobox.style.bottom=newpoints[mousepoint]+50+"px";
         let thewidth=infobox.style.offsetWidth;
-        if(mousepoint%2===0){
-            infobox.style.left=pixelsperpoint*mousepoint-50+"px";
-        }
-        else{
-            infobox.style.left=pixelsperpoint*(mousepoint+1)-50+"px";
-        }
         let point=mousepoint;
         if(point>newpoints.length){
             point=newpoints.length
@@ -242,6 +252,24 @@ let drawGraph = function () {
         infobox.innerHTML=inputvalue;
 
         
+        let canvaswidth=(document.getElementById('canvas-div').clientWidth-100)*.9;
+        let infoboxwidth=(document.getElementById('infobox').clientWidth);
+        if(drawlinex<=canvaswidth/2){
+            if(mousepoint%2===0){
+                infobox.style.left=pixelsperpoint*mousepoint+50+canvaswidth/9+"px";
+            }
+            else{
+                infobox.style.left=pixelsperpoint*(mousepoint+1)+50+canvaswidth/9+"px";
+            }
+        }
+        else{
+            if(mousepoint%2===0){
+                infobox.style.left=pixelsperpoint*mousepoint+50+canvaswidth/9-infoboxwidth-3+"px";
+            }
+            else{
+                infobox.style.left=pixelsperpoint*(mousepoint+1)+50+canvaswidth/9-infoboxwidth-3+"px";
+            }
+        }
     }
     else{
         infobox.style.display="none";

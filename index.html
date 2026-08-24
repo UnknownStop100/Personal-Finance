@@ -1,11 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CalcPilot — Financial Calculators</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/Footer/style.css">
+  <link rel="stylesheet" href="/Header/style.css">
 </head>
 <body>
-    
+  <!--<header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="#">Calc<span>Pilot</span></a>
+
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#">Finance</a>
+        <a href="#">Construction</a>
+        <a href="#">Electrical</a>
+        <a href="#">Business</a>
+      </nav>
+
+      <button class="search-button" aria-label="Search calculators">
+        <span class="search-icon">⌕</span>
+        <span>Search</span>
+      </button>
+    </div>
+  </header>-->
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">Financial calculators</p>
+        <h1>Make better decisions with numbers.</h1>
+        <p class="hero-text">
+          Simple, accurate calculators for investing, loans, retirement,
+          savings, debt, and everyday financial decisions.
+        </p>
+
+        <label class="search-box">
+          <span class="search-icon">⌕</span>
+          <input type="search" placeholder="Search calculators..." aria-label="Search calculators">
+          <kbd>⌘ K</kbd>
+        </label>
+      </div>
+    </section>
+
+    <section class="featured-section section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Popular tools</p>
+          <h2>Featured calculators</h2>
+        </div>
+        <div class="carousel-controls">
+          <button aria-label="Previous calculators">←</button>
+          <button aria-label="Next calculators">→</button>
+        </div>
+      </div>
+
+      <div class="featured-track">
+        <a class="featured-card featured-card-dark" href="Mortgage%20Payment%20Calculator/index.html">
+          <div class="card-top">
+            <span class="card-icon">$</span>
+            <span class="card-arrow">↗</span>
+          </div>
+          <div>
+            <h3>Mortgage Payment Calculator</h3>
+            <p>Estimate monthly payments, interest, and total cost.</p>
+          </div>
+          <span class="card-link">Open calculator →</span>
+        </a>
+
+        <a class="featured-card" href="Compound%20Interest%20Calculator/index.html">
+          <div class="card-top">
+            <span class="card-icon">↗</span>
+            <span class="card-arrow">↗</span>
+          </div>
+          <div>
+            <h3>Compound Interest Calculator</h3>
+            <p>See how your money could grow over time.</p>
+          </div>
+          <span class="card-link">Open calculator →</span>
+        </a>
+
+        <a class="featured-card" href="Retirement%20Nest%20Egg%20Calculator/index.html">
+          <div class="card-top">
+            <span class="card-icon">◎</span>
+            <span class="card-arrow">↗</span>
+          </div>
+          <div>
+            <h3>Retirement Nest Egg Calculator</h3>
+            <p>Estimate how much you may need for retirement.</p>
+          </div>
+          <span class="card-link">Open calculator →</span>
+        </a>
+
+        <a class="featured-card" href="Debt%20Payoff%20Calculator/index.html">
+          <div class="card-top">
+            <span class="card-icon">−</span>
+            <span class="card-arrow">↗</span>
+          </div>
+          <div>
+            <h3>Debt Payoff Calculator</h3>
+            <p>Compare snowball vs. avalanche payoff strategies.</p>
+          </div>
+          <span class="card-link">Open calculator →</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="ad-placeholder" aria-label="Advertisement">
+      <span>ADVERTISEMENT</span>
+    </div>
+
+    <section class="calculator-section section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Browse all tools</p>
+          <h2>Financial calculators</h2>
+        </div>
+        <a class="view-all" href="#">View all →</a>
+      </div>
+
+      <div class="category-row">
+        <button class="category active">All</button>
+        <button class="category">Investing</button>
+        <button class="category">Loans</button>
+        <button class="category">Retirement</button>
+        <button class="category">Savings</button>
+        <button class="category">Debt</button>
+        <button class="category">Real Estate</button>
+      </div>
+
+      <div class="calculator-grid">
+        <a class="calculator-card" href="Compound%20Interest%20Calculator/index.html">
+          <span class="mini-icon">$</span>
+          <div>
+            <h3>Compound Interest Calculator</h3>
+            <p>Calculate compound growth and future value.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Mortgage%20Payment%20Calculator/index.html">
+          <span class="mini-icon">⌂</span>
+          <div>
+            <h3>Mortgage Payment Calculator</h3>
+            <p>Estimate monthly payments, taxes, insurance & HOA.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Retirement%20Nest%20Egg%20Calculator/index.html">
+          <span class="mini-icon">◎</span>
+          <div>
+            <h3>Retirement Nest Egg Calculator</h3>
+            <p>Project retirement savings from contributions.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Loan%20Amortization%20Schedule/index.html">
+          <span class="mini-icon">%</span>
+          <div>
+            <h3>Loan Amortization Schedule</h3>
+            <p>See how each payment splits between principal and interest.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Debt%20Payoff%20Calculator/index.html">
+          <span class="mini-icon">−</span>
+          <div>
+            <h3>Debt Payoff Calculator</h3>
+            <p>Compare snowball vs. avalanche strategies.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Rent%20vs%20Buy%20Calculator/index.html">
+          <span class="mini-icon">↕</span>
+          <div>
+            <h3>Rent vs. Buy Calculator</h3>
+            <p>Compare the total cost of renting vs. buying.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Emergency%20Fund%20Calculator/index.html">
+          <span class="mini-icon">★</span>
+          <div>
+            <h3>Emergency Fund Calculator</h3>
+            <p>Find your target and time to reach it.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Net%20Worth%20Calculator/index.html">
+          <span class="mini-icon">↗</span>
+          <div>
+            <h3>Net Worth Calculator</h3>
+            <p>Add up your assets and liabilities.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Car%20Affordability%20Calculator/index.html">
+          <span class="mini-icon">$</span>
+          <div>
+            <h3>Car Affordability Calculator</h3>
+            <p>Find the max car price you can afford.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+
+        <a class="calculator-card" href="Inflation%20Impact%20Calculator/index.html">
+          <span class="mini-icon">↕</span>
+          <div>
+            <h3>Inflation Impact Calculator</h3>
+            <p>Compare purchasing power across time.</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="ad-placeholder ad-mid" aria-label="Advertisement">
+      <span>ADVERTISEMENT</span>
+    </div>
+
+    <section class="about-section section">
+      <div class="about-card">
+        <div class="about-copy">
+          <p class="eyebrow">About CalcPilot</p>
+          <h2>Useful tools without the clutter.</h2>
+          <p>
+            Our calculators are designed to make complicated numbers easier
+            to understand. Enter your information, see the result, and explore
+            the calculation behind it.
+          </p>
+          <p>
+            Every calculator includes clear inputs, easy-to-read results,
+            useful visualizations where appropriate, and explanations to help
+            you understand what the numbers mean.
+          </p>
+        </div>
+        <div class="about-stat">
+          <strong>10</strong>
+          <span>calculators live</span>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

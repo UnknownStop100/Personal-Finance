@@ -1,38 +1,32 @@
+:root {
+  --page: #f6f7f9;
+  --surface: #ffffff;
+  --text: #17191d;
+  --muted: #6d737c;
+  --line: #e4e7eb;
+  --accent: #17191d;
+  --accent-soft: #eef0f3;
+  --max-width: 1180px;
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
 body{
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     margin: 0px;
     padding: 0;
-    background-color:rgb(174, 207, 205)
+    background-color:rgba(0, 0, 0, 0.1)
 }
 h2{
 }
-header{
-    /*display: flex;
-    width: 100%;
-    justify-content: space-around;
-    align-items: center;*/
-    display: grid;
-    grid-template-columns: 15% 55% 15% 15%;
-    border-bottom: 1px solid #999;
-    background-color: #fff;
-    margin: 0px;
-}
-header > div{
-    border-left: 1px solid #999;
-    border-right: 1px solid #999;
-    width: 100%;
-    text-align: center;
-    padding-bottom:10px;
-    padding-top:10px;
-}
-header > div:first-child{
-    border-left: none;
-}
-header > div:last-child{
-    border-right: none;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 main{
-    margin:10px;
+    margin:0px;
     background-color:#f6f6f6;
     border-radius: 5px;
     box-shadow: 1px 1px 1px #ccc;
@@ -49,7 +43,7 @@ main{
     text-align: center;
 }
 }
-@media screen and (min-width: 1000px){
+@media screen and (min-width: 1400px){
     #main-calculator{
         display: grid;
         grid-template-columns: 3fr 7fr;
@@ -68,15 +62,17 @@ main{
     margin-left: 20px;
 }
 #canvas-div{
-    margin-left:50px;
-    padding-bottom:50px;
+    margin:0px;
+    padding:50px;
     position: relative;
-    margin-top: 20px;
+    direction: rtl;
+    display: grid;
 }
 canvas{
     border: 1px solid #ccc;
     background-color: #fff;
     margin: 0px;
+    /*width: 100%;*/
 }
 #xpoints{
     position:absolute;
@@ -85,9 +81,10 @@ canvas{
     z-index: 10;
     width:750px;
     display: grid;
+    grid-template-columns: repeat(5, 1fr); 
     align-content: space-between;
-    grid-auto-flow: column;
     text-align: center;
+    direction: ltr;
 }
 
 #ypoints{
@@ -104,7 +101,7 @@ canvas{
 }
 #xlabel{
     position: absolute;
-    width:100%;
+    /*width:100%;*/
     bottom:5px;
 }
 #ylabel{
@@ -152,21 +149,19 @@ canvas{
     height: 100%;
     pointer-events: none;
 }
-input{
-    padding:5px;
-    width: 150px;
-}
 select{
-    width:162px;
-    padding:5px;
-}
-footer{
+    position: relative;
     width: 100%;
-    background-color: white;
+    max-width: 320px;
+    padding:15px;
+    height: 54px;
+    border: 1px solid #dfe2e6;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
 }
-
 #how-it-works {
-  max-width: 800px;
+  max-width: 1140px;
   margin: 40px auto;
   padding: 20px;
   font-family: Arial, Helvetica, sans-serif;
@@ -239,4 +234,14 @@ footer{
   #how-it-works h3 {
     font-size: 1.25em;
   }
+}
+#output{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr); 
+}
+#output > div{
+  margin:10px;
+  padding:5px;
+  border:1px solid black;
+  border-radius:12px;
 }

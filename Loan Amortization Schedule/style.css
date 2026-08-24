@@ -1,0 +1,137 @@
+/* Widen the page-layout content column so the calculator takes ~80% width */
+.top-section-layout,
+.bottom-section-layout {
+    grid-template-columns: 1fr 8fr 1fr !important;
+}
+
+@media (max-width: 900px) {
+    .top-section-layout,
+    .bottom-section-layout {
+        grid-template-columns: 1fr !important;
+    }
+    .side-ad {
+        display: none;
+    }
+}
+
+.main-content {
+    max-width: 100%;
+}
+
+.main-article {
+    max-width: 100%;
+}
+
+/* Calculator + result cards */
+.calculator-card,
+.results-section > .result-hero,
+.description,
+.article-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    margin: 0 0 16px;
+}
+
+.description,
+.article-card {
+    padding: 24px 26px;
+}
+
+.card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0 0 20px;
+}
+
+.card-heading .eyebrow,
+.description .eyebrow,
+.article-card .eyebrow {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.card-heading h2,
+.description h2,
+.article-card h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.article-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 20px 0 8px;
+}
+
+.description p,
+.article-card p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0 0 10px;
+}
+
+.status-dot {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--accent-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.field-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 18px 0 6px;
+}
+
+.field-group label:first-of-type {
+    margin-top: 0;
+}
+
+.field-group select.select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--page);
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.field-group-heading {
+    margin: 28px 0 4px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--text);
+}
+
+.field-group .field-group-heading:first-of-type {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.results-section {
+    margin-top: 8px;
+}

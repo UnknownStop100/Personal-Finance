@@ -1,0 +1,236 @@
+/* Result module — reuses the site's --page/--surface/--text/--muted/--line/--accent tokens */
+
+.result-hero {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px 28px 24px;
+    margin: 0 0 16px;
+}
+
+.result-hero-label {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.result-hero-value {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+
+.result-hero-sublabel {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.result-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0 0 16px;
+}
+
+.result-stat {
+    flex: 1 1 160px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: calc(var(--radius) - 6px);
+    padding: 16px 18px;
+}
+
+.result-stat-label {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.result-stat-value {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.result-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin: 0 0 16px;
+}
+
+.result-card-title {
+    margin: 0 0 12px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    gap: 16px;
+}
+
+.result-row:last-child {
+    border-bottom: none;
+}
+
+.result-row-label {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.result-row-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: right;
+}
+
+.result-row-emphasis .result-row-label,
+.result-row-emphasis .result-row-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.result-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: auto;
+    max-height: 420px;
+    margin: 0 0 16px;
+}
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.result-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--accent-soft);
+    color: var(--text);
+    text-align: right;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+.result-table thead th:first-child,
+.result-table td:first-child {
+    text-align: left;
+}
+
+.result-table td {
+    text-align: right;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.result-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.result-table-highlight td {
+    background: var(--accent-soft);
+    font-weight: 700;
+}
+
+.result-chart {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 12px 8px;
+    margin: 0 0 16px;
+}
+
+.chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.chart-gridline {
+    stroke: var(--line);
+    stroke-width: 1;
+}
+
+.chart-axis-label {
+    font-size: 11px;
+    fill: var(--muted);
+    font-family: inherit;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 10px 8px 2px;
+}
+
+.chart-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.chart-legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.result-note {
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border-radius: calc(var(--radius) - 6px);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.result-note-neutral {
+    background: var(--accent-soft);
+    color: var(--text);
+}
+
+.result-note-warning {
+    background: #fdf1e3;
+    color: #7a4a12;
+}
+
+.result-note-good {
+    background: #e9f6ee;
+    color: #1e6b3d;
+}
+
+@media (max-width: 640px) {
+    .result-hero-value {
+        font-size: 32px;
+    }
+}
