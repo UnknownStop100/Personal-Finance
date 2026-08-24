@@ -282,6 +282,25 @@ canvas.addEventListener('mousemove',(event)=>{
         drawlinex=1;
     drawGraph();
 });
+canvas.addEventListener('touchmove', (event) => {
+    // 1. Prevents the phone screen from scrolling while dragging
+    event.preventDefault(); 
+    
+    // 2. Get the position of the canvas on the screen
+    const rect = canvas.getBoundingClientRect();
+    
+    // 3. Extract the X coordinate from the first finger touching the screen
+    let touchX = event.touches[0].clientX - rect.left;
+    
+    // 4. Apply your boundary check to prevent errors
+    if (touchX < 1) {
+        touchX = 1;
+    }
+    
+    // 5. Update your variable and redraw
+    drawlinex = touchX;
+    drawGraph();
+}, { passive: false }); 
 canvas.addEventListener('mouseenter',(event)=>{
     drawline=true;
     drawGraph();
