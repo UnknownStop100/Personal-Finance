@@ -139,12 +139,49 @@ let drawthegraph = function (points,pixelsperpoint,canvaselement,min,max,linecol
     ctx.fillStyle = infillcolor;
     ctx.fill();
 }
+ const formatInput = (value) => {
+            value=value+"";
+            value.replace(/,/g, "")
+            .replace(/[^\d.]/g, "");
 
+        // Prevent multiple decimal points
+        const decimalIndex = value.indexOf(".");
+
+        if (decimalIndex !== -1) {
+            value =
+                value.substring(0, decimalIndex + 1) +
+                value
+                    .substring(decimalIndex + 1)
+                    .replace(/\./g, "");
+        }
+
+        if (value === "" || value === ".") {
+            return value;
+        }
+
+        const parts = value.split(".");
+
+        const wholeNumber =
+            Number(parts[0]).toLocaleString("en-US");
+
+        if (parts.length > 1) {
+            return    wholeNumber + "." + parts[1];
+        } else {
+            return wholeNumber;
+        }
+    };
 let drawGraph = function () {
     let base = 1.01;
     let start = 1;
     let newpoints = actualpoints(roi,contributionfrequency*investmentduration,contributionfrequency,currentsavings,contributionamount);
     let newpoints2 = actualpoints(0,contributionfrequency*investmentduration,contributionfrequency,currentsavings,contributionamount);
+    
+    let output1=document.getElementById("moneyinput");
+    let output2=document.getElementById("moneyearned");
+    let output3=document.getElementById("totalmoney");
+    output1.innerHTML=formatInput(newpoints2[newpoints2.length-1]+"");
+    output2.innerHTML=newpoints[newpoints.length-1]-newpoints2[newpoints2.length-1];
+    output3.innerHTML=newpoints[newpoints.length-1];
     let ypoints=ylabel.children;
     let max=newpoints[0];
     //graph(canvas,ylabel,xlabel,newpoints);
