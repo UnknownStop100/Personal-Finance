@@ -183,6 +183,9 @@ let drawGraph = function () {
     drawthegraph(newpoints,pixelsperpoint,canvas,0,max);
     //drawthegraph(newpoints2,pixelsperpoint,canvas,0,max,"rgba(0,0,0,.75)","rgba(0, 255, 76, 0.05)");
 
+    if(mousepoint>=newpoints.length){
+        mousepoint=newpoints.length-1;
+    }
     if(drawline){
         ctx.beginPath();
         if(mousepoint%2===0){
