@@ -10,6 +10,7 @@
   --radius: 18px;
 }
 
+
 * {
   box-sizing: border-box;
 }
@@ -159,6 +160,7 @@ select{
     border-radius: 12px;
     font-size: 15px;
     outline: none;
+    background-color: white;
 }
 #how-it-works {
   max-width: 1140px;
