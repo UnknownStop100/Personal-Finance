@@ -3,13 +3,21 @@ import { valueInputs } from "../Modules/Input/input.js";
 import { createFooter } from "../Footer/script.js";
 import { createHeader } from "../Header/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
+import { output } from "../Modules/Output/Output/script.js";
 const body = document.querySelector('body');
 const header = createHeader();
 const footer = createFooter();
 const title = titleGenerator("Finance calculator", "Investment Calculator", "Plot future investment growth using compound interest and regular contributions.")
+const outputarea = document.getElementById("output");
+const moneyinput=output("Money Input");
+const moneyearned=output("Money Earned");
+const totalmoney=output("Total Money");
 body.prepend(title);
 body.prepend(header);
 body.appendChild(footer);
+outputarea.appendChild(moneyinput);
+outputarea.appendChild(moneyearned);
+outputarea.appendChild(totalmoney);
 ///////////////////////////
 //handles inputs
 ///////////////////////////
@@ -19,16 +27,16 @@ contributionamount=500,
 currentsavings=0,
 investmentduration=20;
 
-let currentSavings=numberInput(0,1000000000,document.getElementById("inputs"),"Current Savings",0,"$","",updateCurrentSavings);
+let currentSavings=numberInput(0,1000000000,document.getElementById("inputs"),"Current Savings",0,"$","",updateCurrentSavings,"?");
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let contributionFrequency=valueInputs("Contribution Frequency",["Monthly","Quarterly","Yearly"],[12,4,1],document.getElementById("inputs"),updateContributionFrequency);
+let contributionFrequency=valueInputs("Contribution Frequency",["Monthly","Quarterly","Yearly"],[12,4,1],document.getElementById("inputs"),updateContributionFrequency,"?");
 document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let contributionAmount=numberInput(-1000000,1000000000,document.getElementById("inputs"),"Contribution Amount",500,"$","",updateContributionAmount);
+let contributionAmount=numberInput(-1000000,1000000000,document.getElementById("inputs"),"Contribution Amount",500,"$","",updateContributionAmount,"?");
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let returnOnInvestment=numberInput(0,100,document.getElementById("inputs"),"Return on Investment (ROI)",8,"","%",updateReturnOnInvestment);
+let returnOnInvestment=numberInput(0,100,document.getElementById("inputs"),"Return on Investment (ROI)",8,"","%",updateReturnOnInvestment,"?");
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let investmentDuration=numberInput(0,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration);
+let investmentDuration=numberInput(0,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration,"?");
 document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
 
@@ -110,9 +118,10 @@ window.addEventListener('resize', function () {
 });
 let drawthegraph = function (points,pixelsperpoint,canvaselement,min,max,linecolor="black",infillcolor="rgba(0, 123, 255, 0.2)") {
 
-    let ratio = canvas.height / max;
+    let ratio = canvas.height / (max-min);
     for (let i = 0; i < points.length; i++) {
         points[i] *= ratio;
+        points[i] -= min*ratio;
     }
     ctx.setLineDash([5, 0]);
     ctx.beginPath();
@@ -179,27 +188,34 @@ let drawGraph = function () {
     let output1=document.getElementById("moneyinput");
     let output2=document.getElementById("moneyearned");
     let output3=document.getElementById("totalmoney");
-    output1.innerHTML=formatInput(newpoints2[newpoints2.length-1]+"");
-    output2.innerHTML=newpoints[newpoints.length-1]-newpoints2[newpoints2.length-1];
-    output3.innerHTML=newpoints[newpoints.length-1];
+    output1.innerHTML="$"+formatInput(newpoints2[newpoints2.length-1]);
+    output2.innerHTML="$"+formatInput(Math.round((newpoints[newpoints.length-1]-newpoints2[newpoints2.length-1])));
+    output3.innerHTML="$"+formatInput(Math.round(newpoints[newpoints.length-1]));
     let ypoints=ylabel.children;
     let max=newpoints[0];
+    let min=0;
     //graph(canvas,ylabel,xlabel,newpoints);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for(let i=0;i<newpoints.length;i++){
         if(newpoints[i]>max){
             max=newpoints[i];
         }
+        if(newpoints[i]<min){
+            min=newpoints[i];
+        }
     }
     for(let i=0;i<ypoints.length;i++){
-        let num=Math.round(max/4*i);
+        let num=Math.abs(Math.round((max-min)/4*i)+min);
         let point=0;
         while(num>1000){
             num/=1000;
             point++;
         }
         if(point<characters.length){
-            ypoints[4-i].innerHTML=`$${Math.round(num*10)/10}${characters[point]}`;
+            ypoints[4-i].innerHTML="";
+            if(((max-min)/4*i+min)<0)
+            ypoints[4-i].innerHTML+="-";
+            ypoints[4-i].innerHTML+=`$${Math.round(num*10)/10}${characters[point]}`;
         }
         else{
             ypoints[4-1].innerHTML="NaN";
@@ -216,8 +232,8 @@ let drawGraph = function () {
         mousepoint=Math.floor(drawlinex/pixelsperpoint);
     }
     //draw the graph
-    let ratio = canvas.height / max;
-    drawthegraph(newpoints,pixelsperpoint,canvas,0,max);
+    let ratio = canvas.height / (max-min);
+    drawthegraph(newpoints,pixelsperpoint,canvas,min,max);
     //drawthegraph(newpoints2,pixelsperpoint,canvas,0,max,"rgba(0,0,0,.75)","rgba(0, 255, 76, 0.05)");
 
     if(mousepoint>=newpoints.length){
@@ -271,23 +287,37 @@ let drawGraph = function () {
         }
         let inputvalue="<inline>";
         let pointratio=0;
-        let displayvalue=newpoints[point]/ratio;
+        let displayvalue=Math.abs(newpoints[point]/ratio+min);
         while(displayvalue>1000){
             displayvalue/=1000;
             pointratio++;
         }
+        if(newpoints[point]/ratio+min<0)
+            inputvalue+="-";
             inputvalue+="$"+Math.round(displayvalue*100)/100+characters[pointratio];
         inputvalue+="<br>";
         inputvalue+="Y";
-        inputvalue+=Math.floor(point/24)
+        if(contributionfrequency===12)
+            inputvalue+=Math.floor(point/24)
+        else if(contributionfrequency===4)
+            inputvalue+=Math.floor(point/8)
+        else if(contributionfrequency===1)
+            inputvalue+=Math.floor(point/2)
         if(point%2){
             inputvalue+=" End";
         }
         else{
             inputvalue+=" Start";
         }
+        if(contributionfrequency===12){
         inputvalue+=" M";
         inputvalue+=Math.floor((point%24)/2)+1;
+        }
+        else if(contributionfrequency===4){
+        inputvalue+=" Q";
+        inputvalue+=Math.floor((point%8)/2)+1;
+
+        }
         inputvalue+="</inline>"
         infobox.innerHTML=inputvalue;
 

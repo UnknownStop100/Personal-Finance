@@ -6,7 +6,8 @@ export function numberInput(
     initialvalue = 0,
     prefix = "",
     suffix = "",
-    runfunction = () => {}
+    runfunction = () => {},
+    help = ""
 ) {
     const label = document.createElement("label");
     const inputdiv = document.createElement("div");
@@ -91,7 +92,10 @@ export function numberInput(
 
     // Label
     if (labeltext) {
-        label.textContent = labeltext;
+        let thesup=document.createElement('sup');
+        thesup.innerHTML=help;
+        label.innerHTML = labeltext;
+        label.appendChild(thesup);
         parentelement.appendChild(label);
     }
 
@@ -116,7 +120,7 @@ export function numberInput(
 
         let value = input.value
             .replace(/,/g, "")
-            .replace(/[^\d.]/g, "");
+            .replace(/[^\d.-]/g, "");
 
         // Prevent multiple decimal points
         const decimalIndex = value.indexOf(".");
@@ -177,13 +181,16 @@ export function numberInput(
     return input;
 }
 
-export function valueInputs(labeltext, inputvalues, outputvalues, parentelement, runfunction = () => {}) {
+export function valueInputs(labeltext, inputvalues, outputvalues, parentelement, runfunction = () => {}, help="") {
     const label = document.createElement("label");
     const select = document.createElement("select");
     label.for = labeltext.toLowerCase().replaceAll(" ", "-") + "-label";
     select.id = labeltext.toLowerCase().replaceAll(" ", "-") + "-select";
     select.className = "select";
-    label.textContent = labeltext;
+    label.innerHTML = labeltext;
+    let thesup=document.createElement("sup");
+    thesup.innerHTML=help;
+    label.appendChild(thesup);
 
     for (let i = 0; i < inputvalues.length; i++) {
         const option = document.createElement("option");

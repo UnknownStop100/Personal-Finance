@@ -97,6 +97,7 @@ canvas{
     align-content: space-around;
     grid-auto-flow: row;
     text-align:right;
+    direction: ltr;
 }
 #xlabel{
     position: absolute;
@@ -237,14 +238,16 @@ select{
 }
 #output{
   display:grid;
-  grid-template-columns: repeat(4, 1fr); 
+  grid-template-columns: repeat(3, 1fr); 
 }
-.valueoutput{
-  margin:10px;
-  padding:5px;
-  border:1px solid rgba(0,0,0,.1);
-  border-radius:12px;
-  height:45px;
+@media (max-width: 700px){
+  
+#output{
+  grid-template-columns: repeat(1, 1fr); 
+}
+}
+#infobox{
+  direction: ltr;
 }
 #resolve{
   background-color: rgba(100, 162, 255, 0.068);

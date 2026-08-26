@@ -1,0 +1,16 @@
+.divoutput{
+    margin:10px;
+}
+.titleoutput{
+    text-align: left;
+    margin-left:2px;
+}
+.valueoutput{
+  padding:10px;
+  padding-left:20px;
+  border:1px solid rgba(0,0,0,.1);
+  border-radius:12px;
+  text-align: left;
+  max-width: 350px;
+  margin:2px;
+}
