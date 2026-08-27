@@ -258,3 +258,6 @@ select{
   
   background-color: rgba(100, 162, 255, 0.1);
 }
+*{
+  scroll-margin-top:100px;
+}

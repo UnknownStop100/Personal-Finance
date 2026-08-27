@@ -27,16 +27,16 @@ contributionamount=500,
 currentsavings=0,
 investmentduration=20;
 
-let currentSavings=numberInput(0,1000000000,document.getElementById("inputs"),"Current Savings",0,"$","",updateCurrentSavings,"?");
+let currentSavings=numberInput(0,1000000000,document.getElementById("inputs"),"Current Savings",0,"$","",updateCurrentSavings,`<a href="#input-savings">🛈</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let contributionFrequency=valueInputs("Contribution Frequency",["Monthly","Quarterly","Yearly"],[12,4,1],document.getElementById("inputs"),updateContributionFrequency,"?");
+let contributionFrequency=valueInputs("Contribution Frequency",["Monthly","Quarterly","Yearly"],[12,4,1],document.getElementById("inputs"),updateContributionFrequency,`<a href="#input-savings">🛈</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let contributionAmount=numberInput(-1000000,1000000000,document.getElementById("inputs"),"Contribution Amount",500,"$","",updateContributionAmount,"?");
+let contributionAmount=numberInput(-1000000,1000000000,document.getElementById("inputs"),"Contribution Amount",500,"$","",updateContributionAmount,`<a href="#input-savings">🛈</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let returnOnInvestment=numberInput(0,100,document.getElementById("inputs"),"Return on Investment (ROI)",8,"","%",updateReturnOnInvestment,"?");
+let returnOnInvestment=numberInput(0,100,document.getElementById("inputs"),"Return on Investment (ROI)",8,"","%",updateReturnOnInvestment,`<a href="#roi-values">🛈</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let investmentDuration=numberInput(0,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration,"?");
+let investmentDuration=numberInput(0,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration,`<a href="#investment-duration">🛈</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
 
