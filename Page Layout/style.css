@@ -1,7 +1,7 @@
 .top-section-layout {
     max-width: var(--max);
     margin: auto;
-    padding: 55px 0px 80px;
+    padding: 10px 0px 20px;
     display: grid;
     grid-template-columns: 20% 60% 20%;
     align-items: start
@@ -9,7 +9,7 @@
 .bottom-section-layout {
     max-width: var(--max);
     margin: auto;
-    padding: 55px 0px 80px;
+    padding: 20px 0px 80px;
     display: grid;
     grid-template-columns: 20% 60% 20%;
     align-items: start;
@@ -69,4 +69,84 @@
     .page-layout {
         padding: 30px 14px 60px
     }
+}
+
+
+.main-article {
+  max-width: 1140px;
+  padding: 0px 20px 0px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Heading styles */
+.main-article h2 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+  color: #2c3e50;
+}
+
+.main-article h3 {
+  font-size: 1.5em;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: #34495e;
+}
+
+/* Paragraph styles */
+.main-article p {
+  margin-bottom: 1em;
+}
+
+/* Ordered list styles */
+.main-article ol {
+  padding-left: 20px;
+  margin-bottom: 1em;
+}
+
+.main-article ol li {
+  margin-bottom: 0.75em;
+}
+
+/* Unordered list styles */
+.main-article ul {
+  padding-left: 20px;
+  list-style-type: disc;
+  margin-bottom: 1em;
+}
+
+.main-article ul li {
+  margin-bottom: 0.5em;
+}
+
+/* Emphasis styles */
+.main-article strong {
+  font-weight: bold;
+}
+
+.main-article em {
+  font-style: italic;
+}
+
+/* Optional: Add some responsiveness */
+@media (max-width: 600px) {
+  .main-article {
+    padding: 15px;
+  }
+
+  .main-article h2 {
+    font-size: 1.75em;
+  }
+
+  .main-article h3 {
+    font-size: 1.25em;
+  }
+}
+
+*{
+  scroll-margin-top:100px;
 }

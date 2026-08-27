@@ -1,102 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Calculator</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="../Footer/style.css">
-    <link rel="stylesheet" href="../Header/style.css">
-    <link rel="stylesheet" href="../Calculator Title/style.css">
-    <link rel="stylesheet" href="../Modules/Input/input.css">
-    <link rel="stylesheet" href="../Modules/Output/Output/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investment Calculator</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../Footer/style.css">
+  <link rel="stylesheet" href="../Header/style.css">
+  <link rel="stylesheet" href="../Calculator Title/style.css">
+  <link rel="stylesheet" href="../Modules/Input/input.css">
+  <link rel="stylesheet" href="../Modules/Output/Output/style.css">
+  <link rel="stylesheet" href="../Page Layout/style.css">
 </head>
-
 <body>
-    <div id="main-content">
-        <aside id="left-sidebar">
-        </aside>
-        <main>
-            <div id="main-calculator">
-                <div id="inputs">
-                    <h3>Input Fields:</h3>
-                    <!--<button id="calculate-btn">Calculate</button>-->
-                </div>
-                <div id="canvas-div">
-                    <canvas id="investment-graph"></canvas>
-                    <div id="xlabel">Years</div>
-                    <div id="xpoints">
-                        <div>0</div>
-                        <div>0</div>
-                        <div>0</div>
-                        <div>0</div>
-                        <div>0</div>
-                    </div>
-                    <div id="ylabel">Value</div>
-                    <div id="ypoints">
-                        <div>0</div>
-                        <div>0</div>
-                        <div>0</div>
-                        <div>0</div>
-                        <div>0</div>
-                    </div>
-                    <div id="infobox">
-                    </div>
-                </div>
-            </div>
-            <div id="output">
-            <!--button id="resolve">recalculate</button>-->
-            </div>
-        </main>
-        <aside id="right-sidebar">
-        </aside>
-    </div>
-    <section id="how-it-works">
-  <h2>How the Investment ROI Calculator Works</h2>
-  <p>The <strong>Investment ROI Calculator</strong> is a tool designed to model and visualize the growth of your investments over time based on user-defined inputs. It helps analyze different asset classes such as <em>stocks</em>, <em>bonds</em>, <em>real estate</em>, and <em>money market funds</em> to assist in financial planning.</p>
-  
-  <h3>Step-by-Step Functionality</h3>
-  <ol>
-    <li id="input-savings">
-      <strong>Input Current Savings and Investment Amounts:</strong>
-      Users enter their existing savings and specify regular contributions (monthly, quarterly, or annually) to the investment.
-    </li>
-    <li id="investment-duration">
-      <strong>Define Investment Duration and Time Periods:</strong>
-      Set the total investment period, ranging from months to decades, which influences the growth projection.
-    </li>
-    <li id="roi-values">
-      <strong>Set Expected ROI Based on Asset Class:</strong>
-      Input an assumed annual rate of return, based on historical or expected performance for different assets:
-      <ul>
-        <li>Stocks: 8-10%</li>
-        <li>Bonds: 3-6%</li>
-        <li>Real Estate: 8-12%</li>
-        <li>Money Market Funds: 0.5-2%</li>
-      </ul>
-    </li>
-    <li>
-      <strong>Calculate Compound Growth and Investment Returns:</strong>
-      The calculator models growth using compound interest formulas, considering initial savings, periodic contributions, expected ROI, and investment duration.
-    </li>
-    <li>
-      <strong>Visualization Through Dynamic Graphs:</strong>
-      Results are displayed in interactive graphs that show how your investment value evolves over time, including cumulative totals and growth trends.
-    </li>
-  </ol>
-
-  <h3>Key Features</h3>
-  <ul>
-    <li>Customizable inputs: savings, contributions, ROI, investment period</li>
-    <li>Modeling for multiple asset classes: stocks, bonds, real estate, money market</li>
-    <li>Time-based projections from months to decades</li>
-    <li>Visual data representation with graphs and charts</li>
-  </ul>
-
-  <p>By leveraging principles like compound interest and asset-specific ROI assumptions, this calculator provides realistic projections of your investment growth, helping you make informed financial decisions for the future.</p>
-</section>
-    <script type="module" src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 
 </html>

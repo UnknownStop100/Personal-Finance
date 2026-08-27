@@ -4,77 +4,114 @@ import { createFooter } from "../Footer/script.js";
 import { createHeader } from "../Header/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { output } from "../Modules/Output/Output/script.js";
+import { createPageLayout } from "../Page Layout/script.js";
 const body = document.querySelector('body');
 const header = createHeader();
 const footer = createFooter();
 const title = titleGenerator("Finance calculator", "Investment Calculator", "Plot future investment growth using compound interest and regular contributions.")
-const outputarea = document.getElementById("output");
-const moneyinput=output("Money Input");
-const moneyearned=output("Money Earned");
-const totalmoney=output("Total Money");
+const moneyinput = output("Money Input");
+const moneyearned = output("Money Earned");
+const totalmoney = output("Total Money");
+const main = createPageLayout();
 body.prepend(title);
 body.prepend(header);
+body.appendChild(main);
 body.appendChild(footer);
+
+
+
+
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+                <div id="canvas-div">
+                    <canvas id="investment-graph"></canvas>
+                    <div id="xlabel">Years</div>
+                    <div id="xpoints">
+                        <div>0</div>
+                        <div>0</div>
+                        <div>0</div>
+                        <div>0</div>
+                        <div>0</div>
+                    </div>
+                    <div id="ylabel">Value</div>
+                    <div id="ypoints">
+                        <div>0</div>
+                        <div>0</div>
+                        <div>0</div>
+                        <div>0</div>
+                        <div>0</div>
+                    </div>
+                    <div id="infobox">
+                    </div>
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
+const outputarea = document.getElementById("output");
 outputarea.appendChild(moneyinput);
 outputarea.appendChild(moneyearned);
 outputarea.appendChild(totalmoney);
 ///////////////////////////
 //handles inputs
 ///////////////////////////
-let roi=.08,
-contributionfrequency=12,
-contributionamount=500,
-currentsavings=0,
-investmentduration=20;
+let roi = .08,
+    contributionfrequency = 12,
+    contributionamount = 500,
+    currentsavings = 0,
+    investmentduration = 20;
 
-let currentSavings=numberInput(0,1000000000,document.getElementById("inputs"),"Current Savings",0,"$","",updateCurrentSavings,`<a href="#input-savings">🛈</a>`);
+let currentSavings = numberInput(0, 1000000000, document.getElementById("inputs"), "Current Savings", 0, "$", "", updateCurrentSavings, `<a href="#input-savings">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let contributionFrequency=valueInputs("Contribution Frequency",["Monthly","Quarterly","Yearly"],[12,4,1],document.getElementById("inputs"),updateContributionFrequency,`<a href="#input-savings">🛈</a>`);
+let contributionFrequency = valueInputs("Contribution Frequency", ["Monthly", "Quarterly", "Yearly"], [12, 4, 1], document.getElementById("inputs"), updateContributionFrequency, `<a href="#input-savings">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let contributionAmount=numberInput(-1000000,1000000000,document.getElementById("inputs"),"Contribution Amount",500,"$","",updateContributionAmount,`<a href="#input-savings">🛈</a>`);
+let contributionAmount = numberInput(-1000000, 1000000000, document.getElementById("inputs"), "Contribution Amount", 500, "$", "", updateContributionAmount, `<a href="#input-savings">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let returnOnInvestment=numberInput(0,100,document.getElementById("inputs"),"Return on Investment (ROI)",8,"","%",updateReturnOnInvestment,`<a href="#roi-values">🛈</a>`);
+let returnOnInvestment = numberInput(0, 100, document.getElementById("inputs"), "Return on Investment (ROI)", 8, "", "%", updateReturnOnInvestment, `<a href="#roi-values">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let investmentDuration=numberInput(0,100,document.getElementById("inputs"),"Investment Duration",20,"","",updateInvestmentDuration,`<a href="#investment-duration">🛈</a>`);
+let investmentDuration = numberInput(0, 100, document.getElementById("inputs"), "Investment Duration", 20, "", "", updateInvestmentDuration, `<a href="#investment-duration">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
 
-function updateCurrentSavings(){
-currentsavings=Number(currentSavings.value.replaceAll(",",""));
-drawGraph();
-}
-function updateContributionFrequency(){
-    contributionfrequency=Number(contributionFrequency.value.replaceAll(",",""));
+function updateCurrentSavings() {
+    currentsavings = Number(currentSavings.value.replaceAll(",", ""));
     drawGraph();
 }
-function updateContributionAmount(){
-    contributionamount=Number(contributionAmount.value.replaceAll(",",""));
+function updateContributionFrequency() {
+    contributionfrequency = Number(contributionFrequency.value.replaceAll(",", ""));
     drawGraph();
 }
-function updateReturnOnInvestment(){
-    roi=Number(returnOnInvestment.value.replaceAll(",",""))/100;
+function updateContributionAmount() {
+    contributionamount = Number(contributionAmount.value.replaceAll(",", ""));
     drawGraph();
 }
-function updateInvestmentDuration(){
-    investmentduration=Number(investmentDuration.value.replaceAll(",",""));
-    if(investmentduration===0){
-        investmentduration=1;
+function updateReturnOnInvestment() {
+    roi = Number(returnOnInvestment.value.replaceAll(",", "")) / 100;
+    drawGraph();
+}
+function updateInvestmentDuration() {
+    investmentduration = Number(investmentDuration.value.replaceAll(",", ""));
+    if (investmentduration === 0) {
+        investmentduration = 1;
     }
     drawGraph();
 }
 ///////////////////////////
 //handles inputs
 ///////////////////////////
-let actualpoints = function (ROI, iterations, iterationsperyear,initalmoney,iterationcontribution) {
-    let points=[];
-    let price=initalmoney;
-    let iterationroi=(ROI+1)**(1/iterationsperyear);
+let actualpoints = function (ROI, iterations, iterationsperyear, initalmoney, iterationcontribution) {
+    let points = [];
+    let price = initalmoney;
+    let iterationroi = (ROI + 1) ** (1 / iterationsperyear);
+    points.push(price);
+    for (let i = 0; i < iterations; i++) {
+        price *= iterationroi;
         points.push(price);
-    for(let i=0;i<iterations;i++){
-        price*=iterationroi;
-        points.push(price);
-        price+=iterationcontribution;
+        price += iterationcontribution;
         points.push(price);
     }
     return points;
@@ -82,31 +119,31 @@ let actualpoints = function (ROI, iterations, iterationsperyear,initalmoney,iter
 let xlabel = document.getElementById("xpoints");
 let ylabel = document.getElementById("ypoints");
 let canvas = document.getElementById('investment-graph');
-let infobox=document.getElementById("infobox");
+let infobox = document.getElementById("infobox");
 //calculation variables
-let drawline=false;
-let drawlinex=0;
-let mousepoint=0;
-let characters=["","k","m","b","t","qd","qt","st"];
+let drawline = false;
+let drawlinex = 0;
+let mousepoint = 0;
+let characters = ["", "k", "m", "b", "t", "qd", "qt", "st"];
 
 //resize canvas elements to line up
-let resizewindow=function(){
+let resizewindow = function () {
     //get the size canvas should be set to
-    let canvaswidth = (document.getElementById('canvas-div').clientWidth-100)*.9;
+    let canvaswidth = (document.getElementById('canvas-div').clientWidth - 100) * .9;
     let canvasheight = canvaswidth;
     //adjust canvas size
     canvas.width = canvaswidth;
     canvas.height = canvasheight;
     //change the label location to match new size
     ylabel.style.height = canvasheight / 4 * 5 + "px";
-    ylabel.style.top = `${50-canvasheight/4*5/10}px`;
+    ylabel.style.top = `${50 - canvasheight / 4 * 5 / 10}px`;
     //50 for padding then the width of the canvas then 5 for extra space and the border width
-    ylabel.style.right = `${50+canvaswidth+5}px`;
-    xlabel.style.width = canvaswidth/4*5 + "px";
+    ylabel.style.right = `${50 + canvaswidth + 5}px`;
+    xlabel.style.width = canvaswidth / 4 * 5 + "px";
     //50 is padding for the div and then go back by half the element width then a 1 for the border width
-    xlabel.style.right = `${50-canvaswidth/4*5/10+1}px`;
-    xlabel.style.bottom= `${50-22}px`
-    document.getElementById("xlabel").style.width=`${(document.getElementById('canvas-div').clientWidth-100)*.9+100}px`;
+    xlabel.style.right = `${50 - canvaswidth / 4 * 5 / 10 + 1}px`;
+    xlabel.style.bottom = `${50 - 22}px`
+    document.getElementById("xlabel").style.width = `${(document.getElementById('canvas-div').clientWidth - 100) * .9 + 100}px`;
 }
 //resize canvas when user loads page so it matches the screen
 resizewindow();
@@ -116,21 +153,21 @@ window.addEventListener('resize', function () {
     resizewindow();
     drawGraph();
 });
-let drawthegraph = function (points,pixelsperpoint,canvaselement,min,max,linecolor="black",infillcolor="rgba(0, 123, 255, 0.2)") {
+let drawthegraph = function (points, pixelsperpoint, canvaselement, min, max, linecolor = "black", infillcolor = "rgba(0, 123, 255, 0.2)") {
 
-    let ratio = canvas.height / (max-min);
+    let ratio = canvas.height / (max - min);
     for (let i = 0; i < points.length; i++) {
         points[i] *= ratio;
-        points[i] -= min*ratio;
+        points[i] -= min * ratio;
     }
     ctx.setLineDash([5, 0]);
     ctx.beginPath();
     ctx.strokeStyle = linecolor;
     ctx.moveTo(0, canvaselement.height);
     for (let i = 0; i < points.length; i++) {
-        ctx.lineTo(i*pixelsperpoint, canvaselement.height - points[i]);
+        ctx.lineTo(i * pixelsperpoint, canvaselement.height - points[i]);
         i++
-        ctx.lineTo((i+1)*pixelsperpoint, canvaselement.height - points[i]);
+        ctx.lineTo((i + 1) * pixelsperpoint, canvaselement.height - points[i]);
     }
     ctx.stroke();
 
@@ -138,9 +175,9 @@ let drawthegraph = function (points,pixelsperpoint,canvaselement,min,max,linecol
     ctx.beginPath();
     ctx.moveTo(0, canvaselement.height);
     for (let i = 0; i < points.length; i++) {
-        ctx.lineTo(i*pixelsperpoint, canvaselement.height - points[i]);
+        ctx.lineTo(i * pixelsperpoint, canvaselement.height - points[i]);
         i++
-        ctx.lineTo((i+1)*pixelsperpoint, canvaselement.height - points[i]);
+        ctx.lineTo((i + 1) * pixelsperpoint, canvaselement.height - points[i]);
     }
     ctx.lineTo(canvaselement.width, canvaselement.height);
     ctx.lineTo(0, canvaselement.height);
@@ -148,248 +185,248 @@ let drawthegraph = function (points,pixelsperpoint,canvaselement,min,max,linecol
     ctx.fillStyle = infillcolor;
     ctx.fill();
 }
- const formatInput = (value) => {
-            value=value+"";
-            value.replace(/,/g, "")
-            .replace(/[^\d.]/g, "");
+const formatInput = (value) => {
+    value = value + "";
+    value.replace(/,/g, "")
+        .replace(/[^\d.]/g, "");
 
-        // Prevent multiple decimal points
-        const decimalIndex = value.indexOf(".");
+    // Prevent multiple decimal points
+    const decimalIndex = value.indexOf(".");
 
-        if (decimalIndex !== -1) {
-            value =
-                value.substring(0, decimalIndex + 1) +
-                value
-                    .substring(decimalIndex + 1)
-                    .replace(/\./g, "");
-        }
+    if (decimalIndex !== -1) {
+        value =
+            value.substring(0, decimalIndex + 1) +
+            value
+                .substring(decimalIndex + 1)
+                .replace(/\./g, "");
+    }
 
-        if (value === "" || value === ".") {
-            return value;
-        }
+    if (value === "" || value === ".") {
+        return value;
+    }
 
-        const parts = value.split(".");
+    const parts = value.split(".");
 
-        const wholeNumber =
-            Number(parts[0]).toLocaleString("en-US");
+    const wholeNumber =
+        Number(parts[0]).toLocaleString("en-US");
 
-        if (parts.length > 1) {
-            return    wholeNumber + "." + parts[1];
-        } else {
-            return wholeNumber;
-        }
-    };
+    if (parts.length > 1) {
+        return wholeNumber + "." + parts[1];
+    } else {
+        return wholeNumber;
+    }
+};
 let drawGraph = function () {
     let base = 1.01;
     let start = 1;
-    let newpoints = actualpoints(roi,contributionfrequency*investmentduration,contributionfrequency,currentsavings,contributionamount);
-    let newpoints2 = actualpoints(0,contributionfrequency*investmentduration,contributionfrequency,currentsavings,contributionamount);
-    
-    let output1=document.getElementById("moneyinput");
-    let output2=document.getElementById("moneyearned");
-    let output3=document.getElementById("totalmoney");
-    output1.innerHTML="$"+formatInput(newpoints2[newpoints2.length-1]);
-    output2.innerHTML="$"+formatInput(Math.round((newpoints[newpoints.length-1]-newpoints2[newpoints2.length-1])));
-    output3.innerHTML="$"+formatInput(Math.round(newpoints[newpoints.length-1]));
-    let ypoints=ylabel.children;
-    let max=newpoints[0];
-    let min=0;
+    let newpoints = actualpoints(roi, contributionfrequency * investmentduration, contributionfrequency, currentsavings, contributionamount);
+    let newpoints2 = actualpoints(0, contributionfrequency * investmentduration, contributionfrequency, currentsavings, contributionamount);
+
+    let output1 = document.getElementById("moneyinput");
+    let output2 = document.getElementById("moneyearned");
+    let output3 = document.getElementById("totalmoney");
+    output1.innerHTML = "$" + formatInput(newpoints2[newpoints2.length - 1]);
+    output2.innerHTML = "$" + formatInput(Math.round((newpoints[newpoints.length - 1] - newpoints2[newpoints2.length - 1])));
+    output3.innerHTML = "$" + formatInput(Math.round(newpoints[newpoints.length - 1]));
+    let ypoints = ylabel.children;
+    let max = newpoints[0];
+    let min = 0;
     //graph(canvas,ylabel,xlabel,newpoints);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for(let i=0;i<newpoints.length;i++){
-        if(newpoints[i]>max){
-            max=newpoints[i];
+    for (let i = 0; i < newpoints.length; i++) {
+        if (newpoints[i] > max) {
+            max = newpoints[i];
         }
-        if(newpoints[i]<min){
-            min=newpoints[i];
+        if (newpoints[i] < min) {
+            min = newpoints[i];
         }
     }
-    for(let i=0;i<ypoints.length;i++){
-        let num=Math.abs(Math.round((max-min)/4*i)+min);
-        let point=0;
-        while(num>1000){
-            num/=1000;
+    for (let i = 0; i < ypoints.length; i++) {
+        let num = Math.abs(Math.round((max - min) / 4 * i) + min);
+        let point = 0;
+        while (num > 1000) {
+            num /= 1000;
             point++;
         }
-        if(point<characters.length){
-            ypoints[4-i].innerHTML="";
-            if(((max-min)/4*i+min)<0)
-            ypoints[4-i].innerHTML+="-";
-            ypoints[4-i].innerHTML+=`$${Math.round(num*10)/10}${characters[point]}`;
+        if (point < characters.length) {
+            ypoints[4 - i].innerHTML = "";
+            if (((max - min) / 4 * i + min) < 0)
+                ypoints[4 - i].innerHTML += "-";
+            ypoints[4 - i].innerHTML += `$${Math.round(num * 10) / 10}${characters[point]}`;
         }
-        else{
-            ypoints[4-1].innerHTML="NaN";
+        else {
+            ypoints[4 - 1].innerHTML = "NaN";
         }
     }
-    let xpoints=xlabel.children;
-    for(let i=0;i<xpoints.length;i++){
-        xpoints[i].innerHTML=Math.floor(investmentduration/4*i);
+    let xpoints = xlabel.children;
+    for (let i = 0; i < xpoints.length; i++) {
+        xpoints[i].innerHTML = Math.floor(investmentduration / 4 * i);
     }
-    
-    let pixelsperpoint=canvas.width/(newpoints.length-1);
 
-    if(drawline){
-        mousepoint=Math.floor(drawlinex/pixelsperpoint);
+    let pixelsperpoint = canvas.width / (newpoints.length - 1);
+
+    if (drawline) {
+        mousepoint = Math.floor(drawlinex / pixelsperpoint);
     }
     //draw the graph
-    let ratio = canvas.height / (max-min);
-    drawthegraph(newpoints,pixelsperpoint,canvas,min,max);
+    let ratio = canvas.height / (max - min);
+    drawthegraph(newpoints, pixelsperpoint, canvas, min, max);
     //drawthegraph(newpoints2,pixelsperpoint,canvas,0,max,"rgba(0,0,0,.75)","rgba(0, 255, 76, 0.05)");
 
-    if(mousepoint>=newpoints.length){
-        mousepoint=newpoints.length-1;
+    if (mousepoint >= newpoints.length) {
+        mousepoint = newpoints.length - 1;
     }
-    if(drawline){
+    if (drawline) {
         ctx.beginPath();
-        if(mousepoint%2===0){
-            ctx.arc(pixelsperpoint*mousepoint, canvas.height-newpoints[mousepoint], 5, 0, 2 * Math.PI);
+        if (mousepoint % 2 === 0) {
+            ctx.arc(pixelsperpoint * mousepoint, canvas.height - newpoints[mousepoint], 5, 0, 2 * Math.PI);
         }
-        else{
-            ctx.arc(pixelsperpoint*(mousepoint+1), canvas.height-newpoints[mousepoint], 5, 0, 2 * Math.PI);
+        else {
+            ctx.arc(pixelsperpoint * (mousepoint + 1), canvas.height - newpoints[mousepoint], 5, 0, 2 * Math.PI);
         }
-        ctx.fillStyle="rgba(0, 123, 255, 0.2)";
+        ctx.fillStyle = "rgba(0, 123, 255, 0.2)";
         ctx.fill();
     }
 
 
     ctx.beginPath();
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.16)';
-    ctx.moveTo(0, canvas.height/4*3);
-    ctx.lineTo(canvas.width,canvas.height/4*3);
-    ctx.moveTo(0, canvas.height/4*2);
-    ctx.lineTo(canvas.width,canvas.height/4*2);
-    ctx.moveTo(0, canvas.height/4*1);
-    ctx.lineTo(canvas.width,canvas.height/4*1);
-    if(drawline){
-    if(mousepoint%2===0){
-        ctx.moveTo(pixelsperpoint*mousepoint, 0);
-        ctx.lineTo(pixelsperpoint*mousepoint,canvas.height);
+    ctx.moveTo(0, canvas.height / 4 * 3);
+    ctx.lineTo(canvas.width, canvas.height / 4 * 3);
+    ctx.moveTo(0, canvas.height / 4 * 2);
+    ctx.lineTo(canvas.width, canvas.height / 4 * 2);
+    ctx.moveTo(0, canvas.height / 4 * 1);
+    ctx.lineTo(canvas.width, canvas.height / 4 * 1);
+    if (drawline) {
+        if (mousepoint % 2 === 0) {
+            ctx.moveTo(pixelsperpoint * mousepoint, 0);
+            ctx.lineTo(pixelsperpoint * mousepoint, canvas.height);
+        }
+        else {
+            ctx.moveTo(pixelsperpoint * (mousepoint + 1), 0);
+            ctx.lineTo(pixelsperpoint * (mousepoint + 1), canvas.height);
+        }
     }
-    else{
-        ctx.moveTo(pixelsperpoint*(mousepoint+1), 0);
-        ctx.lineTo(pixelsperpoint*(mousepoint+1),canvas.height);
-    }
-}
     ctx.stroke();
 
 
-    if(drawline){
-        infobox.style.display="revert";
+    if (drawline) {
+        infobox.style.display = "revert";
         //take into account the point height and the bottom padding ie 50
-        infobox.style.bottom=newpoints[mousepoint]+50+"px";
-        let thewidth=infobox.style.offsetWidth;
-        let point=mousepoint;
-        if(point>newpoints.length){
-            point=newpoints.length
+        infobox.style.bottom = newpoints[mousepoint] + 50 + "px";
+        let thewidth = infobox.style.offsetWidth;
+        let point = mousepoint;
+        if (point > newpoints.length) {
+            point = newpoints.length
         }
-        else if(point<0){
-            point=0;
+        else if (point < 0) {
+            point = 0;
         }
-        let inputvalue="<inline>";
-        let pointratio=0;
-        let displayvalue=Math.abs(newpoints[point]/ratio+min);
-        while(displayvalue>1000){
-            displayvalue/=1000;
+        let inputvalue = "<inline>";
+        let pointratio = 0;
+        let displayvalue = Math.abs(newpoints[point] / ratio + min);
+        while (displayvalue > 1000) {
+            displayvalue /= 1000;
             pointratio++;
         }
-        if(newpoints[point]/ratio+min<0)
-            inputvalue+="-";
-            inputvalue+="$"+Math.round(displayvalue*100)/100+characters[pointratio];
-        inputvalue+="<br>";
-        inputvalue+="Y";
-        if(contributionfrequency===12)
-            inputvalue+=Math.floor(point/24)
-        else if(contributionfrequency===4)
-            inputvalue+=Math.floor(point/8)
-        else if(contributionfrequency===1)
-            inputvalue+=Math.floor(point/2)
-        if(point%2){
-            inputvalue+=" End";
+        if (newpoints[point] / ratio + min < 0)
+            inputvalue += "-";
+        inputvalue += "$" + Math.round(displayvalue * 100) / 100 + characters[pointratio];
+        inputvalue += "<br>";
+        inputvalue += "Y";
+        if (contributionfrequency === 12)
+            inputvalue += Math.floor(point / 24)
+        else if (contributionfrequency === 4)
+            inputvalue += Math.floor(point / 8)
+        else if (contributionfrequency === 1)
+            inputvalue += Math.floor(point / 2)
+        if (point % 2) {
+            inputvalue += " End";
         }
-        else{
-            inputvalue+=" Start";
+        else {
+            inputvalue += " Start";
         }
-        if(contributionfrequency===12){
-        inputvalue+=" M";
-        inputvalue+=Math.floor((point%24)/2)+1;
+        if (contributionfrequency === 12) {
+            inputvalue += " M";
+            inputvalue += Math.floor((point % 24) / 2) + 1;
         }
-        else if(contributionfrequency===4){
-        inputvalue+=" Q";
-        inputvalue+=Math.floor((point%8)/2)+1;
+        else if (contributionfrequency === 4) {
+            inputvalue += " Q";
+            inputvalue += Math.floor((point % 8) / 2) + 1;
 
         }
-        inputvalue+="</inline>"
-        infobox.innerHTML=inputvalue;
+        inputvalue += "</inline>"
+        infobox.innerHTML = inputvalue;
 
-        
-        let canvaswidth=(document.getElementById('canvas-div').clientWidth-100)*.9;
-        let infoboxwidth=(document.getElementById('infobox').clientWidth);
-        if(drawlinex<=canvaswidth/2){
-            if(mousepoint%2===0){
-                infobox.style.left=pixelsperpoint*mousepoint+50+canvaswidth/9+"px";
+
+        let canvaswidth = (document.getElementById('canvas-div').clientWidth - 100) * .9;
+        let infoboxwidth = (document.getElementById('infobox').clientWidth);
+        if (drawlinex <= canvaswidth / 2) {
+            if (mousepoint % 2 === 0) {
+                infobox.style.left = pixelsperpoint * mousepoint + 50 + canvaswidth / 9 + "px";
             }
-            else{
-                infobox.style.left=pixelsperpoint*(mousepoint+1)+50+canvaswidth/9+"px";
+            else {
+                infobox.style.left = pixelsperpoint * (mousepoint + 1) + 50 + canvaswidth / 9 + "px";
             }
         }
-        else{
-            if(mousepoint%2===0){
-                infobox.style.left=pixelsperpoint*mousepoint+50+canvaswidth/9-infoboxwidth-3+"px";
+        else {
+            if (mousepoint % 2 === 0) {
+                infobox.style.left = pixelsperpoint * mousepoint + 50 + canvaswidth / 9 - infoboxwidth - 3 + "px";
             }
-            else{
-                infobox.style.left=pixelsperpoint*(mousepoint+1)+50+canvaswidth/9-infoboxwidth-3+"px";
+            else {
+                infobox.style.left = pixelsperpoint * (mousepoint + 1) + 50 + canvaswidth / 9 - infoboxwidth - 3 + "px";
             }
         }
     }
-    else{
-        infobox.style.display="none";
+    else {
+        infobox.style.display = "none";
     }
 }
-canvas.addEventListener('mousemove',(event)=>{
-    drawlinex=event.offsetX;
+canvas.addEventListener('mousemove', (event) => {
+    drawlinex = event.offsetX;
     //removes NAN from accuring on the entry boundry of the graph
-    if(drawlinex<1)
-        drawlinex=1;
+    if (drawlinex < 1)
+        drawlinex = 1;
     drawGraph();
 });
 canvas.addEventListener('touchmove', (event) => {
     // 1. Prevents the phone screen from scrolling while dragging
-    event.preventDefault(); 
-    
+    event.preventDefault();
+
     // 2. Get the position of the canvas on the screen
     const rect = canvas.getBoundingClientRect();
-    
+
     // 3. Extract the X coordinate from the first finger touching the screen
     let touchX = event.touches[0].clientX - rect.left;
-    
+
     // 4. Apply your boundary check to prevent errors
     if (touchX < 1) {
         touchX = 1;
     }
-    
+
     // 5. Update your variable and redraw
     drawlinex = touchX;
     drawGraph();
-}, { passive: false }); 
-canvas.addEventListener('mouseenter',(event)=>{
-    drawline=true;
+}, { passive: false });
+canvas.addEventListener('mouseenter', (event) => {
+    drawline = true;
     drawGraph();
 
 });
-canvas.addEventListener('mouseleave',(event)=>{
-    drawline=false;
+canvas.addEventListener('mouseleave', (event) => {
+    drawline = false;
     drawGraph();
 });
 canvas.addEventListener('touchstart', (event) => {
     // 1. Optional: update the X coordinate immediately on first touch
     const rect = canvas.getBoundingClientRect();
     let touchX = event.touches[0].clientX - rect.left;
-    
+
     if (touchX < 1) touchX = 1;
     drawlinex = touchX;
 
     // 2. Set your flag to true and draw
-    drawline = true; 
+    drawline = true;
     drawGraph();
 });
 window.addEventListener('touchstart', (event) => {
@@ -399,8 +436,54 @@ window.addEventListener('touchstart', (event) => {
         drawGraph();
     }
 });
-canvas.addEventListener('touchcancel',(event)=>{
-    drawline=false;
+canvas.addEventListener('touchcancel', (event) => {
+    drawline = false;
     drawGraph();
 });
 drawGraph();
+
+
+document.getElementById("mainarticle").innerHTML = `
+  <h2>How the Investment ROI Calculator Works</h2>
+  <p>The <strong>Investment ROI Calculator</strong> is a tool designed to model and visualize the growth of your investments over time based on user-defined inputs. It helps analyze different asset classes such as <em>stocks</em>, <em>bonds</em>, <em>real estate</em>, and <em>money market funds</em> to assist in financial planning.</p>
+  
+  <h3>Step-by-Step Functionality</h3>
+  <ol>
+    <li id="input-savings">
+      <strong>Input Current Savings and Investment Amounts:</strong>
+      Users enter their existing savings and specify regular contributions (monthly, quarterly, or annually) to the investment.
+    </li>
+    <li id="investment-duration">
+      <strong>Define Investment Duration and Time Periods:</strong>
+      Set the total investment period, ranging from months to decades, which influences the growth projection.
+    </li>
+    <li id="roi-values">
+      <strong>Set Expected ROI Based on Asset Class:</strong>
+      Input an assumed annual rate of return, based on historical or expected performance for different assets:
+      <ul>
+        <li>Stocks: 8-10%</li>
+        <li>Bonds: 3-6%</li>
+        <li>Real Estate: 8-12%</li>
+        <li>Money Market Funds: 0.5-2%</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Calculate Compound Growth and Investment Returns:</strong>
+      The calculator models growth using compound interest formulas, considering initial savings, periodic contributions, expected ROI, and investment duration.
+    </li>
+    <li>
+      <strong>Visualization Through Dynamic Graphs:</strong>
+      Results are displayed in interactive graphs that show how your investment value evolves over time, including cumulative totals and growth trends.
+    </li>
+  </ol>
+
+  <h3>Key Features</h3>
+  <ul>
+    <li>Customizable inputs: savings, contributions, ROI, investment period</li>
+    <li>Modeling for multiple asset classes: stocks, bonds, real estate, money market</li>
+    <li>Time-based projections from months to decades</li>
+    <li>Visual data representation with graphs and charts</li>
+  </ul>
+
+  <p>By leveraging principles like compound interest and asset-specific ROI assumptions, this calculator provides realistic projections of your investment growth, helping you make informed financial decisions for the future.</p>
+`;
