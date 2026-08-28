@@ -26,6 +26,7 @@
     margin-top:20px;
     padding-top:1px;
     height: 100%;
+    width:100%;
 }
 .ad-box {
     min-height: 180px;
@@ -57,6 +58,8 @@
         display:flex;
         align-items: center;
         flex-direction: column;
+        margin-left:15px;
+        margin-right:15px;
     }
     .bottom-section-layout{
         display:flex;
@@ -68,6 +71,10 @@
 @media(max-width:700px) {
     .page-layout {
         padding: 30px 14px 60px
+    }
+    .top-section-layout{
+        margin-left:15px;
+        margin-right:15px;
     }
 }
 
