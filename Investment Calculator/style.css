@@ -88,8 +88,13 @@ canvas{
     text-align: center;
     direction: ltr;
     overflow-x: hidden;
+    place-items: end;
 }
 
+#xpoints div{
+  width:100px;
+  text-align: center;
+}
 #ypoints{
     position:absolute;
     top:-75px;

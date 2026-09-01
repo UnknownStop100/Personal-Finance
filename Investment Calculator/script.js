@@ -141,7 +141,8 @@ let resizewindow = function () {
     ylabel.style.right = `${50 + canvaswidth + 5}px`;
     xlabel.style.width = canvaswidth / 4 * 5 + "px";
     //50 is padding for the div and then go back by half the element width then a 1 for the border width
-    xlabel.style.right = `${50 - canvaswidth / 4 * 5 / 10 + 1}px`;
+    //xlabel.style.right = `${50 - canvaswidth / 4 * 5 / 10 + 1}px`;
+    xlabel.style.right = `${0}px`;
     xlabel.style.bottom = `${50 - 22}px`
     document.getElementById("xlabel").style.width = `${(document.getElementById('canvas-div').clientWidth - 100) * .9 + 100}px`;
 }
