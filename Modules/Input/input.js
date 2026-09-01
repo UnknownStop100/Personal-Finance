@@ -70,7 +70,7 @@ export function numberInput(
 
     // Use text instead of number so commas can be displayed
     input.type = "text";
-    input.inputMode = "decimal";
+    input.inputMode = "text";
 
     // Format initial value
     input.value = Number(initialvalue).toLocaleString("en-US");
@@ -133,7 +133,7 @@ export function numberInput(
                     .replace(/\./g, "");
         }
 
-        if (value === "" || value === ".") {
+        if (value === "" || value === "."|| value==="-") {
             input.value = value;
             return;
         }
@@ -163,9 +163,10 @@ export function numberInput(
                 Number(max).toLocaleString("en-US");
         }
 
-        if (value < min && input.value !== "") {
+        if (value < min && (input.value !== ""||input.value!=="-")) {
             // Don't immediately force min while typing
             // because it makes editing difficult.
+            input.value=Number(min).toLocaleString("en-US");
         }
 
         formatInput();

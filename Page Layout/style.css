@@ -52,7 +52,8 @@
 @media(max-width:1050px) {
     .page-layout {
         grid-template-columns: minmax(0, 760px);
-        justify-content: center
+        justify-content: center;
+        padding: 30px 14px 60px
     }
     .top-section-layout{
         display:flex;
