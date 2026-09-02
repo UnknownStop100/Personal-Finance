@@ -2,7 +2,7 @@
 #input-div {
     position: relative;
     width: 100%;
-    max-width: 320px;
+    max-width: 250px;
 }
 
 #input-prefix,
@@ -58,4 +58,17 @@
 
 input[type="number"] {
     -moz-appearance: textfield;
+}
+
+select{
+    position: relative;
+    width: 100%;
+    max-width: 250px;
+    padding:15px;
+    height: 54px;
+    border: 1px solid #dfe2e6;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    background-color: white;
 }

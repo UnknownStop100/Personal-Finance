@@ -118,6 +118,7 @@ let actualpoints = function (ROI, iterations, iterationsperyear, initalmoney, it
 }
 let xlabel = document.getElementById("xpoints");
 let ylabel = document.getElementById("ypoints");
+let xtitle = document.getElementById("xlabel");
 let canvas = document.getElementById('investment-graph');
 let infobox = document.getElementById("infobox");
 //calculation variables
@@ -143,7 +144,8 @@ let resizewindow = function () {
     //50 is padding for the div and then go back by half the element width then a 1 for the border width
     //xlabel.style.right = `${50 - canvaswidth / 4 * 5 / 10 + 1}px`;
     xlabel.style.right = `${50-10}px`;
-    xlabel.style.bottom = `${50 - 22}px`
+    xlabel.style.top = `${50+canvaswidth}px`;
+    xtitle.style.top = `${50+canvaswidth+20}px`;
     document.getElementById("xlabel").style.width = `${(document.getElementById('canvas-div').clientWidth - 100) * .9 + 100}px`;
 }
 //resize canvas when user loads page so it matches the screen

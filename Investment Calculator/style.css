@@ -44,6 +44,21 @@ main{
     text-align: center;
 }
 }
+
+@media screen and (min-width: 700px){
+    #main-calculator{
+        display: grid;
+        grid-template-columns: 4fr 7fr;
+    }
+#main-calculator > * {
+    min-width: 0;
+  }
+#main-content{
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    text-align: center;
+}
+}
 @media screen and (min-width: 1400px){
     #main-calculator{
         display: grid;
@@ -157,18 +172,6 @@ canvas{
     align-items: center;
     height: 100%;
     pointer-events: none;
-}
-select{
-    position: relative;
-    width: 100%;
-    max-width: 320px;
-    padding:15px;
-    height: 54px;
-    border: 1px solid #dfe2e6;
-    border-radius: 12px;
-    font-size: 15px;
-    outline: none;
-    background-color: white;
 }
 #output{
   display:grid;
