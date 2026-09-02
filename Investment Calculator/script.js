@@ -316,7 +316,7 @@ let drawGraph = function () {
     if (drawline) {
         infobox.style.display = "revert";
         //take into account the point height and the bottom padding ie 50
-        infobox.style.bottom = newpoints[mousepoint] + 50 + "px";
+        infobox.style.top = canvas.height-newpoints[mousepoint] + 50-55 + "px";
         let thewidth = infobox.style.offsetWidth;
         let point = mousepoint;
         if (point > newpoints.length) {
