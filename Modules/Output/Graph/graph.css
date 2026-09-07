@@ -1,0 +1,77 @@
+#canvas-div {
+  position: relative;
+  padding: 50px;
+  display: grid;
+  /* optional: set max width or responsiveness as needed */
+  width: 100%;
+  /*box-sizing: border-box;*/
+  direction: rtl;
+}
+
+canvas {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  /*width: 100%; /* Make sure canvas scales with container if resized */
+  height: auto; /* height is set via JS, but you can also set a default */
+  display: block; /* remove extra inline space */
+}
+
+/* Position X points labels below the canvas */
+#xpoints {
+  position: absolute;
+  bottom: -20px;
+  left: -75px;
+  width: 750px; /* Or 100% / responsive as needed */
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-content: space-between;
+  text-align: center;
+  z-index: 10;
+  overflow-x: hidden;
+  place-items: end;
+  direction: ltr;
+}
+
+/* Position Y points labels on the side */
+#ypoints {
+  position: absolute;
+  top: -75px;
+  right: 600px; /* Adjust as necessary */
+  height: 750px; /* Match the graph height */
+  display: grid;
+  align-content: space-around;
+  grid-auto-flow: row;
+  text-align: right;
+  z-index: 10;
+}
+
+#xlabel{
+    text-align: center;
+    position: absolute;
+}
+/* Info box styling for hover info */
+#infobox {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 3px;
+  z-index: 100;
+  pointer-events: none;
+  white-space: nowrap;
+  height: 55px;
+  direction: ltr;
+}
+
+/* Additional styling for responsiveness and layout */
+@media (max-width: 700px) {
+  #xpoints {
+    width: 100%; /* Make labels responsive */
+  }
+  #ypoints {
+    right: 10px; /* Adjust position on small screens */
+  }
+  #infobox {
+    font-size: 12px; /* Smaller info box on small screens */
+  }
+}

@@ -75,6 +75,8 @@ let returnOnInvestment = numberInput(0, 100, document.getElementById("inputs"), 
 document.getElementById("inputs").appendChild(document.createElement("br"));
 let investmentDuration = numberInput(0, 100, document.getElementById("inputs"), "Investment Duration", 20, "", "", updateInvestmentDuration, `<a href="#investment-duration">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
+//const outputrange = valueInputs("Output Time Frame", ["Lifetime", "Yearly", "Monthly", "Weekly", "Daily"], [4, 3, 2, 1, 0], document.getElementById("inputs"), updateMoneyEarned, ``);
+//document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
 
 function updateCurrentSavings() {

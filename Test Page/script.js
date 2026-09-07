@@ -4,6 +4,7 @@ import { createFooter } from "../Footer/script.js";
 import { createHeader } from "../Header/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
+import {Graph} from "../Modules/Output/Graph/graph.js";
 const body = document.querySelector('body');
 const header = createHeader();
 const footer = createFooter();
@@ -19,6 +20,8 @@ const value2=numberInput(0,4000000000,maincontent,"Quarters",0,"  ","");
 const value3=numberInput(0,10000000000,maincontent,"Dimes",0,"  ","");
 const value4=numberInput(0,20000000000,maincontent,"Nickels",0,"  ","");
 const value5=numberInput(0,100000000000,maincontent,"Pennies",0,"¢","");
+
+const myGraph = new Graph({ divId: 'canvas-div', points: [50000,50000,60000,60000,70000,70000,80000,80000,90000,90000,100000,100000,110000,110000,120000,120000,130000,130000,140000,140000,150000,150000,160000,160000,5000,5000,10000,10000,15000,15000,5000,5000,10000], xLabel: 'Years', timeRange:10 ,parent: maincontent, stepsize:4});
  const formatInput = (value) => {
             value=value+"";
             value.replace(/,/g, "")
