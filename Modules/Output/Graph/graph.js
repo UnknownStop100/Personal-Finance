@@ -119,7 +119,7 @@ export class Graph {
     const containerWidth = (document.getElementById('canvas-div')?.clientWidth - 100) * 0.9;
     const size = containerWidth;
     // Get the device pixel ratio
-    const dpr = window.devicePixelRatio || 1;
+   /* const dpr = window.devicePixelRatio || 1;
 
     // Update canvas bitmap size (multiplied by DPR)
     this.canvas.width = size * dpr;
@@ -141,9 +141,9 @@ this.ctx.mozImageSmoothingEnabled = false;
 
 // 👇 FORCE THE BROWSER CSS ENGINE TO RENDER PIXEL-PERFECT
 this.canvas.style.imageRendering = 'pixelated'; 
-this.canvas.style.imageRendering = 'crisp-edges';
-    /*this.canvas.width = size;
-    this.canvas.height = size;*/
+this.canvas.style.imageRendering = 'crisp-edges';*/
+    this.canvas.width = size;
+    this.canvas.height = size;
 
     // position labels
     const ylabel = this.container.querySelector('#ypoints');
