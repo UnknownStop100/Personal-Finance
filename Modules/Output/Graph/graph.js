@@ -118,8 +118,32 @@ export class Graph {
   _resizeCanvas() {
     const containerWidth = (document.getElementById('canvas-div')?.clientWidth - 100) * 0.9;
     const size = containerWidth;
-    this.canvas.width = size;
-    this.canvas.height = size;
+    // Get the device pixel ratio
+    const dpr = window.devicePixelRatio || 1;
+
+    // Update canvas bitmap size (multiplied by DPR)
+    this.canvas.width = size * dpr;
+    this.canvas.height = size * dpr;
+
+    // Update canvas style size (CSS pixels)
+    this.canvas.style.width = `${size}px`;
+    this.canvas.style.height = `${size}px`;
+    
+    this.ctx = this.canvas.getContext('2d');
+    // Reset and apply the DPR scale
+    // (Crucial: setting width/height resets the canvas state, so scale must happen now)
+    this.ctx.scale(dpr, dpr);
+
+// 👇 FORCE THE CONTEXT TO TURN OFF BLURRY FILTERING
+this.ctx.imageSmoothingEnabled = false;
+this.ctx.webkitImageSmoothingEnabled = false;
+this.ctx.mozImageSmoothingEnabled = false;
+
+// 👇 FORCE THE BROWSER CSS ENGINE TO RENDER PIXEL-PERFECT
+this.canvas.style.imageRendering = 'pixelated'; 
+this.canvas.style.imageRendering = 'crisp-edges';
+    /*this.canvas.width = size;
+    this.canvas.height = size;*/
 
     // position labels
     const ylabel = this.container.querySelector('#ypoints');
@@ -195,6 +219,7 @@ export class Graph {
 //Correct
   draw() {
     const ctx = this.ctx;
+
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this._drawGraph();
     if (this.drawline){
