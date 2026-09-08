@@ -186,6 +186,12 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
     this.draw();
   }
 
+  setStepSize(stepsize) {
+    this.options.stepsize = stepsize;
+    this._calculateBounds();
+    this._updateLabels();
+    this.draw();
+  }
   _calculateBounds() {
     this.maxY = Math.max(...this.points, 0);
     this.minY = Math.min(...this.points, 0);
@@ -195,7 +201,7 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
     // For simplicity, fill labels with placeholder or based on data
     const count = this.xpointsDiv.children.length;
     for (let i = 0; i < count; i++) {
-      this.xpointsDiv.children[i].innerHTML = Math.floor(i * this.options.timeRange/4); // example
+      this.xpointsDiv.children[i].innerHTML = Math.floor(i * this.points.length/this.options.stepsize/2/4); // example
       this.ypointsDiv.children[i].innerHTML = `$${Math.round((this.maxY - this.minY) * i / count + this.minY)}`;
     }
     for (let i = 0; i < this.ypointsDiv.children.length; i++) {
@@ -375,6 +381,5 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
     }
     info.style.top = `${canvas.height - (this.points[theindex]-this.minY)*ratio + 50 - 54}px`;
     info.style.display = 'block';
-    console.log(this.minY);
   }
 }
