@@ -37,11 +37,6 @@ outputarea.appendChild(totalmoney);
 ///////////////////////////
 //handles inputs
 ///////////////////////////
-let roi = .08,
-    contributionfrequency = 12,
-    contributionamount = 500,
-    currentsavings = 0,
-    investmentduration = 20;
 
 let currentSavings = numberInput(0, 1000000000, document.getElementById("inputs"), "Current Savings", 0, "$", "", updateCurrentSavings, `<a href="#input-savings">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
@@ -58,8 +53,13 @@ document.getElementById("inputs").appendChild(document.createElement("br"));
 //document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
 
-const myGraph = new Graph({ divId: 'canvas-div', points: [], xLabel: 'Years' ,parent: document.getElementById("main-calculator"), stepsize:contributionfrequency});
 
+let roi = Number(returnOnInvestment.value.replaceAll(",", "")) / 100,
+    contributionfrequency = Number(contributionFrequency.value.replaceAll(",", "")),
+    contributionamount = Number(contributionAmount.value.replaceAll(",", "")),
+    currentsavings = Number(currentSavings.value.replaceAll(",", "")),
+    investmentduration = Number(investmentDuration.value.replaceAll(",", ""));
+const myGraph = new Graph({ divId: 'canvas-div', points: [], xLabel: 'Years' ,parent: document.getElementById("main-calculator"), stepsize:contributionfrequency});
 
 function updateCurrentSavings() {
     currentsavings = Number(currentSavings.value.replaceAll(",", ""));

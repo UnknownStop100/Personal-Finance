@@ -3,17 +3,6 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput } from "../Modules/Input/input.js";
-import {
-    resultHero,
-    resultGrid,
-    resultStat,
-    resultCard,
-    resultRow,
-    resultNote,
-    barChart,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -30,28 +19,26 @@ body.append(main);
 body.appendChild(footer);
 
 const maincontent = document.getElementById("maincontent");
-const mainarticle = document.getElementById("mainarticle");
 
-const calculatorCard = document.createElement("section");
-calculatorCard.className = "calculator-card";
-calculatorCard.innerHTML = `
-  <div class="card-heading">
-    <div><p class="eyebrow">Home financing</p><h2>Estimate your payment</h2></div>
-    <span class="status-dot">Estimate</span>
-  </div>
-`;
-const fields = document.createElement("div");
-fields.className = "field-group";
-calculatorCard.appendChild(fields);
-maincontent.appendChild(calculatorCard);
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 
-const homePrice = numberInput(0, 20000000, fields, "Home price", 400000, "$", "", calculate);
-const downPayment = numberInput(0, 20000000, fields, "Down payment", 80000, "$", "", calculate);
-const loanTerm = numberInput(1, 40, fields, "Loan term", 30, "", "yrs", calculate);
-const interestRate = numberInput(0, 25, fields, "Interest rate", 6.5, "", "%", calculate);
-const propertyTax = numberInput(0, 200000, fields, "Annual property tax", 4000, "$", "", calculate);
-const homeInsurance = numberInput(0, 50000, fields, "Annual home insurance", 1400, "$", "", calculate);
-const hoa = numberInput(0, 20000, fields, "Monthly HOA dues", 0, "$", "", calculate);
+const inputs = document.getElementById("inputs");
+
+const homePrice = numberInput(0, 20000000, inputs, "Home price", 400000, "$", "", calculate);
+const downPayment = numberInput(0, 20000000, inputs, "Down payment", 80000, "$", "", calculate);
+const loanTerm = numberInput(1, 40, inputs, "Loan term", 30, "", "yrs", calculate);
+const interestRate = numberInput(0, 25, inputs, "Interest rate", 6.5, "", "%", calculate);
+const propertyTax = numberInput(0, 200000, inputs, "Annual property tax", 4000, "$", "", calculate);
+const homeInsurance = numberInput(0, 50000, inputs, "Annual home insurance", 1400, "$", "", calculate);
+const hoa = numberInput(0, 20000, inputs, "Monthly HOA dues", 0, "$", "", calculate);
 
 const resultsSection = document.createElement("section");
 resultsSection.className = "results-section";
@@ -121,18 +108,13 @@ function calculate() {
 
 calculate();
 
-const description = document.createElement("section");
-description.className = "description";
-description.innerHTML = `
+
+
+const mainarticle = document.getElementById("mainarticle");
+mainarticle.innerHTML = `
   <p class="eyebrow">About this calculator</p>
   <h2>Estimate your monthly mortgage payment</h2>
   <p>This mortgage calculator estimates your total monthly housing payment, including principal, interest, property tax, homeowners insurance, and HOA dues, based on your home price, down payment, loan term, and interest rate.</p>
-`;
-mainarticle.appendChild(description);
-
-const article = document.createElement("section");
-article.className = "article-card";
-article.innerHTML = `
   <p class="eyebrow">Mortgage payment guide</p>
   <h2>How mortgage payments are calculated</h2>
   <p>A fixed-rate mortgage payment is calculated using an amortization formula that spreads the loan amount, plus interest, evenly across every monthly payment for the life of the loan. Early payments are mostly interest; later payments are mostly principal.</p>
@@ -143,4 +125,3 @@ article.innerHTML = `
   <h3>Fixed-rate vs. adjustable-rate</h3>
   <p>This calculator assumes a fixed interest rate for the full loan term. Adjustable-rate mortgages (ARMs) can change after an initial fixed period, which would change your monthly payment.</p>
 `;
-mainarticle.appendChild(article);

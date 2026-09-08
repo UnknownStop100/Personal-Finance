@@ -1,5 +1,10 @@
 /* Widen the page-layout content column so the calculator takes ~80% width */
-.top-section-layout,
+
+
+#inputs{
+    margin-left:20px;
+}
+/*.top-section-layout,
 .bottom-section-layout {
     grid-template-columns: 1fr 8fr 1fr !important;
 }
@@ -21,9 +26,9 @@
 .main-article {
     max-width: 100%;
 }
-
+*/
 /* Calculator + result cards */
-.calculator-card,
+/*.calculator-card,
 .results-section > .result-hero,
 .description,
 .article-card {
@@ -134,4 +139,4 @@
 
 .results-section {
     margin-top: 8px;
-}
+}*/

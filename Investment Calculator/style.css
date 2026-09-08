@@ -58,9 +58,9 @@ main{
 }
 }
 
-#main-calculator > div:first-child{
-    text-align: left;
-    margin-left: 20px;
+#inputs{
+  text-align: left;
+  margin-left:20px;
 }
 #canvas-div{
     margin:0px;
@@ -79,9 +79,6 @@ canvas{
     padding-left:10px;
     width: 145px;
 }
-#input-div{
-    position: relative;
-}
 #output{
   display:grid;
   grid-template-columns: repeat(4, 1fr); 
@@ -98,9 +95,6 @@ canvas{
   grid-template-columns: repeat(1, 1fr); 
 }
 }
-#infobox{
-  direction: ltr;
-}
 #resolve{
   background-color: rgba(100, 162, 255, 0.068);
   margin:20px;
@@ -109,7 +103,4 @@ canvas{
 #resolve:hover{
   
   background-color: rgba(100, 162, 255, 0.1);
-}
-#xlabel{
-  text-align: center;
 }
