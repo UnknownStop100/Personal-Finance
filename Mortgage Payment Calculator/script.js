@@ -3,6 +3,8 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput } from "../Modules/Input/input.js";
+import { output } from "../Modules/Output/Output/script.js";
+import {Graph} from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -18,8 +20,8 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 
+const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -38,77 +40,57 @@ const loanTerm = numberInput(1, 40, inputs, "Loan term", 30, "", "yrs", calculat
 const interestRate = numberInput(0, 25, inputs, "Interest rate", 6.5, "", "%", calculate);
 const propertyTax = numberInput(0, 200000, inputs, "Annual property tax", 4000, "$", "", calculate);
 const homeInsurance = numberInput(0, 50000, inputs, "Annual home insurance", 1400, "$", "", calculate);
-const hoa = numberInput(0, 20000, inputs, "Monthly HOA dues", 0, "$", "", calculate);
+const hoaDues = numberInput(0, 20000, inputs, "Monthly HOA dues", 0, "$", "", calculate);
 
-const resultsSection = document.createElement("section");
-resultsSection.className = "results-section";
-maincontent.appendChild(resultsSection);
 
-function calculate() {
-    const price = homePrice.getNumericValue();
-    const down = Math.min(downPayment.getNumericValue(), price);
-    const loanAmount = Math.max(price - down, 0);
-    const n = loanTerm.getNumericValue() * 12;
-    const monthlyRate = interestRate.getNumericValue() / 100 / 12;
+const monthlypayment = output("Monthly Payment");
+const monthlyloanpayment = output("Monthly Loan Payment");
+const interestcost = output("Full-term Interest Cost");
+const fulltermcost = output("Full-term Cost");
+let outputvalues=document.getElementById("output");
+    outputvalues.append(monthlypayment);
+    outputvalues.append(monthlyloanpayment);
+    outputvalues.append(interestcost);
+    outputvalues.append(fulltermcost);
 
-    let principalAndInterest;
-    if (monthlyRate === 0) {
-        principalAndInterest = n > 0 ? loanAmount / n : 0;
-    } else {
-        principalAndInterest =
-            (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, n)) /
-            (Math.pow(1 + monthlyRate, n) - 1);
+    
+    let points=[];
+    let value=320000;
+
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years' ,parent: document.getElementById("main-calculator"), stepsize:12});
+function calculate(){
+    let homeprice=Number(homePrice.value.replaceAll(",",""));
+    let downpayment=Number(downPayment.value.replaceAll(",",""));
+    let loanterm=Number(loanTerm.value.replaceAll(",",""));
+    let interestrate=Number(interestRate.value.replaceAll(",",""));
+    let propertytax=Number(propertyTax.value.replaceAll(",",""));
+    let homeinsurance=Number(homeInsurance.value.replaceAll(",",""));
+    let hoadues=Number(hoaDues.value.replaceAll(",",""));
+    let loanprinciple=(homeprice-downpayment);
+    let monthlyinterestrate=(interestrate/1200);
+    let months=loanterm*12;
+    let monthlypropertytax=propertytax/12;
+    let monthlyinsurance=homeinsurance/12;
+    let monthlypayment=loanprinciple*(monthlyinterestrate*(1+monthlyinterestrate)**months)/((1+monthlyinterestrate)**months-1);
+    document.getElementById("monthlypayment").innerHTML="$"+(Math.round((monthlypayment+monthlyinsurance+monthlypropertytax)*100)/100).toLocaleString('en-US');
+    document.getElementById("monthlyloanpayment").innerHTML="$"+(Math.round(monthlypayment*100)/100).toLocaleString('en-US');
+    document.getElementById("full-terminterestcost").innerHTML="$"+(Math.round((monthlypayment*months-loanprinciple)*100)/100).toLocaleString('en-US');
+    document.getElementById("full-termcost").innerHTML="$"+(Math.round(((monthlypayment+monthlyinsurance+monthlypropertytax)*months+downpayment)*100)/100).toLocaleString('en-US');
+
+    
+    points=[];
+    value=loanprinciple;
+    for(let i=0;i<loanterm*12;i++){
+    points.push(value);
+    value*=(1+monthlyinterestrate);
+    points.push(value);
+    value-=monthlypayment;
     }
-    if (!isFinite(principalAndInterest)) principalAndInterest = 0;
-
-    const monthlyTax = propertyTax.getNumericValue() / 12;
-    const monthlyInsurance = homeInsurance.getNumericValue() / 12;
-    const monthlyHoa = hoa.getNumericValue();
-
-    const totalMonthly = principalAndInterest + monthlyTax + monthlyInsurance + monthlyHoa;
-    const totalPaidOverLoan = principalAndInterest * n;
-    const totalInterest = totalPaidOverLoan - loanAmount;
-
-    clearElement(resultsSection);
-
-    resultHero(
-        resultsSection,
-        "Estimated monthly payment",
-        fmtCurrency(totalMonthly),
-        "Principal, interest, taxes, insurance & HOA"
-    );
-
-    const grid = resultGrid(resultsSection);
-    resultStat(grid, "Loan amount", fmtCurrency(loanAmount));
-    resultStat(grid, "Down payment %", `${price > 0 ? ((down / price) * 100).toFixed(1) : 0}%`);
-    resultStat(grid, "Total interest paid", fmtCurrency(totalInterest));
-
-    const card = resultCard(resultsSection, "Monthly payment breakdown");
-    resultRow(card, "Principal & interest", fmtCurrency(principalAndInterest));
-    resultRow(card, "Property tax", fmtCurrency(monthlyTax));
-    resultRow(card, "Home insurance", fmtCurrency(monthlyInsurance));
-    resultRow(card, "HOA dues", fmtCurrency(monthlyHoa));
-    resultRow(card, "Total monthly payment", fmtCurrency(totalMonthly), true);
-
-    barChart(
-        resultsSection,
-        [
-            { label: "Loan amount", value: loanAmount, color: "var(--accent)" },
-            { label: "Total interest", value: Math.max(totalInterest, 0), color: "var(--muted)" },
-        ],
-        {}
-    );
-
-    resultNote(
-        resultsSection,
-        "Estimate only. Actual payments depend on your lender, credit, and local tax rates.",
-        "neutral"
-    );
+    points.push(value);
+    myGraph.setPoints(points);
+    myGraph.setStepSize(12);
 }
-
 calculate();
-
-
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `

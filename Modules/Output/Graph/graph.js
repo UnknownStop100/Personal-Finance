@@ -1,4 +1,6 @@
 // Graph.js
+//Add A title to the graph
+//Consider a Legend for multiple graphs
 let characters = [
   "",       // 1
   "k",      // thousand (10^3)

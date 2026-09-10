@@ -40,7 +40,7 @@
 }
 
 .main-content {
-    min-width: 0
+    min-width: 0;
 }
 
 .mobile-ad {
@@ -66,6 +66,9 @@
         display:flex;
         align-items: center;
         flex-direction: column;
+    }
+    .main-content{
+    padding-bottom: 20px;
     }
 }
 
