@@ -3,15 +3,8 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput } from "../Modules/Input/input.js";
-import {
-    resultHero,
-    resultGrid,
-    resultStat,
-    resultNote,
-    lineChart,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
+import { output } from "../Modules/Output/Output/script.js";
+import { Graph } from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -28,137 +21,123 @@ body.append(main);
 body.appendChild(footer);
 
 const maincontent = document.getElementById("maincontent");
-const mainarticle = document.getElementById("mainarticle");
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 
-const calculatorCard = document.createElement("section");
-calculatorCard.className = "calculator-card";
-calculatorCard.innerHTML = `
-  <div class="card-heading">
-    <div><p class="eyebrow">Housing decision</p><h2>Rent or buy?</h2></div>
-    <span class="status-dot">Estimate</span>
-  </div>
-`;
-const fields = document.createElement("div");
-fields.className = "field-group";
-calculatorCard.appendChild(fields);
-maincontent.appendChild(calculatorCard);
+const inputs = document.getElementById("inputs");
 
-const monthlyRent = numberInput(0, 200000, fields, "Monthly rent", 2200, "$", "", calculate);
-const rentIncrease = numberInput(0, 20, fields, "Annual rent increase", 3, "", "%", calculate);
-const homePrice = numberInput(0, 20000000, fields, "Home price", 450000, "$", "", calculate);
-const downPaymentPct = numberInput(0, 100, fields, "Down payment", 20, "", "%", calculate);
-const mortgageRate = numberInput(0, 25, fields, "Mortgage rate", 6.5, "", "%", calculate);
-const loanTerm = numberInput(1, 40, fields, "Loan term", 30, "", "yrs", calculate);
-const propertyTaxRate = numberInput(0, 10, fields, "Property tax rate", 1.1, "", "%", calculate);
-const maintenanceRate = numberInput(0, 10, fields, "Annual maintenance", 1, "", "%", calculate);
-const appreciationRate = numberInput(0, 15, fields, "Annual home appreciation", 3, "", "%", calculate);
-const closingCostPct = numberInput(0, 15, fields, "Closing costs", 3, "", "%", calculate);
-const sellingCostPct = numberInput(0, 15, fields, "Selling costs", 6, "", "%", calculate);
-const yearsToCompare = numberInput(1, 40, fields, "Years to compare", 10, "", "yrs", calculate);
+const monthlyRent = numberInput(0, 200000, inputs, "Monthly rent", 2200, "$", "", calculate);
+const rentIncrease = numberInput(0, 20, inputs, "Annual rent increase", 3, "", "%", calculate);
+const homePrice = numberInput(0, 20000000, inputs, "Home price", 450000, "$", "", calculate);
+const downPaymentPct = numberInput(0, 100, inputs, "Down payment", 20, "", "%", calculate);
+const mortgageRate = numberInput(0, 25, inputs, "Mortgage rate", 6.5, "", "%", calculate);
+const loanTerm = numberInput(1, 40, inputs, "Loan term", 30, "", "yrs", calculate);
+const propertyTaxRate = numberInput(0, 10, inputs, "Property tax rate", 1.1, "", "%", calculate);
+const maintenanceRate = numberInput(0, 10, inputs, "Annual maintenance", 1, "", "%", calculate);
+const appreciationRate = numberInput(0, 15, inputs, "Annual home appreciation", 3, "", "%", calculate);
+const closingCostPct = numberInput(0, 15, inputs, "Closing costs", 3, "", "%", calculate);
+const sellingCostPct = numberInput(0, 15, inputs, "Selling costs", 6, "", "%", calculate);
+const yearsToCompare = numberInput(1, 40, inputs, "Years to compare", 10, "", "yrs", calculate);
 
-const resultsSection = document.createElement("section");
-resultsSection.className = "results-section";
-maincontent.appendChild(resultsSection);
+const netCostRenting = output("Net Cost of Renting");
+const netCostBuying = output("Net Cost of Buying");
+const cashNeededToBuy = output("Cash Needed to Buy");
+const cheaperOption = output("Cheaper Option");
+let outputvalues = document.getElementById("output");
+outputvalues.append(netCostRenting);
+outputvalues.append(netCostBuying);
+outputvalues.append(cashNeededToBuy);
+outputvalues.append(cheaperOption);
+
+let points = [];
+let value = 450000;
+
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 1 });
 
 function calculate() {
-    const price = homePrice.getNumericValue();
-    const downPct = downPaymentPct.getNumericValue() / 100;
-    const down = price * downPct;
-    const loanAmount = price - down;
-    const monthlyRateM = mortgageRate.getNumericValue() / 100 / 12;
-    const n = loanTerm.getNumericValue() * 12;
+    let price = Number(homePrice.value.replaceAll(",",""));
+    let downpct = Number(downPaymentPct.value.replaceAll(",","")) / 100;
+    let down = price * downpct;
+    let loanamount = price - down;
+    let monthlyratem = Number(mortgageRate.value.replaceAll(",","")) / 100 / 12;
+    let n = Number(loanTerm.value.replaceAll(",","")) * 12;
 
     let payment;
-    if (monthlyRateM === 0) {
-        payment = n > 0 ? loanAmount / n : 0;
+    if (monthlyratem === 0) {
+        payment = n > 0 ? loanamount / n : 0;
     } else {
         payment =
-            (loanAmount * monthlyRateM * Math.pow(1 + monthlyRateM, n)) /
-            (Math.pow(1 + monthlyRateM, n) - 1);
+            (loanamount * monthlyratem * (1 + monthlyratem) ** n) /
+            ((1 + monthlyratem) ** n - 1);
     }
     if (!isFinite(payment)) payment = 0;
 
-    const years = yearsToCompare.getNumericValue();
-    const closingCosts = price * (closingCostPct.getNumericValue() / 100);
+    let years = Number(yearsToCompare.value.replaceAll(",",""));
+    let closingcosts = price * (Number(closingCostPct.value.replaceAll(",","")) / 100);
+    let rentincrease = Number(rentIncrease.value.replaceAll(",",""));
+    let propertytaxrate = Number(propertyTaxRate.value.replaceAll(",",""));
+    let maintenancerate = Number(maintenanceRate.value.replaceAll(",",""));
+    let appreciationrate = Number(appreciationRate.value.replaceAll(",",""));
+    let sellingcostpct = Number(sellingCostPct.value.replaceAll(",",""));
 
-    let rent = monthlyRent.getNumericValue();
-    let balance = loanAmount;
-    let homeValue = price;
-    let totalRentCost = 0;
-    let totalBuyCashOutlay = closingCosts + down;
+    let rent = Number(monthlyRent.value.replaceAll(",",""));
+    let balance = loanamount;
+    let homevalue = price;
+    let totalrentcost = 0;
+    let totalbuycashoutlay = closingcosts + down;
 
-    const rentPoints = [];
-    const buyPoints = [];
+    points = [];
+    points.push(down + closingcosts);
+
+    let finalrentcost = 0;
+    let finalbuycost = 0;
 
     for (let year = 1; year <= years; year++) {
         for (let m = 0; m < 12; m++) {
-            totalRentCost += rent;
-            const interestPortion = balance * monthlyRateM;
-            const principalPortion = Math.min(payment - interestPortion, balance);
-            balance -= principalPortion;
-            totalBuyCashOutlay += payment;
+            totalrentcost += rent;
+            let interestportion = balance * monthlyratem;
+            let principalportion = Math.min(payment - interestportion, balance);
+            balance -= principalportion;
+            totalbuycashoutlay += payment;
         }
-        totalBuyCashOutlay +=
-            homeValue * (propertyTaxRate.getNumericValue() / 100) +
-            homeValue * (maintenanceRate.getNumericValue() / 100);
-        homeValue *= 1 + appreciationRate.getNumericValue() / 100;
-        rent *= 1 + rentIncrease.getNumericValue() / 100;
+        totalbuycashoutlay +=
+            homevalue * (propertytaxrate / 100) +
+            homevalue * (maintenancerate / 100);
+        homevalue *= 1 + appreciationrate / 100;
+        rent *= 1 + rentincrease / 100;
 
-        const sellingCosts = homeValue * (sellingCostPct.getNumericValue() / 100);
-        const netBuyCost = totalBuyCashOutlay + sellingCosts - (homeValue - balance);
+        let sellingcosts = homevalue * (sellingcostpct / 100);
+        let netbuycost = totalbuycashoutlay + sellingcosts - (homevalue - balance);
 
-        rentPoints.push({ x: year, y: totalRentCost });
-        buyPoints.push({ x: year, y: Math.max(netBuyCost, 0) });
+        finalrentcost = totalrentcost;
+        finalbuycost = Math.max(netbuycost, 0);
+        points.push(finalbuycost);
     }
 
-    const finalRentCost = rentPoints[rentPoints.length - 1].y;
-    const finalBuyCost = buyPoints[buyPoints.length - 1].y;
-    const buyingWins = finalBuyCost < finalRentCost;
+    let buyingwins = finalbuycost < finalrentcost;
 
-    clearElement(resultsSection);
+    document.getElementById("netcostofrenting").innerHTML = "$" + (Math.round(finalrentcost * 100) / 100).toLocaleString('en-US');
+    document.getElementById("netcostofbuying").innerHTML = "$" + (Math.round(finalbuycost * 100) / 100).toLocaleString('en-US');
+    document.getElementById("cashneededtobuy").innerHTML = "$" + (Math.round((down + closingcosts) * 100) / 100).toLocaleString('en-US');
+    document.getElementById("cheaperoption").innerHTML = buyingwins ? "Buying" : "Renting";
 
-    resultHero(
-        resultsSection,
-        buyingWins ? "Buying is cheaper" : "Renting is cheaper",
-        fmtCurrency(Math.abs(finalRentCost - finalBuyCost)),
-        `Net difference over ${years} years`
-    );
-
-    const grid = resultGrid(resultsSection);
-    resultStat(grid, "Net cost of renting", fmtCurrency(finalRentCost));
-    resultStat(grid, "Net cost of buying", fmtCurrency(finalBuyCost));
-    resultStat(grid, "Cash needed to buy", fmtCurrency(down + closingCosts));
-
-    lineChart(
-        resultsSection,
-        [
-            { name: "Net cost of renting", points: rentPoints, color: "var(--muted)" },
-            { name: "Net cost of buying", points: buyPoints, color: "var(--accent)" },
-        ],
-        { xFormatter: (v) => `Yr ${Math.round(v)}` }
-    );
-
-    resultNote(
-        resultsSection,
-        "Net buying cost accounts for equity gained and home appreciation, minus selling costs, so it can go down over time as the mortgage is paid off.",
-        "neutral"
-    );
+    myGraph.setPoints(points);
+    myGraph.setStepSize(1);
 }
-
 calculate();
 
-const description = document.createElement("section");
-description.className = "description";
-description.innerHTML = `
+const mainarticle = document.getElementById("mainarticle");
+mainarticle.innerHTML = `
   <p class="eyebrow">About this calculator</p>
   <h2>Compare the cost of renting vs. buying a home</h2>
   <p>This rent vs. buy calculator compares the total net cost of renting against buying a home over a set number of years, factoring in mortgage payments, taxes, maintenance, appreciation, and selling costs.</p>
-`;
-mainarticle.appendChild(description);
-
-const article = document.createElement("section");
-article.className = "article-card";
-article.innerHTML = `
   <p class="eyebrow">Rent vs. buy guide</p>
   <h2>How to compare renting and buying</h2>
   <p>Comparing renting and buying isn't just about monthly payment size. Buying builds home equity and can benefit from appreciation, but comes with upfront closing costs, ongoing maintenance, property taxes, and eventual selling costs if you move.</p>
@@ -169,4 +148,3 @@ article.innerHTML = `
   <h3>Renting isn't "wasting money"</h3>
   <p>Renting avoids maintenance costs, property taxes, and the risk of a declining home value, and can be the better financial choice for shorter time horizons or uncertain markets.</p>
 `;
-mainarticle.appendChild(article);

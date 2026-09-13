@@ -3,15 +3,8 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput } from "../Modules/Input/input.js";
-import {
-    resultHero,
-    resultGrid,
-    resultStat,
-    resultNote,
-    lineChart,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
+import { output } from "../Modules/Output/Output/script.js";
+import { Graph } from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -28,89 +21,66 @@ body.append(main);
 body.appendChild(footer);
 
 const maincontent = document.getElementById("maincontent");
-const mainarticle = document.getElementById("mainarticle");
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 
-const calculatorCard = document.createElement("section");
-calculatorCard.className = "calculator-card";
-calculatorCard.innerHTML = `
-  <div class="card-heading">
-    <div><p class="eyebrow">Purchasing power</p><h2>See inflation's impact</h2></div>
-    <span class="status-dot">Estimate</span>
-  </div>
-`;
-const fields = document.createElement("div");
-fields.className = "field-group";
-calculatorCard.appendChild(fields);
-maincontent.appendChild(calculatorCard);
+const inputs = document.getElementById("inputs");
 
-const currentAmount = numberInput(0, 1000000000, fields, "Amount today", 10000, "$", "", calculate);
-const inflationRate = numberInput(0, 30, fields, "Annual inflation rate", 3, "", "%", calculate);
-const years = numberInput(1, 60, fields, "Years from now", 20, "", "yrs", calculate);
+const currentAmount = numberInput(0, 1000000000, inputs, "Amount today", 10000, "$", "", calculate);
+const inflationRate = numberInput(0, 30, inputs, "Annual inflation rate", 3, "", "%", calculate);
+const years = numberInput(1, 60, inputs, "Years from now", 20, "", "yrs", calculate);
 
-const resultsSection = document.createElement("section");
-resultsSection.className = "results-section";
-maincontent.appendChild(resultsSection);
+const purchasingPowerFuture = output("Purchasing Power In The Future");
+const purchasingPowerLostOut = output("Purchasing Power Lost");
+const percentLostOut = output("Percent Lost");
+const amountToMatchToday = output("Amount Needed To Match Today");
+let outputvalues = document.getElementById("output");
+outputvalues.append(purchasingPowerFuture);
+outputvalues.append(purchasingPowerLostOut);
+outputvalues.append(percentLostOut);
+outputvalues.append(amountToMatchToday);
+
+let points = [];
+let value = 10000;
+
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 1 });
 
 function calculate() {
-    const amount = currentAmount.getNumericValue();
-    const rate = inflationRate.getNumericValue() / 100;
-    const t = years.getNumericValue();
+    let amount = Number(currentAmount.value.replaceAll(",",""));
+    let rate = Number(inflationRate.value.replaceAll(",","")) / 100;
+    let t = Number(years.value.replaceAll(",",""));
 
-    const futureEquivalent = amount / Math.pow(1 + rate, t);
-    const purchasingPowerLost = amount - futureEquivalent;
-    const percentLost = amount > 0 ? (purchasingPowerLost / amount) * 100 : 0;
+    let futureequivalent = amount / (1 + rate) ** t;
+    let purchasingpowerlost = amount - futureequivalent;
+    let percentlost = amount > 0 ? (purchasingpowerlost / amount) * 100 : 0;
+    let amounttomatchtoday = amount * (1 + rate) ** t;
 
-    const points = [];
-    const nominalPoints = [];
+    document.getElementById("purchasingpowerinthefuture").innerHTML = "$" + (Math.round(futureequivalent * 100) / 100).toLocaleString('en-US');
+    document.getElementById("purchasingpowerlost").innerHTML = "$" + (Math.round(purchasingpowerlost * 100) / 100).toLocaleString('en-US');
+    document.getElementById("percentlost").innerHTML = percentlost.toFixed(1) + "%";
+    document.getElementById("amountneededtomatchtoday").innerHTML = "$" + (Math.round(amounttomatchtoday * 100) / 100).toLocaleString('en-US');
+
+    points = [];
     for (let year = 0; year <= t; year++) {
-        points.push({ x: year, y: amount / Math.pow(1 + rate, year) });
-        nominalPoints.push({ x: year, y: amount });
+        points.push(amount / (1 + rate) ** year);
     }
-
-    clearElement(resultsSection);
-
-    resultHero(
-        resultsSection,
-        "Purchasing power in the future",
-        fmtCurrency(futureEquivalent),
-        `What today's ${fmtCurrency(amount)} will feel like in ${t} years at ${inflationRate.getNumericValue()}% inflation`
-    );
-
-    const grid = resultGrid(resultsSection);
-    resultStat(grid, "Purchasing power lost", fmtCurrency(purchasingPowerLost));
-    resultStat(grid, "Percent lost", `${percentLost.toFixed(1)}%`);
-    resultStat(grid, "To match today's power, you'd need", fmtCurrency(amount * Math.pow(1 + rate, t)));
-
-    lineChart(
-        resultsSection,
-        [
-            { name: "Real purchasing power", points, color: "var(--accent)" },
-            { name: "Nominal amount", points: nominalPoints, color: "var(--muted)" },
-        ],
-        { xFormatter: (v) => `Yr ${Math.round(v)}` }
-    );
-
-    resultNote(
-        resultsSection,
-        "This shows the effect of inflation alone — it doesn't account for any interest or investment growth on the amount.",
-        "neutral"
-    );
+    myGraph.setPoints(points);
+    myGraph.setStepSize(1);
 }
-
 calculate();
 
-const description = document.createElement("section");
-description.className = "description";
-description.innerHTML = `
+const mainarticle = document.getElementById("mainarticle");
+mainarticle.innerHTML = `
   <p class="eyebrow">About this calculator</p>
   <h2>Calculate the impact of inflation on your money</h2>
   <p>This inflation calculator shows how much purchasing power a given amount of money loses over time at a chosen annual inflation rate, and what amount you'd need in the future to match today's buying power.</p>
-`;
-mainarticle.appendChild(description);
-
-const article = document.createElement("section");
-article.className = "article-card";
-article.innerHTML = `
   <p class="eyebrow">Inflation guide</p>
   <h2>How inflation affects purchasing power</h2>
   <p>Inflation is the rate at which prices for goods and services rise over time, which reduces how much a fixed amount of money can buy in the future compared to today.</p>
@@ -121,4 +91,3 @@ article.innerHTML = `
   <h3>Historical inflation context</h3>
   <p>Inflation rates vary by year and country; this calculator lets you test different assumed rates to see how sensitive your long-term purchasing power is to higher or lower inflation.</p>
 `;
-mainarticle.appendChild(article);

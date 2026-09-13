@@ -3,16 +3,8 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput } from "../Modules/Input/input.js";
-import {
-    resultHero,
-    resultGrid,
-    resultStat,
-    resultCard,
-    resultRow,
-    resultNote,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
+import { output } from "../Modules/Output/Output/script.js";
+import { Graph } from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -29,91 +21,83 @@ body.append(main);
 body.appendChild(footer);
 
 const maincontent = document.getElementById("maincontent");
-const mainarticle = document.getElementById("mainarticle");
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 
-const calculatorCard = document.createElement("section");
-calculatorCard.className = "calculator-card";
-calculatorCard.innerHTML = `
-  <div class="card-heading">
-    <div><p class="eyebrow">Auto financing</p><h2>How much car can you afford?</h2></div>
-    <span class="status-dot">Estimate</span>
-  </div>
-`;
-const fields = document.createElement("div");
-fields.className = "field-group";
-calculatorCard.appendChild(fields);
-maincontent.appendChild(calculatorCard);
+const inputs = document.getElementById("inputs");
 
-const monthlyIncome = numberInput(0, 1000000, fields, "Monthly take-home pay", 5000, "$", "", calculate);
-const targetPct = numberInput(1, 50, fields, "Target % of income for car payment", 15, "", "%", calculate);
-const downPayment = numberInput(0, 1000000, fields, "Down payment", 3000, "$", "", calculate);
-const tradeIn = numberInput(0, 1000000, fields, "Trade-in value", 0, "$", "", calculate);
-const loanTermMonths = numberInput(12, 96, fields, "Loan term", 60, "", "mo", calculate);
-const interestRate = numberInput(0, 25, fields, "Interest rate (APR)", 7, "", "%", calculate);
+const monthlyIncome = numberInput(0, 1000000, inputs, "Monthly take-home pay", 5000, "$", "", calculate);
+const targetPct = numberInput(1, 50, inputs, "Target % of income for car payment", 15, "", "%", calculate);
+const downPayment = numberInput(0, 1000000, inputs, "Down payment", 3000, "$", "", calculate);
+const tradeIn = numberInput(0, 1000000, inputs, "Trade-in value", 0, "$", "", calculate);
+const loanTermMonths = numberInput(12, 96, inputs, "Loan term", 60, "", "mo", calculate);
+const interestRate = numberInput(0, 25, inputs, "Interest rate (APR)", 7, "", "%", calculate);
 
-const resultsSection = document.createElement("section");
-resultsSection.className = "results-section";
-maincontent.appendChild(resultsSection);
+const maxCarPriceOut = output("Max Affordable Car Price");
+const maxMonthlyPayment = output("Max Monthly Payment");
+const maxLoanAmount = output("Max Loan Amount");
+const downPlusTradeIn = output("Down Payment Plus Trade-In");
+let outputvalues = document.getElementById("output");
+outputvalues.append(maxCarPriceOut);
+outputvalues.append(maxMonthlyPayment);
+outputvalues.append(maxLoanAmount);
+outputvalues.append(downPlusTradeIn);
+
+let points = [];
+let value = 0;
+
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Months', parent: document.getElementById("main-calculator"), stepsize: 1 });
 
 function calculate() {
-    const income = monthlyIncome.getNumericValue();
-    const maxPayment = income * (targetPct.getNumericValue() / 100);
-    const down = downPayment.getNumericValue();
-    const trade = tradeIn.getNumericValue();
-    const n = loanTermMonths.getNumericValue();
-    const monthlyRate = interestRate.getNumericValue() / 100 / 12;
+    let income = Number(monthlyIncome.value.replaceAll(",",""));
+    let targetpct = Number(targetPct.value.replaceAll(",",""));
+    let maxpayment = income * (targetpct / 100);
+    let down = Number(downPayment.value.replaceAll(",",""));
+    let trade = Number(tradeIn.value.replaceAll(",",""));
+    let n = Number(loanTermMonths.value.replaceAll(",",""));
+    let interestrate = Number(interestRate.value.replaceAll(",",""));
+    let monthlyrate = interestrate / 100 / 12;
 
-    let maxLoan;
-    if (monthlyRate === 0) {
-        maxLoan = maxPayment * n;
+    let maxloan;
+    if (monthlyrate === 0) {
+        maxloan = maxpayment * n;
     } else {
-        maxLoan = (maxPayment * (1 - Math.pow(1 + monthlyRate, -n))) / monthlyRate;
+        maxloan = (maxpayment * (1 - (1 + monthlyrate) ** -n)) / monthlyrate;
     }
-    if (!isFinite(maxLoan)) maxLoan = 0;
+    if (!isFinite(maxloan)) maxloan = 0;
 
-    const maxCarPrice = maxLoan + down + trade;
+    let maxcarprice = maxloan + down + trade;
 
-    clearElement(resultsSection);
+    document.getElementById("maxaffordablecarprice").innerHTML = "$" + (Math.round(maxcarprice * 100) / 100).toLocaleString('en-US');
+    document.getElementById("maxmonthlypayment").innerHTML = "$" + (Math.round(maxpayment * 100) / 100).toLocaleString('en-US');
+    document.getElementById("maxloanamount").innerHTML = "$" + (Math.round(maxloan * 100) / 100).toLocaleString('en-US');
+    document.getElementById("downpaymentplustradein").innerHTML = "$" + (Math.round((down + trade) * 100) / 100).toLocaleString('en-US');
 
-    resultHero(
-        resultsSection,
-        "Max affordable car price",
-        fmtCurrency(maxCarPrice),
-        `Keeping payments at ${fmtCurrency(maxPayment)}/month`
-    );
-
-    const grid = resultGrid(resultsSection);
-    resultStat(grid, "Max monthly payment", fmtCurrency(maxPayment));
-    resultStat(grid, "Max loan amount", fmtCurrency(maxLoan));
-    resultStat(grid, "Down payment + trade-in", fmtCurrency(down + trade));
-
-    const card = resultCard(resultsSection, "How this breaks down");
-    resultRow(card, "Down payment", fmtCurrency(down));
-    resultRow(card, "Trade-in value", fmtCurrency(trade));
-    resultRow(card, "Financed amount", fmtCurrency(maxLoan));
-    resultRow(card, "Max car price", fmtCurrency(maxCarPrice), true);
-
-    resultNote(
-        resultsSection,
-        "Many lenders also apply a total 'debt-to-income' cap across all your loans, so your real limit could be lower depending on other debts.",
-        "neutral"
-    );
+    points = [];
+    let balance = maxloan;
+    for (let m = 0; m <= n; m++) {
+        points.push(Math.max(balance, 0));
+        let interestportion = balance * monthlyrate;
+        let principalportion = Math.min(maxpayment - interestportion, balance);
+        balance -= principalportion;
+    }
+    myGraph.setPoints(points);
+    myGraph.setStepSize(1);
 }
-
 calculate();
 
-const description = document.createElement("section");
-description.className = "description";
-description.innerHTML = `
+const mainarticle = document.getElementById("mainarticle");
+mainarticle.innerHTML = `
   <p class="eyebrow">About this calculator</p>
   <h2>Figure out how much car you can afford</h2>
   <p>This car affordability calculator estimates the maximum car price you can afford based on a target percentage of your monthly take-home pay, your down payment, trade-in value, and loan terms.</p>
-`;
-mainarticle.appendChild(description);
-
-const article = document.createElement("section");
-article.className = "article-card";
-article.innerHTML = `
   <p class="eyebrow">Car affordability guide</p>
   <h2>How much of your income should go to a car payment</h2>
   <p>A common budgeting guideline caps total vehicle costs, including payment, insurance, and fuel, at around 15-20% of monthly take-home pay, with the loan payment itself typically well under that.</p>
@@ -124,4 +108,3 @@ article.innerHTML = `
   <h3>Loan term trade-offs</h3>
   <p>A longer loan term lowers the monthly payment and raises the max price you can technically afford, but it also means paying more total interest and can leave you owing more than the car is worth for longer.</p>
 `;
-mainarticle.appendChild(article);

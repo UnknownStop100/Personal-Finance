@@ -3,15 +3,8 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput } from "../Modules/Input/input.js";
-import {
-    resultHero,
-    resultCard,
-    resultRow,
-    resultNote,
-    barChart,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
+import { output } from "../Modules/Output/Output/script.js";
+import { Graph } from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -28,117 +21,86 @@ body.append(main);
 body.appendChild(footer);
 
 const maincontent = document.getElementById("maincontent");
-const mainarticle = document.getElementById("mainarticle");
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 
-const calculatorCard = document.createElement("section");
-calculatorCard.className = "calculator-card";
-calculatorCard.innerHTML = `
-  <div class="card-heading">
-    <div><p class="eyebrow">Financial snapshot</p><h2>Add up your net worth</h2></div>
-    <span class="status-dot">Estimate</span>
-  </div>
-`;
-const fields = document.createElement("div");
-fields.className = "field-group";
-calculatorCard.appendChild(fields);
-maincontent.appendChild(calculatorCard);
+const inputs = document.getElementById("inputs");
 
 function heading(text) {
     const h = document.createElement("p");
     h.className = "field-group-heading";
     h.textContent = text;
-    fields.appendChild(h);
+    inputs.appendChild(h);
 }
 
 heading("Assets");
-const cash = numberInput(0, 100000000, fields, "Cash & bank accounts", 15000, "$", "", calculate);
-const investments = numberInput(0, 100000000, fields, "Investment accounts", 25000, "$", "", calculate);
-const retirement = numberInput(0, 100000000, fields, "Retirement accounts", 60000, "$", "", calculate);
-const realEstate = numberInput(0, 100000000, fields, "Real estate value", 400000, "$", "", calculate);
-const vehicles = numberInput(0, 10000000, fields, "Vehicles", 18000, "$", "", calculate);
-const otherAssets = numberInput(0, 100000000, fields, "Other assets", 0, "$", "", calculate);
+const cash = numberInput(0, 100000000, inputs, "Cash & bank accounts", 15000, "$", "", calculate);
+const investments = numberInput(0, 100000000, inputs, "Investment accounts", 25000, "$", "", calculate);
+const retirement = numberInput(0, 100000000, inputs, "Retirement accounts", 60000, "$", "", calculate);
+const realEstate = numberInput(0, 100000000, inputs, "Real estate value", 400000, "$", "", calculate);
+const vehicles = numberInput(0, 10000000, inputs, "Vehicles", 18000, "$", "", calculate);
+const otherAssets = numberInput(0, 100000000, inputs, "Other assets", 0, "$", "", calculate);
 
 heading("Liabilities");
-const mortgageBalance = numberInput(0, 100000000, fields, "Mortgage balance", 280000, "$", "", calculate);
-const autoLoans = numberInput(0, 10000000, fields, "Auto loans", 9000, "$", "", calculate);
-const studentLoans = numberInput(0, 10000000, fields, "Student loans", 12000, "$", "", calculate);
-const creditCardDebt = numberInput(0, 10000000, fields, "Credit card debt", 2500, "$", "", calculate);
-const otherLiabilities = numberInput(0, 100000000, fields, "Other liabilities", 0, "$", "", calculate);
+const mortgageBalance = numberInput(0, 100000000, inputs, "Mortgage balance", 280000, "$", "", calculate);
+const autoLoans = numberInput(0, 10000000, inputs, "Auto loans", 9000, "$", "", calculate);
+const studentLoans = numberInput(0, 10000000, inputs, "Student loans", 12000, "$", "", calculate);
+const creditCardDebt = numberInput(0, 10000000, inputs, "Credit card debt", 2500, "$", "", calculate);
+const otherLiabilities = numberInput(0, 100000000, inputs, "Other liabilities", 0, "$", "", calculate);
 
-const resultsSection = document.createElement("section");
-resultsSection.className = "results-section";
-maincontent.appendChild(resultsSection);
+const netWorthOut = output("Net Worth");
+const totalAssetsOut = output("Total Assets");
+const totalLiabilitiesOut = output("Total Liabilities");
+let outputvalues = document.getElementById("output");
+outputvalues.append(netWorthOut);
+outputvalues.append(totalAssetsOut);
+outputvalues.append(totalLiabilitiesOut);
+
+let points = [];
+let value = 0;
+
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: '', parent: document.getElementById("main-calculator"), stepsize: 1 });
 
 function calculate() {
-    const assetItems = [
-        ["Cash & bank accounts", cash.getNumericValue()],
-        ["Investment accounts", investments.getNumericValue()],
-        ["Retirement accounts", retirement.getNumericValue()],
-        ["Real estate value", realEstate.getNumericValue()],
-        ["Vehicles", vehicles.getNumericValue()],
-        ["Other assets", otherAssets.getNumericValue()],
-    ];
-    const liabilityItems = [
-        ["Mortgage balance", mortgageBalance.getNumericValue()],
-        ["Auto loans", autoLoans.getNumericValue()],
-        ["Student loans", studentLoans.getNumericValue()],
-        ["Credit card debt", creditCardDebt.getNumericValue()],
-        ["Other liabilities", otherLiabilities.getNumericValue()],
-    ];
+    let totalassets =
+        Number(cash.value.replaceAll(",","")) +
+        Number(investments.value.replaceAll(",","")) +
+        Number(retirement.value.replaceAll(",","")) +
+        Number(realEstate.value.replaceAll(",","")) +
+        Number(vehicles.value.replaceAll(",","")) +
+        Number(otherAssets.value.replaceAll(",",""));
 
-    const totalAssets = assetItems.reduce((s, [, v]) => s + v, 0);
-    const totalLiabilities = liabilityItems.reduce((s, [, v]) => s + v, 0);
-    const netWorth = totalAssets - totalLiabilities;
+    let totalliabilities =
+        Number(mortgageBalance.value.replaceAll(",","")) +
+        Number(autoLoans.value.replaceAll(",","")) +
+        Number(studentLoans.value.replaceAll(",","")) +
+        Number(creditCardDebt.value.replaceAll(",","")) +
+        Number(otherLiabilities.value.replaceAll(",",""));
 
-    clearElement(resultsSection);
+    let networth = totalassets - totalliabilities;
 
-    resultHero(
-        resultsSection,
-        "Net worth",
-        fmtCurrency(netWorth),
-        `${fmtCurrency(totalAssets)} in assets minus ${fmtCurrency(totalLiabilities)} in liabilities`
-    );
+    document.getElementById("networth").innerHTML = "$" + (Math.round(networth * 100) / 100).toLocaleString('en-US');
+    document.getElementById("totalassets").innerHTML = "$" + (Math.round(totalassets * 100) / 100).toLocaleString('en-US');
+    document.getElementById("totalliabilities").innerHTML = "$" + (Math.round(totalliabilities * 100) / 100).toLocaleString('en-US');
 
-    const assetCard = resultCard(resultsSection, "Assets");
-    assetItems.forEach(([label, value]) => resultRow(assetCard, label, fmtCurrency(value)));
-    resultRow(assetCard, "Total assets", fmtCurrency(totalAssets), true);
-
-    const liabilityCard = resultCard(resultsSection, "Liabilities");
-    liabilityItems.forEach(([label, value]) => resultRow(liabilityCard, label, fmtCurrency(value)));
-    resultRow(liabilityCard, "Total liabilities", fmtCurrency(totalLiabilities), true);
-
-    barChart(
-        resultsSection,
-        [
-            { label: "Assets", value: totalAssets, color: "var(--accent)" },
-            { label: "Liabilities", value: totalLiabilities, color: "var(--muted)" },
-        ],
-        {}
-    );
-
-    resultNote(
-        resultsSection,
-        netWorth >= 0
-            ? "Your assets currently outweigh your liabilities."
-            : "Your liabilities currently outweigh your assets — that's common with a mortgage or student loans and tends to improve over time.",
-        netWorth >= 0 ? "good" : "neutral"
-    );
+    points = [totalliabilities, totalassets];
+    myGraph.setPoints(points);
+    myGraph.setStepSize(1);
 }
-
 calculate();
 
-const description = document.createElement("section");
-description.className = "description";
-description.innerHTML = `
+const mainarticle = document.getElementById("mainarticle");
+mainarticle.innerHTML = `
   <p class="eyebrow">About this calculator</p>
   <h2>Calculate your total net worth</h2>
   <p>This net worth calculator adds up your assets, like cash, investments, retirement accounts, real estate, and vehicles, and subtracts your liabilities, like mortgages, loans, and credit card debt, to give you a single net worth figure.</p>
-`;
-mainarticle.appendChild(description);
-
-const article = document.createElement("section");
-article.className = "article-card";
-article.innerHTML = `
   <p class="eyebrow">Net worth guide</p>
   <h2>How net worth is calculated</h2>
   <p>Net worth is calculated as total assets minus total liabilities. Assets are everything you own that has monetary value, while liabilities are everything you owe.</p>
@@ -149,4 +111,3 @@ article.innerHTML = `
   <h3>Why tracking net worth over time matters</h3>
   <p>A single net worth snapshot is useful, but tracking it monthly or yearly shows whether your overall financial position is improving, which can matter more than any one account balance.</p>
 `;
-mainarticle.appendChild(article);

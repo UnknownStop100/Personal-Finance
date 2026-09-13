@@ -3,15 +3,8 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput } from "../Modules/Input/input.js";
-import {
-    resultHero,
-    resultGrid,
-    resultStat,
-    resultNote,
-    lineChart,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
+import { output } from "../Modules/Output/Output/script.js";
+import { Graph } from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -26,8 +19,16 @@ body.prepend(title);
 body.prepend(header);
 body.append(main);
 body.appendChild(footer);
-
 const maincontent = document.getElementById("maincontent");
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 const mainarticle = document.getElementById("mainarticle");
 
 const calculatorCard = document.createElement("section");
@@ -38,10 +39,7 @@ calculatorCard.innerHTML = `
     <span class="status-dot">Estimate</span>
   </div>
 `;
-const fields = document.createElement("div");
-fields.className = "field-group";
-calculatorCard.appendChild(fields);
-maincontent.appendChild(calculatorCard);
+let fields=document.getElementById("inputs");
 
 const currentAge = numberInput(18, 90, fields, "Current age", 30, "", "yrs", calculate);
 const retireAge = numberInput(19, 95, fields, "Retirement age", 65, "", "yrs", calculate);
@@ -51,73 +49,59 @@ const annualReturn = numberInput(0, 20, fields, "Expected annual return", 7, "",
 const desiredIncome = numberInput(0, 5000000, fields, "Desired annual retirement income", 60000, "$", "", calculate);
 const withdrawalRate = numberInput(1, 10, fields, "Safe withdrawal rate", 4, "", "%", calculate);
 
-const resultsSection = document.createElement("section");
-resultsSection.className = "results-section";
-maincontent.appendChild(resultsSection);
+const outputContainer = document.getElementById("output");
 
-function calculate() {
-    const age = currentAge.getNumericValue();
-    const retAge = Math.max(retireAge.getNumericValue(), age + 1);
-    const yearsToGrow = retAge - age;
-    const start = currentSavings.getNumericValue();
-    const monthly = monthlyContribution.getNumericValue();
-    const rate = annualReturn.getNumericValue() / 100;
-    const income = desiredIncome.getNumericValue();
-    const swr = withdrawalRate.getNumericValue() / 100;
+const nestEgg = output("Nest Egg at Retirement");
+const totalContributions = output("Total Contributions");
+const sustainableIncome = output("Sustainable Annual Income");
+const incomeGap = output("Income Gap");
+outputContainer.append(nestEgg);
+outputContainer.append(totalContributions);
+outputContainer.append(sustainableIncome);
+outputContainer.append(incomeGap);
 
-    const monthlyRate = rate / 12;
-    let balance = start;
-    const points = [{ x: age, y: balance }];
+let points = [];
+let value = 40000;
 
-    for (let year = 1; year <= yearsToGrow; year++) {
-        for (let m = 0; m < 12; m++) {
-            balance = balance * (1 + monthlyRate) + monthly;
-        }
-        points.push({ x: age + year, y: balance });
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 12 });
+
+function calculate(){
+    let currentage = Number(currentAge.value.replaceAll(",",""));
+    let retireage = Number(retireAge.value.replaceAll(",",""));
+    let currentsavings = Number(currentSavings.value.replaceAll(",",""));
+    let monthlycontribution = Number(monthlyContribution.value.replaceAll(",",""));
+    let annualreturn = Number(annualReturn.value.replaceAll(",",""));
+    let desiredincome = Number(desiredIncome.value.replaceAll(",",""));
+    let withdrawalrate = Number(withdrawalRate.value.replaceAll(",",""));
+
+    let yearstoretirement = retireage - currentage;
+    let months = yearstoretirement * 12;
+    let monthlyreturnrate = annualreturn / 1200;
+
+    let nestegg = currentsavings * (1 + monthlyreturnrate) ** months
+        + monthlycontribution * (((1 + monthlyreturnrate) ** months - 1) / monthlyreturnrate);
+    let totalcontributions = currentsavings + monthlycontribution * months;
+    let sustainableincome = nestegg * (withdrawalrate / 100);
+    let incomegap = sustainableincome - desiredincome;
+
+    document.getElementById("nesteggatretirement").innerHTML = "$" + (Math.round(nestegg * 100) / 100).toLocaleString('en-US');
+    document.getElementById("totalcontributions").innerHTML = "$" + (Math.round(totalcontributions * 100) / 100).toLocaleString('en-US');
+    document.getElementById("sustainableannualincome").innerHTML = "$" + (Math.round(sustainableincome * 100) / 100).toLocaleString('en-US');
+    document.getElementById("incomegap").innerHTML = (incomegap >= 0 ? "+$" : "-$") + (Math.round(Math.abs(incomegap) * 100) / 100).toLocaleString('en-US');
+
+    points = [];
+    value = currentsavings;
+    for (let i = 0; i < months; i++) {
+        points.push(value);
+        value *= (1 + monthlyreturnrate);
+        points.push(value);
+        value += monthlycontribution;
     }
-
-    const nestEgg = balance;
-    const sustainableIncome = nestEgg * swr;
-    const gap = income - sustainableIncome;
-    const meetsGoal = sustainableIncome >= income;
-
-    clearElement(resultsSection);
-
-    resultHero(
-        resultsSection,
-        "Projected nest egg at retirement",
-        fmtCurrency(nestEgg),
-        `At age ${retAge}, after ${yearsToGrow} years of growth`
-    );
-
-    const grid = resultGrid(resultsSection);
-    resultStat(grid, "Sustainable annual income", fmtCurrency(sustainableIncome));
-    resultStat(grid, `${meetsGoal ? "Surplus" : "Shortfall"} vs. goal`, fmtCurrency(Math.abs(gap)));
-    resultStat(grid, "Total contributed", fmtCurrency(monthly * 12 * yearsToGrow + start));
-
-    lineChart(resultsSection, [{ name: "Projected balance", points, color: "var(--accent)" }], {
-        xFormatter: (v) => `Age ${Math.round(v)}`,
-    });
-
-    resultNote(
-        resultsSection,
-        meetsGoal
-            ? `On this path, your savings could support your ${fmtCurrency(income)} annual income goal using a ${withdrawalRate.getNumericValue()}% withdrawal rate.`
-            : `At this rate you'd fall short of your ${fmtCurrency(income)} goal by about ${fmtCurrency(gap)}/yr. Consider saving more or working longer.`,
-        meetsGoal ? "good" : "warning"
-    );
+    points.push(value);
+    myGraph.setPoints(points);
+    myGraph.setStepSize(12);
 }
-
 calculate();
-
-const description = document.createElement("section");
-description.className = "description";
-description.innerHTML = `
-  <p class="eyebrow">About this calculator</p>
-  <h2>Project your retirement nest egg</h2>
-  <p>This retirement calculator projects how your current savings and monthly contributions could grow by retirement age, and compares the sustainable income it could generate against your retirement income goal.</p>
-`;
-mainarticle.appendChild(description);
 
 const article = document.createElement("section");
 article.className = "article-card";

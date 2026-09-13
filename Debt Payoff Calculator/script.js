@@ -3,17 +3,8 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput } from "../Modules/Input/input.js";
-import {
-    resultHero,
-    resultGrid,
-    resultStat,
-    resultCard,
-    resultRow,
-    resultNote,
-    lineChart,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
+import { output } from "../Modules/Output/Output/script.js";
+import { Graph } from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -30,44 +21,52 @@ body.append(main);
 body.appendChild(footer);
 
 const maincontent = document.getElementById("maincontent");
-const mainarticle = document.getElementById("mainarticle");
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 
-const calculatorCard = document.createElement("section");
-calculatorCard.className = "calculator-card";
-calculatorCard.innerHTML = `
-  <div class="card-heading">
-    <div><p class="eyebrow">Debt freedom</p><h2>Snowball vs. avalanche</h2></div>
-    <span class="status-dot">Estimate</span>
-  </div>
-`;
-const fields = document.createElement("div");
-fields.className = "field-group";
-calculatorCard.appendChild(fields);
-maincontent.appendChild(calculatorCard);
+const inputs = document.getElementById("inputs");
 
 const debtInputs = [1, 2, 3, 4].map((i) => {
     const heading = document.createElement("p");
     heading.className = "field-group-heading";
     heading.textContent = `Debt ${i}`;
-    fields.appendChild(heading);
+    inputs.appendChild(heading);
     return {
-        balance: numberInput(0, 1000000, fields, `Balance`, i === 1 ? 4000 : 0, "$", "", calculate),
-        rate: numberInput(0, 40, fields, `Interest rate (APR)`, i === 1 ? 22 : 0, "", "%", calculate),
-        minPayment: numberInput(0, 100000, fields, `Minimum payment`, i === 1 ? 100 : 0, "$", "", calculate),
+        balance: numberInput(0, 1000000, inputs, "Balance", i === 1 ? 4000 : 0, "$", "", calculate),
+        rate: numberInput(0, 40, inputs, "Interest rate (APR)", i === 1 ? 22 : 0, "", "%", calculate),
+        minPayment: numberInput(0, 100000, inputs, "Minimum payment", i === 1 ? 100 : 0, "$", "", calculate),
     };
 });
 
-const extraPayment = numberInput(0, 100000, fields, "Extra monthly payment toward debt", 200, "$", "", calculate);
+const extraPayment = numberInput(0, 100000, inputs, "Extra monthly payment toward debt", 200, "$", "", calculate);
 
-const resultsSection = document.createElement("section");
-resultsSection.className = "results-section";
-maincontent.appendChild(resultsSection);
+const totalDebt = output("Total Debt");
+const snowballPayoffTime = output("Snowball Payoff Time");
+const avalanchePayoffTime = output("Avalanche Payoff Time");
+const interestSaved = output("Avalanche Interest Savings");
+let outputvalues = document.getElementById("output");
+outputvalues.append(totalDebt);
+outputvalues.append(snowballPayoffTime);
+outputvalues.append(avalanchePayoffTime);
+outputvalues.append(interestSaved);
+
+let points = [];
+let value = 4000;
+
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 12 });
 
 function simulate(debts, extra, strategy) {
     let working = debts.map((d) => ({ ...d }));
     let month = 0;
     let totalInterest = 0;
-    const balancePoints = [{ x: 0, y: working.reduce((s, d) => s + d.balance, 0) }];
+    const balancePoints = [working.reduce((s, d) => s + d.balance, 0)];
 
     while (working.some((d) => d.balance > 0.005) && month < 1200) {
         month++;
@@ -95,11 +94,8 @@ function simulate(debts, extra, strategy) {
             extraAvailable -= pay;
         }
 
-        if (month % 3 === 0 || working.every((d) => d.balance <= 0.005)) {
-            balancePoints.push({
-                x: month / 12,
-                y: Math.max(working.reduce((s, d) => s + d.balance, 0), 0),
-            });
+        if (month % 12 === 0 || working.every((d) => d.balance <= 0.005)) {
+            balancePoints.push(Math.max(working.reduce((s, d) => s + d.balance, 0), 0));
         }
     }
 
@@ -107,81 +103,46 @@ function simulate(debts, extra, strategy) {
 }
 
 function calculate() {
-    const debts = debtInputs
+    let debts = debtInputs
         .map((d) => ({
-            balance: d.balance.getNumericValue(),
-            rate: d.rate.getNumericValue(),
-            minPayment: d.minPayment.getNumericValue(),
+            balance: Number(d.balance.value.replaceAll(",","")),
+            rate: Number(d.rate.value.replaceAll(",","")),
+            minPayment: Number(d.minPayment.value.replaceAll(",","")),
         }))
         .filter((d) => d.balance > 0);
 
-    const extra = extraPayment.getNumericValue();
-
-    clearElement(resultsSection);
+    let extra = Number(extraPayment.value.replaceAll(",",""));
 
     if (debts.length === 0) {
-        resultNote(resultsSection, "Enter at least one debt balance to see a payoff comparison.", "neutral");
+        document.getElementById("totaldebt").innerHTML = "$0";
+        document.getElementById("snowballpayofftime").innerHTML = "—";
+        document.getElementById("avalanchepayofftime").innerHTML = "—";
+        document.getElementById("avalancheinterestsavings").innerHTML = "$0";
+        myGraph.setPoints([0]);
+        myGraph.setStepSize(1);
         return;
     }
 
     const snowball = simulate(debts, extra, "snowball");
     const avalanche = simulate(debts, extra, "avalanche");
     const totalStartingBalance = debts.reduce((s, d) => s + d.balance, 0);
+    const interestsavings = snowball.totalInterest - avalanche.totalInterest;
 
-    const faster = snowball.months <= avalanche.months ? "snowball" : "avalanche";
-    const cheaper = snowball.totalInterest <= avalanche.totalInterest ? "snowball" : "avalanche";
+    document.getElementById("totaldebt").innerHTML = "$" + (Math.round(totalStartingBalance * 100) / 100).toLocaleString('en-US');
+    document.getElementById("snowballpayofftime").innerHTML = Math.floor(snowball.months / 12) + " yr " + (snowball.months % 12) + " mo";
+    document.getElementById("avalanchepayofftime").innerHTML = Math.floor(avalanche.months / 12) + " yr " + (avalanche.months % 12) + " mo";
+    document.getElementById("avalancheinterestsavings").innerHTML = (interestsavings >= 0 ? "$" : "-$") + (Math.round(Math.abs(interestsavings) * 100) / 100).toLocaleString('en-US');
 
-    resultHero(
-        resultsSection,
-        "Total debt",
-        fmtCurrency(totalStartingBalance),
-        `Across ${debts.length} debt${debts.length > 1 ? "s" : ""}`
-    );
-
-    const grid = resultGrid(resultsSection);
-    resultStat(grid, "Debt-free in (snowball)", `${Math.floor(snowball.months / 12)} yr ${snowball.months % 12} mo`);
-    resultStat(grid, "Debt-free in (avalanche)", `${Math.floor(avalanche.months / 12)} yr ${avalanche.months % 12} mo`);
-
-    const card = resultCard(resultsSection, "Snowball vs. avalanche");
-    resultRow(card, "Snowball — total interest paid", fmtCurrency(snowball.totalInterest));
-    resultRow(card, "Avalanche — total interest paid", fmtCurrency(avalanche.totalInterest));
-    resultRow(
-        card,
-        "Avalanche saves you",
-        fmtCurrency(Math.abs(snowball.totalInterest - avalanche.totalInterest)),
-        true
-    );
-
-    lineChart(
-        resultsSection,
-        [
-            { name: "Snowball balance", points: snowball.balancePoints, color: "var(--accent)" },
-            { name: "Avalanche balance", points: avalanche.balancePoints, color: "var(--muted)" },
-        ],
-        { xFormatter: (v) => `Yr ${v.toFixed(1)}` }
-    );
-
-    resultNote(
-        resultsSection,
-        `Avalanche (highest interest rate first) is mathematically ${cheaper === "avalanche" ? "cheaper" : "not cheaper here"}. Snowball (smallest balance first) can be ${faster === "snowball" ? "faster to your first payoff and easier to stick with" : "motivating even when it isn't fastest"} psychologically.`,
-        "neutral"
-    );
+    myGraph.setPoints(avalanche.balancePoints);
+    myGraph.setStepSize(1);
 }
-
 calculate();
 
-const description = document.createElement("section");
-description.className = "description";
-description.innerHTML = `
+const mainarticle = document.getElementById("mainarticle");
+mainarticle.innerHTML = `
   <p class="eyebrow">About this calculator</p>
   <h2>Compare debt snowball vs. debt avalanche</h2>
   <p>This debt payoff calculator simulates paying down up to four debts using the snowball method (smallest balance first) and the avalanche method (highest interest rate first), so you can see which gets you debt-free faster and which saves more in interest.</p>
-`;
-mainarticle.appendChild(description);
-
-const article = document.createElement("section");
-article.className = "article-card";
-article.innerHTML = `
   <p class="eyebrow">Debt payoff guide</p>
   <h2>Debt snowball vs. debt avalanche method</h2>
   <p>Both strategies pay the minimum on every debt, then direct any extra payment toward one target debt at a time. They differ only in which debt gets that extra payment first.</p>
@@ -192,4 +153,3 @@ article.innerHTML = `
   <h3>Which method should you choose</h3>
   <p>Avalanche usually saves more money mathematically, while snowball can be easier to stay motivated with. Many people choose based on which approach they're more likely to stick with consistently.</p>
 `;
-mainarticle.appendChild(article);

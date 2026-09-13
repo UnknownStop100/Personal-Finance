@@ -3,15 +3,8 @@ import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput, valueInputs } from "../Modules/Input/input.js";
-import {
-    resultHero,
-    resultGrid,
-    resultStat,
-    resultNote,
-    barChart,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
+import { output } from "../Modules/Output/Output/script.js";
+import { Graph } from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -28,99 +21,80 @@ body.append(main);
 body.appendChild(footer);
 
 const maincontent = document.getElementById("maincontent");
-const mainarticle = document.getElementById("mainarticle");
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 
-const calculatorCard = document.createElement("section");
-calculatorCard.className = "calculator-card";
-calculatorCard.innerHTML = `
-  <div class="card-heading">
-    <div><p class="eyebrow">Financial safety net</p><h2>Set your target</h2></div>
-    <span class="status-dot">Estimate</span>
-  </div>
-`;
-const fields = document.createElement("div");
-fields.className = "field-group";
-calculatorCard.appendChild(fields);
-maincontent.appendChild(calculatorCard);
+const inputs = document.getElementById("inputs");
 
-const monthlyExpenses = numberInput(0, 1000000, fields, "Monthly essential expenses", 3200, "$", "", calculate);
+const monthlyExpenses = numberInput(0, 1000000, inputs, "Monthly essential expenses", 3200, "$", "", calculate);
 const monthsCoverage = valueInputs(
     "Months of coverage desired",
     ["3 months", "6 months", "9 months", "12 months"],
     [3, 6, 9, 12],
-    fields,
+    inputs,
     calculate
 );
-const currentSavings = numberInput(0, 10000000, fields, "Current emergency savings", 1000, "$", "", calculate);
-const monthlySavings = numberInput(0, 100000, fields, "Monthly savings toward fund", 300, "$", "", calculate);
+const currentSavings = numberInput(0, 10000000, inputs, "Current emergency savings", 1000, "$", "", calculate);
+const monthlySavings = numberInput(0, 100000, inputs, "Monthly savings toward fund", 300, "$", "", calculate);
 
-const resultsSection = document.createElement("section");
-resultsSection.className = "results-section";
-maincontent.appendChild(resultsSection);
+const emergencyFundTarget = output("Emergency Fund Target");
+const currentProgress = output("Current Progress");
+const amountRemaining = output("Amount Remaining");
+const timeToReachGoal = output("Time To Reach Goal");
+let outputvalues = document.getElementById("output");
+outputvalues.append(emergencyFundTarget);
+outputvalues.append(currentProgress);
+outputvalues.append(amountRemaining);
+outputvalues.append(timeToReachGoal);
+
+let points = [];
+let value = 1000;
+
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Months', parent: document.getElementById("main-calculator"), stepsize: 1 });
 
 function calculate() {
-    const expenses = monthlyExpenses.getNumericValue();
-    const months = Number(monthsCoverage.value);
-    const target = expenses * months;
-    const current = currentSavings.getNumericValue();
-    const monthly = monthlySavings.getNumericValue();
-    const gap = Math.max(target - current, 0);
-    const monthsToGoal = monthly > 0 ? Math.ceil(gap / monthly) : Infinity;
+    let expenses = Number(monthlyExpenses.value.replaceAll(",",""));
+    let months = Number(monthsCoverage.value);
+    let target = expenses * months;
+    let current = Number(currentSavings.value.replaceAll(",",""));
+    let monthly = Number(monthlySavings.value.replaceAll(",",""));
+    let gap = Math.max(target - current, 0);
+    let monthstogoal = monthly > 0 ? Math.ceil(gap / monthly) : Infinity;
 
-    clearElement(resultsSection);
+    document.getElementById("emergencyfundtarget").innerHTML = "$" + (Math.round(target * 100) / 100).toLocaleString('en-US');
+    document.getElementById("currentprogress").innerHTML = (target > 0 ? Math.min((current / target) * 100, 100).toFixed(0) : 0) + "%";
+    document.getElementById("amountremaining").innerHTML = "$" + (Math.round(gap * 100) / 100).toLocaleString('en-US');
+    document.getElementById("timetoreachgoal").innerHTML = isFinite(monthstogoal) ? Math.floor(monthstogoal / 12) + " yr " + (monthstogoal % 12) + " mo" : "—";
 
-    resultHero(
-        resultsSection,
-        "Emergency fund target",
-        fmtCurrency(target),
-        `${months} months of essential expenses`
-    );
-
-    const grid = resultGrid(resultsSection);
-    resultStat(grid, "Current progress", `${target > 0 ? Math.min((current / target) * 100, 100).toFixed(0) : 0}%`);
-    resultStat(grid, "Amount remaining", fmtCurrency(gap));
-    resultStat(
-        grid,
-        "Time to reach goal",
-        isFinite(monthsToGoal) ? `${Math.floor(monthsToGoal / 12)} yr ${monthsToGoal % 12} mo` : "—"
-    );
-
-    barChart(
-        resultsSection,
-        [
-            { label: "Current savings", value: current, color: "var(--muted)" },
-            { label: "Target", value: target, color: "var(--accent)" },
-        ],
-        {}
-    );
-
+    points = [];
     if (gap === 0) {
-        resultNote(resultsSection, "You've already reached your emergency fund target. Nice work.", "good");
-    } else if (!isFinite(monthsToGoal)) {
-        resultNote(resultsSection, "Add a monthly savings amount to see how long it will take to reach your goal.", "neutral");
+        points.push(current);
+    } else if (!isFinite(monthstogoal)) {
+        points.push(current);
     } else {
-        resultNote(
-            resultsSection,
-            `Saving ${fmtCurrency(monthly)}/month, you'll reach your target in about ${monthsToGoal} months.`,
-            "neutral"
-        );
+        let balance = current;
+        for (let m = 0; m <= monthstogoal; m++) {
+            points.push(balance);
+            balance += monthly;
+        }
     }
+    myGraph.setPoints(points);
+    myGraph.setStepSize(1);
 }
-
 calculate();
 
-const description = document.createElement("section");
-description.className = "description";
-description.innerHTML = `
+const mainarticle = document.getElementById("mainarticle");
+mainarticle.innerHTML = `
   <p class="eyebrow">About this calculator</p>
   <h2>Calculate your emergency fund target</h2>
   <p>This emergency fund calculator estimates how much you should save based on your essential monthly expenses and desired months of coverage, and shows how long it will take to reach that goal at your current savings rate.</p>
-`;
-mainarticle.appendChild(description);
-
-const article = document.createElement("section");
-article.className = "article-card";
-article.innerHTML = `
   <p class="eyebrow">Emergency fund guide</p>
   <h2>How much should you have in an emergency fund</h2>
   <p>An emergency fund is cash set aside to cover essential expenses, like housing, food, utilities, and insurance, if you lose income unexpectedly. Most guidance suggests saving three to six months of essential expenses, with some people targeting up to twelve months for extra security.</p>
@@ -131,4 +105,3 @@ article.innerHTML = `
   <h3>Building your fund over time</h3>
   <p>Setting a consistent monthly savings amount, even a small one, lets you reach a full emergency fund target gradually while still making progress on other financial goals.</p>
 `;
-mainarticle.appendChild(article);

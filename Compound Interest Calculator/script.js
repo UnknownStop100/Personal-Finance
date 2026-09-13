@@ -1,17 +1,10 @@
-import { numberInput, valueInputs } from "../Modules/Input/input.js";
-import { createFooter } from "../Footer/script.js";
-import { createHeader } from "../Header/script.js";
+import { createHeader } from "/Header/script.js";
+import { createFooter } from "/Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import {
-    resultHero,
-    resultGrid,
-    resultStat,
-    resultNote,
-    lineChart,
-    clearElement,
-    fmtCurrency,
-} from "../Modules/Output/output.js";
+import { numberInput, valueInputs } from "../Modules/Input/input.js";
+import { output } from "../Modules/Output/Output/script.js";
+import { Graph } from "../Modules/Output/Graph/graph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -28,77 +21,79 @@ body.append(main);
 body.appendChild(footer);
 
 const maincontent = document.getElementById("maincontent");
-const mainarticle = document.getElementById("mainarticle");
+document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
+                <div id="inputs">
+                    <h3>Input Fields:</h3>
+                    <!--<button id="calculate-btn">Calculate</button>-->
+                </div>
+            </div>
+            <div id="output">
+            <!--button id="resolve">recalculate</button>-->
+            </div>`;
 
-const principal = numberInput(0, 100000000, maincontent, "Initial amount", 10000, "$", "", calculate);
-const monthlyContribution = numberInput(0, 1000000, maincontent, "Monthly contribution", 200, "$", "", calculate);
-const rate = numberInput(0, 30, maincontent, "Annual interest rate", 7, "", "%", calculate);
-const years = numberInput(1, 60, maincontent, "Years to grow", 25, "", "yrs", calculate);
+const inputs = document.getElementById("inputs");
+
+const principal = numberInput(0, 100000000, inputs, "Initial amount", 10000, "$", "", calculate);
+const monthlyContribution = numberInput(0, 1000000, inputs, "Monthly contribution", 200, "$", "", calculate);
+const rate = numberInput(0, 30, inputs, "Annual interest rate", 7, "", "%", calculate);
+const years = numberInput(1, 60, inputs, "Years to grow", 25, "", "yrs", calculate);
 const frequency = valueInputs(
     "Compounding frequency",
     ["Annually", "Monthly", "Daily"],
     [1, 12, 365],
-    maincontent,
+    inputs,
     calculate
 );
 
-function calculate() {
-    const P = principal.getNumericValue();
-    const monthly = monthlyContribution.getNumericValue();
-    const annualRate = rate.getNumericValue() / 100;
-    const n = Number(frequency.value);
-    const t = years.getNumericValue();
+const futureValue = output("Future Value");
+const totalContributed = output("Total Contributed");
+const totalInterestEarned = output("Total Interest Earned");
+const interestPercentOfBalance = output("Interest As Percent Of Balance");
+let outputvalues = document.getElementById("output");
+outputvalues.append(futureValue);
+outputvalues.append(totalContributed);
+outputvalues.append(totalInterestEarned);
+outputvalues.append(interestPercentOfBalance);
 
-    const totalPeriods = Math.round(n * t);
-    const periodRate = annualRate / n;
-    const periodContribution = (monthly * 12) / n;
+let points = [];
+let value = 10000;
+
+const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 1 });
+
+function calculate() {
+    let P = Number(principal.value.replaceAll(",",""));
+    let monthly = Number(monthlyContribution.value.replaceAll(",",""));
+    let annualrate = Number(rate.value.replaceAll(",","")) / 100;
+    let n = Number(frequency.value);
+    let t = Number(years.value.replaceAll(",",""));
+
+    let totalperiods = Math.round(n * t);
+    let periodrate = annualrate / n;
+    let periodcontribution = (monthly * 12) / n;
 
     let balance = P;
-    const yearlyPoints = [{ x: 0, y: balance }];
-    const contribPoints = [{ x: 0, y: P }];
-    let totalContributed = P;
+    let totalcontributed = P;
 
-    for (let period = 1; period <= totalPeriods; period++) {
-        balance = balance * (1 + periodRate) + periodContribution;
-        totalContributed += periodContribution;
-        if (period % n === 0 || period === totalPeriods) {
-            const yearMark = period / n;
-            yearlyPoints.push({ x: yearMark, y: balance });
-            contribPoints.push({ x: yearMark, y: totalContributed });
+    points = [];
+    points.push(balance);
+
+    for (let period = 1; period <= totalperiods; period++) {
+        balance = balance * (1 + periodrate) + periodcontribution;
+        totalcontributed += periodcontribution;
+        if (period % n === 0 || period === totalperiods) {
+            points.push(balance);
         }
     }
 
-    const finalBalance = balance;
-    const totalInterest = finalBalance - totalContributed;
+    let finalbalance = balance;
+    let totalinterest = finalbalance - totalcontributed;
 
-    clearElement(mainarticle);
+    document.getElementById("futurevalue").innerHTML = "$" + (Math.round(finalbalance * 100) / 100).toLocaleString('en-US');
+    document.getElementById("totalcontributed").innerHTML = "$" + (Math.round(totalcontributed * 100) / 100).toLocaleString('en-US');
+    document.getElementById("totalinterestearned").innerHTML = "$" + (Math.round(totalinterest * 100) / 100).toLocaleString('en-US');
+    document.getElementById("interestaspercentofbalance").innerHTML = ((totalinterest / finalbalance) * 100).toFixed(1) + "%";
 
-    resultHero(
-        mainarticle,
-        "Future value",
-        fmtCurrency(finalBalance),
-        `After ${t} years at ${rate.getNumericValue()}% annual interest`
-    );
-
-    const grid = resultGrid(mainarticle);
-    resultStat(grid, "Total contributed", fmtCurrency(totalContributed));
-    resultStat(grid, "Total interest earned", fmtCurrency(totalInterest));
-    resultStat(grid, "Interest as % of balance", `${((totalInterest / finalBalance) * 100).toFixed(1)}%`);
-
-    lineChart(
-        mainarticle,
-        [
-            { name: "Balance", points: yearlyPoints, color: "var(--accent)" },
-            { name: "Total contributed", points: contribPoints, color: "var(--muted)" },
-        ],
-        { xFormatter: (v) => `Yr ${Math.round(v)}` }
-    );
-
-    resultNote(
-        mainarticle,
-        "This is an estimate. Actual investment returns vary and are never guaranteed.",
-        "neutral"
-    );
+    myGraph.setPoints(points);
+    myGraph.setStepSize(1);
 }
-
 calculate();
