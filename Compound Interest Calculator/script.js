@@ -1,5 +1,5 @@
-import { createHeader } from "/Header/script.js";
-import { createFooter } from "/Footer/script.js";
+import { createHeader } from "../Header/script.js";
+import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { numberInput, valueInputs } from "../Modules/Input/input.js";
