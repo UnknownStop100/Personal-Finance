@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput, valueInputs } from "../Modules/Input/input.js";
+import { Input, valueInputs } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,7 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -31,18 +30,7 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
-
-const monthlyExpenses = numberInput(0, 1000000, inputs, "Monthly essential expenses", 3200, "$", "", calculate);
-const monthsCoverage = valueInputs(
-    "Months of coverage desired",
-    ["3 months", "6 months", "9 months", "12 months"],
-    [3, 6, 9, 12],
-    inputs,
-    calculate
-);
-const currentSavings = numberInput(0, 10000000, inputs, "Current emergency savings", 1000, "$", "", calculate);
-const monthlySavings = numberInput(0, 100000, inputs, "Monthly savings toward fund", 300, "$", "", calculate);
+const inputsContainer = document.getElementById("inputs");
 
 const emergencyFundTarget = output("Emergency Fund Target");
 const currentProgress = output("Current Progress");
@@ -54,17 +42,49 @@ outputvalues.append(currentProgress);
 outputvalues.append(amountRemaining);
 outputvalues.append(timeToReachGoal);
 
-let points = [];
-let value = 1000;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Months', parent: document.getElementById("main-calculator"), stepsize: 1 });
+let monthlyExpenses = new Input(0, 1000000, inputsContainer, "Monthly essential expenses", 3200, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let monthsCoverage = valueInputs(
+    "Months of coverage desired",
+    ["3 months", "6 months", "9 months", "12 months"],
+    [3, 6, 9, 12],
+    inputsContainer,
+    updateFields
+);
+inputsContainer.appendChild(document.createElement("br"));
+let currentSavings = new Input(0, 10000000, inputsContainer, "Current emergency savings", 1000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let monthlySavings = new Input(0, 100000, inputsContainer, "Monthly savings toward fund", 300, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
 
-function calculate() {
-    let expenses = Number(monthlyExpenses.value.replaceAll(",",""));
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Savings Balance", "Target"],
+    xLabel: 'Years',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 12,
+    xlabeloffset: 0
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+function drawGraph() {
+    let expenses = monthlyExpenses.getValue();
     let months = Number(monthsCoverage.value);
     let target = expenses * months;
-    let current = Number(currentSavings.value.replaceAll(",",""));
-    let monthly = Number(monthlySavings.value.replaceAll(",",""));
+    let current = currentSavings.getValue();
+    let monthly = monthlySavings.getValue();
     let gap = Math.max(target - current, 0);
     let monthstogoal = monthly > 0 ? Math.ceil(gap / monthly) : Infinity;
 
@@ -73,22 +93,22 @@ function calculate() {
     document.getElementById("amountremaining").innerHTML = "$" + (Math.round(gap * 100) / 100).toLocaleString('en-US');
     document.getElementById("timetoreachgoal").innerHTML = isFinite(monthstogoal) ? Math.floor(monthstogoal / 12) + " yr " + (monthstogoal % 12) + " mo" : "—";
 
-    points = [];
-    if (gap === 0) {
-        points.push(current);
-    } else if (!isFinite(monthstogoal)) {
-        points.push(current);
+    let points = [];
+    if (gap === 0 || !isFinite(monthstogoal)) {
+        points.push([[current], [target]]);
     } else {
         let balance = current;
         for (let m = 0; m <= monthstogoal; m++) {
-            points.push(balance);
+            points.push([[balance-monthly,balance], [target,target]]);
             balance += monthly;
         }
     }
+
+    myGraph.setStepSize(12);
+    myGraph.setxlabeloffset(0);
     myGraph.setPoints(points);
-    myGraph.setStepSize(1);
 }
-calculate();
+drawGraph();
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `

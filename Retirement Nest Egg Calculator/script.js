@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -19,7 +19,7 @@ body.prepend(title);
 body.prepend(header);
 body.append(main);
 body.appendChild(footer);
-const maincontent = document.getElementById("maincontent");
+
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -29,50 +29,89 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <div id="output">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
-const mainarticle = document.getElementById("mainarticle");
 
-const calculatorCard = document.createElement("section");
-calculatorCard.className = "calculator-card";
-calculatorCard.innerHTML = `
-  <div class="card-heading">
-    <div><p class="eyebrow">Retirement planning</p><h2>Project your nest egg</h2></div>
-    <span class="status-dot">Estimate</span>
-  </div>
-`;
-let fields=document.getElementById("inputs");
-
-const currentAge = numberInput(18, 90, fields, "Current age", 30, "", "yrs", calculate);
-const retireAge = numberInput(19, 95, fields, "Retirement age", 65, "", "yrs", calculate);
-const currentSavings = numberInput(0, 100000000, fields, "Current retirement savings", 40000, "$", "", calculate);
-const monthlyContribution = numberInput(0, 1000000, fields, "Monthly contribution", 500, "$", "", calculate);
-const annualReturn = numberInput(0, 20, fields, "Expected annual return", 7, "", "%", calculate);
-const desiredIncome = numberInput(0, 5000000, fields, "Desired annual retirement income", 60000, "$", "", calculate);
-const withdrawalRate = numberInput(1, 10, fields, "Safe withdrawal rate", 4, "", "%", calculate);
-
-const outputContainer = document.getElementById("output");
+const inputsContainer = document.getElementById("inputs");
 
 const nestEgg = output("Nest Egg at Retirement");
 const totalContributions = output("Total Contributions");
 const sustainableIncome = output("Sustainable Annual Income");
 const incomeGap = output("Income Gap");
+const outputContainer = document.getElementById("output");
 outputContainer.append(nestEgg);
 outputContainer.append(totalContributions);
 outputContainer.append(sustainableIncome);
 outputContainer.append(incomeGap);
 
-let points = [];
-let value = 40000;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 12 });
+let currentAge = new Input(18, 90, inputsContainer, "Current age", 30, "", "yrs", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let retireAge = new Input(19, 95, inputsContainer, "Retirement age", 65, "", "yrs", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let currentSavings = new Input(0, 100000000, inputsContainer, "Current retirement savings", 40000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let monthlyContribution = new Input(0, 1000000, inputsContainer, "Monthly contribution", 500, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let annualReturn = new Input(0, 20, inputsContainer, "Expected annual return", 7, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let desiredIncome = new Input(0, 5000000, inputsContainer, "Desired annual retirement income", 60000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let withdrawalRate = new Input(1, 10, inputsContainer, "Safe withdrawal rate", 4, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
 
-function calculate(){
-    let currentage = Number(currentAge.value.replaceAll(",",""));
-    let retireage = Number(retireAge.value.replaceAll(",",""));
-    let currentsavings = Number(currentSavings.value.replaceAll(",",""));
-    let monthlycontribution = Number(monthlyContribution.value.replaceAll(",",""));
-    let annualreturn = Number(annualReturn.value.replaceAll(",",""));
-    let desiredincome = Number(desiredIncome.value.replaceAll(",",""));
-    let withdrawalrate = Number(withdrawalRate.value.replaceAll(",",""));
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Nest Egg Balance", "Total Contributions", "Investment Growth"],
+    xLabel: 'Years',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 12,
+    xlabeloffset: currentAge.getValue()
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+let actualpoints = function (monthlyRate, months, startingBalance, monthlyContrib) {
+    let points = [];
+    for (let i = 0; i < months + 1; i++) {
+        points.push([[], [], []]);
+    }
+    let balance = startingBalance;
+    let contributed = startingBalance;
+    points[0][0].push(balance);
+    points[0][1].push(contributed);
+    points[0][2].push(balance - contributed);
+    for (let i = 0; i < months; i++) {
+        points[i + 1][0].push(balance);
+        points[i + 1][1].push(contributed);
+        points[i + 1][2].push(balance - contributed);
+        balance *= (1 + monthlyRate);
+        balance += monthlyContrib;
+        contributed += monthlyContrib;
+        points[i + 1][0].push(balance);
+        points[i + 1][1].push(contributed);
+        points[i + 1][2].push(balance - contributed);
+    }
+    return points;
+};
+
+function drawGraph() {
+    let currentage = currentAge.getValue();
+    let retireage = retireAge.getValue();
+    let currentsavings = currentSavings.getValue();
+    let monthlycontribution = monthlyContribution.getValue();
+    let annualreturn = annualReturn.getValue();
+    let desiredincome = desiredIncome.getValue();
+    let withdrawalrate = withdrawalRate.getValue();
+    myGraph.setxlabeloffset(currentage);
 
     let yearstoretirement = retireage - currentage;
     let months = yearstoretirement * 12;
@@ -89,23 +128,14 @@ function calculate(){
     document.getElementById("sustainableannualincome").innerHTML = "$" + (Math.round(sustainableincome * 100) / 100).toLocaleString('en-US');
     document.getElementById("incomegap").innerHTML = (incomegap >= 0 ? "+$" : "-$") + (Math.round(Math.abs(incomegap) * 100) / 100).toLocaleString('en-US');
 
-    points = [];
-    value = currentsavings;
-    for (let i = 0; i < months; i++) {
-        points.push(value);
-        value *= (1 + monthlyreturnrate);
-        points.push(value);
-        value += monthlycontribution;
-    }
-    points.push(value);
-    myGraph.setPoints(points);
     myGraph.setStepSize(12);
+    let points = actualpoints(monthlyreturnrate, months, currentsavings, monthlycontribution);
+    myGraph.setPoints(points);
 }
-calculate();
+drawGraph();
 
-const article = document.createElement("section");
-article.className = "article-card";
-article.innerHTML = `
+const mainarticle = document.getElementById("mainarticle");
+mainarticle.innerHTML = `
   <p class="eyebrow">Retirement savings guide</p>
   <h2>How to estimate your retirement nest egg</h2>
   <p>A retirement nest egg is the total savings and investments you'll rely on for income once you stop working. Estimating it means projecting your current balance and future contributions forward using an assumed rate of investment return.</p>
@@ -116,4 +146,3 @@ article.innerHTML = `
   <h3>Closing a retirement savings gap</h3>
   <p>If your projected sustainable income falls short of your goal, the main levers are increasing monthly contributions, working and saving for additional years, or adjusting your target retirement income.</p>
 `;
-mainarticle.appendChild(article);

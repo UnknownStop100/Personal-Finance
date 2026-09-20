@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,7 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -31,21 +30,7 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
-
-const debtInputs = [1, 2, 3, 4].map((i) => {
-    const heading = document.createElement("p");
-    heading.className = "field-group-heading";
-    heading.textContent = `Debt ${i}`;
-    inputs.appendChild(heading);
-    return {
-        balance: numberInput(0, 1000000, inputs, "Balance", i === 1 ? 4000 : 0, "$", "", calculate),
-        rate: numberInput(0, 40, inputs, "Interest rate (APR)", i === 1 ? 22 : 0, "", "%", calculate),
-        minPayment: numberInput(0, 100000, inputs, "Minimum payment", i === 1 ? 100 : 0, "$", "", calculate),
-    };
-});
-
-const extraPayment = numberInput(0, 100000, inputs, "Extra monthly payment toward debt", 200, "$", "", calculate);
+const inputsContainer = document.getElementById("inputs");
 
 const totalDebt = output("Total Debt");
 const snowballPayoffTime = output("Snowball Payoff Time");
@@ -57,10 +42,44 @@ outputvalues.append(snowballPayoffTime);
 outputvalues.append(avalanchePayoffTime);
 outputvalues.append(interestSaved);
 
-let points = [];
-let value = 4000;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 12 });
+const debtInputs = [1, 2, 3, 4].map((i) => {
+    const heading = document.createElement("p");
+    heading.className = "field-group-heading";
+    heading.textContent = `Debt ${i}`;
+    inputsContainer.appendChild(heading);
+    let balance = new Input(0, 1000000, inputsContainer, "Balance", i === 1 ? 4000 : 0, "$", "", updateFields);
+    inputsContainer.appendChild(document.createElement("br"));
+    let rate = new Input(0, 40, inputsContainer, "Interest rate (APR)", i === 1 ? 22 : 0, "", "%", updateFields);
+    inputsContainer.appendChild(document.createElement("br"));
+    let minPayment = new Input(0, 100000, inputsContainer, "Minimum payment", i === 1 ? 100 : 0, "$", "", updateFields);
+    inputsContainer.appendChild(document.createElement("br"));
+    return { balance, rate, minPayment };
+});
+
+let extraPayment = new Input(0, 100000, inputsContainer, "Extra monthly payment toward debt", 200, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Snowball Balance", "Avalanche Balance"],
+    xLabel: 'Years',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 12,
+    xlabeloffset: 0
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles simulation
+///////////////////////////
 
 function simulate(debts, extra, strategy) {
     let working = debts.map((d) => ({ ...d }));
@@ -102,24 +121,25 @@ function simulate(debts, extra, strategy) {
     return { months: month, totalInterest, balancePoints };
 }
 
-function calculate() {
+function drawGraph() {
     let debts = debtInputs
         .map((d) => ({
-            balance: Number(d.balance.value.replaceAll(",","")),
-            rate: Number(d.rate.value.replaceAll(",","")),
-            minPayment: Number(d.minPayment.value.replaceAll(",","")),
+            balance: d.balance.getValue(),
+            rate: d.rate.getValue(),
+            minPayment: d.minPayment.getValue(),
         }))
         .filter((d) => d.balance > 0);
 
-    let extra = Number(extraPayment.value.replaceAll(",",""));
+    let extra = extraPayment.getValue();
 
     if (debts.length === 0) {
         document.getElementById("totaldebt").innerHTML = "$0";
         document.getElementById("snowballpayofftime").innerHTML = "—";
         document.getElementById("avalanchepayofftime").innerHTML = "—";
         document.getElementById("avalancheinterestsavings").innerHTML = "$0";
-        myGraph.setPoints([0]);
         myGraph.setStepSize(1);
+        myGraph.setxlabeloffset(0);
+        myGraph.setPoints([[[0], [0]]]);
         return;
     }
 
@@ -133,10 +153,19 @@ function calculate() {
     document.getElementById("avalanchepayofftime").innerHTML = Math.floor(avalanche.months / 12) + " yr " + (avalanche.months % 12) + " mo";
     document.getElementById("avalancheinterestsavings").innerHTML = (interestsavings >= 0 ? "$" : "-$") + (Math.round(Math.abs(interestsavings) * 100) / 100).toLocaleString('en-US');
 
-    myGraph.setPoints(avalanche.balancePoints);
+    let maxlength = Math.max(snowball.balancePoints.length, avalanche.balancePoints.length);
+    let points = [];
+    for (let i = 0; i < maxlength; i++) {
+        let snowballval = i < snowball.balancePoints.length ? snowball.balancePoints[i] : 0;
+        let avalancheval = i < avalanche.balancePoints.length ? avalanche.balancePoints[i] : 0;
+        points.push([[snowballval], [avalancheval]]);
+    }
+
     myGraph.setStepSize(1);
+    myGraph.setxlabeloffset(0);
+    myGraph.setPoints(points);
 }
-calculate();
+drawGraph();
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `

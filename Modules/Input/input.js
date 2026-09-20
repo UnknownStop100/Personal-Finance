@@ -100,13 +100,12 @@ export class Input {
             // Save cursor position
             const cursorPosition = this.input.selectionStart;
 
-            // Count how many digits are before the cursor in unformatted string
+            // Count how many value-characters (digits, decimal point, minus) are before the cursor
             const unformattedValue = this.input.value
                 .slice(0, cursorPosition)
                 .replace(/,/g, "")
                 .replace(/[^\d.-]/g, "");
 
-            // Count the number of digits before cursor
             const digitsBeforeCursor = unformattedValue.length;
 
             // Format the value
@@ -129,11 +128,11 @@ export class Input {
                 this.input.value = parts.length > 1 ? wholeNumber + "." + parts[1] : wholeNumber;
             }
 
-            // Now, find the position in the formatted string
+            // Now, find the position in the formatted string — count the SAME character class as above
             let count = 0;
             let newCursorPos = 0;
             for (let i = 0; i < this.input.value.length; i++) {
-                if (/\d/.test(this.input.value[i])) {
+                if (/[\d.-]/.test(this.input.value[i])) {
                     count++;
                 }
                 if (count >= digitsBeforeCursor) {
@@ -168,6 +167,30 @@ export class Input {
             // Call runfunction if value is within bounds
             if (value >= this.min && value <= this.max) {
                 this.runfunction();
+            }
+        });
+        this.input.addEventListener('keydown', (e) => {
+            if ((e.key === 'Delete' || e.key === 'Backspace') &&
+                this.input.selectionStart === this.input.selectionEnd) {
+
+                const pos = this.input.selectionStart;
+                const value = this.input.value;
+                let newPos = null;
+
+                if (e.key === 'Delete' && value[pos] === ',') {
+                    this.input.value = value.slice(0, pos) + value.slice(pos + 2);
+                    newPos = pos;
+                } else if (e.key === 'Backspace' && value[pos - 1] === ',') {
+                    this.input.value = value.slice(0, pos - 2) + value.slice(pos);
+                    newPos = pos - 2;
+                }
+
+                if (newPos !== null) {
+                    e.preventDefault();
+                    this.input.setSelectionRange(newPos, newPos);
+                    // Let the existing "input" listener handle clamping, formatting, and runfunction
+                    this.input.dispatchEvent(new Event("input", { bubbles: true }));
+                }
             }
         });
     }

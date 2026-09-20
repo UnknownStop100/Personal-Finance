@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,7 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -31,20 +30,7 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
-
-const monthlyRent = numberInput(0, 200000, inputs, "Monthly rent", 2200, "$", "", calculate);
-const rentIncrease = numberInput(0, 20, inputs, "Annual rent increase", 3, "", "%", calculate);
-const homePrice = numberInput(0, 20000000, inputs, "Home price", 450000, "$", "", calculate);
-const downPaymentPct = numberInput(0, 100, inputs, "Down payment", 20, "", "%", calculate);
-const mortgageRate = numberInput(0, 25, inputs, "Mortgage rate", 6.5, "", "%", calculate);
-const loanTerm = numberInput(1, 40, inputs, "Loan term", 30, "", "yrs", calculate);
-const propertyTaxRate = numberInput(0, 10, inputs, "Property tax rate", 1.1, "", "%", calculate);
-const maintenanceRate = numberInput(0, 10, inputs, "Annual maintenance", 1, "", "%", calculate);
-const appreciationRate = numberInput(0, 15, inputs, "Annual home appreciation", 3, "", "%", calculate);
-const closingCostPct = numberInput(0, 15, inputs, "Closing costs", 3, "", "%", calculate);
-const sellingCostPct = numberInput(0, 15, inputs, "Selling costs", 6, "", "%", calculate);
-const yearsToCompare = numberInput(1, 40, inputs, "Years to compare", 10, "", "yrs", calculate);
+const inputsContainer = document.getElementById("inputs");
 
 const netCostRenting = output("Net Cost of Renting");
 const netCostBuying = output("Net Cost of Buying");
@@ -56,82 +42,121 @@ outputvalues.append(netCostBuying);
 outputvalues.append(cashNeededToBuy);
 outputvalues.append(cheaperOption);
 
-let points = [];
-let value = 450000;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 1 });
+let monthlyRent = new Input(0, 200000, inputsContainer, "Monthly rent", 2200, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let rentIncrease = new Input(0, 20, inputsContainer, "Annual rent increase", 3, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let homePrice = new Input(0, 20000000, inputsContainer, "Home price", 450000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let downPaymentPct = new Input(0, 100, inputsContainer, "Down payment", 20, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let mortgageRate = new Input(0, 25, inputsContainer, "Mortgage rate", 6.5, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let loanTerm = new Input(1, 40, inputsContainer, "Loan term", 30, "", "yrs", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let propertyTaxRate = new Input(0, 10, inputsContainer, "Property tax rate", 1.1, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let maintenanceRate = new Input(0, 10, inputsContainer, "Annual maintenance", 1, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let appreciationRate = new Input(0, 15, inputsContainer, "Annual home appreciation", 3, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let closingCostPct = new Input(0, 15, inputsContainer, "Closing costs", 3, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let sellingCostPct = new Input(0, 15, inputsContainer, "Selling costs", 6, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let yearsToCompare = new Input(1, 40, inputsContainer, "Years to compare", 10, "", "yrs", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
 
-function calculate() {
-    let price = Number(homePrice.value.replaceAll(",",""));
-    let downpct = Number(downPaymentPct.value.replaceAll(",","")) / 100;
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Net Cost of Buying", "Net Cost of Renting"],
+    xLabel: 'Years',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 1,
+    xlabeloffset: 1
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+function drawGraph() {// Calculate initial home price and loan details
+    let price = homePrice.getValue();
+    let downpct = downPaymentPct.getValue() / 100;
     let down = price * downpct;
     let loanamount = price - down;
-    let monthlyratem = Number(mortgageRate.value.replaceAll(",","")) / 100 / 12;
-    let n = Number(loanTerm.value.replaceAll(",","")) * 12;
+    let monthlyratem = mortgageRate.getValue() / 100 / 12;
+    let n = loanTerm.getValue() * 12;
 
-    let payment;
-    if (monthlyratem === 0) {
-        payment = n > 0 ? loanamount / n : 0;
-    } else {
-        payment =
-            (loanamount * monthlyratem * (1 + monthlyratem) ** n) /
-            ((1 + monthlyratem) ** n - 1);
-    }
-    if (!isFinite(payment)) payment = 0;
+    // Calculate monthly mortgage payment
+    let loanprice = loanamount * monthlyratem * Math.pow(1 + monthlyratem, n) /
+        (Math.pow(1 + monthlyratem, n) - 1);
 
-    let years = Number(yearsToCompare.value.replaceAll(",",""));
-    let closingcosts = price * (Number(closingCostPct.value.replaceAll(",","")) / 100);
-    let rentincrease = Number(rentIncrease.value.replaceAll(",",""));
-    let propertytaxrate = Number(propertyTaxRate.value.replaceAll(",",""));
-    let maintenancerate = Number(maintenanceRate.value.replaceAll(",",""));
-    let appreciationrate = Number(appreciationRate.value.replaceAll(",",""));
-    let sellingcostpct = Number(sellingCostPct.value.replaceAll(",",""));
+    let years = yearsToCompare.getValue();
+    let closingcosts = price * (closingCostPct.getValue() / 100);
+    let rentincrease = rentIncrease.getValue();
+    let propertytaxrate = propertyTaxRate.getValue();
+    let maintenancerate = maintenanceRate.getValue();
+    let appreciationrate = appreciationRate.getValue();
+    let sellingcostpct = sellingCostPct.getValue();
 
-    let rent = Number(monthlyRent.value.replaceAll(",",""));
-    let balance = loanamount;
+    let rent = monthlyRent.getValue();
     let homevalue = price;
-    let totalrentcost = 0;
-    let totalbuycashoutlay = closingcosts + down;
 
-    points = [];
-    points.push(down + closingcosts);
+    // Initialize accumulators
+    let rentcost = 0;
+    let buycost = homevalue * downpct + closingcosts;
 
-    let finalrentcost = 0;
-    let finalbuycost = 0;
+    let points = [];
 
-    for (let year = 1; year <= years; year++) {
-        for (let m = 0; m < 12; m++) {
-            totalrentcost += rent;
-            let interestportion = balance * monthlyratem;
-            let principalportion = Math.min(payment - interestportion, balance);
-            balance -= principalportion;
-            totalbuycashoutlay += payment;
-        }
-        totalbuycashoutlay +=
-            homevalue * (propertytaxrate / 100) +
-            homevalue * (maintenancerate / 100);
-        homevalue *= 1 + appreciationrate / 100;
+    for (let year = 0; year < years - 1; year++) {
+        // Selling cost if you sold at this point in time, based on current home value
+        let sellingcosts = homevalue * (sellingcostpct / 100);
+
+        // Store current costs for plotting
+        points.push([[buycost + sellingcosts], [rentcost]]);
+
+        // Monthly rent cost
+        rentcost += rent * 12;
+
+        // Rent increase for next year
         rent *= 1 + rentincrease / 100;
 
-        let sellingcosts = homevalue * (sellingcostpct / 100);
-        let netbuycost = totalbuycashoutlay + sellingcosts - (homevalue - balance);
+        // Property tax
+        buycost += homevalue * (propertytaxrate / 100);
 
-        finalrentcost = totalrentcost;
-        finalbuycost = Math.max(netbuycost, 0);
-        points.push(finalbuycost);
+        // Maintenance
+        buycost += homevalue * (maintenancerate / 100);
+
+        // Mortgage payment
+        if(year < loanTerm.getValue()) {
+            buycost += loanprice * 12;
+        }
+
+        // Increase home value
+        homevalue *= 1 + appreciationrate / 100;
     }
+    let buyingwins = buycost < rentcost;
 
-    let buyingwins = finalbuycost < finalrentcost;
-
-    document.getElementById("netcostofrenting").innerHTML = "$" + (Math.round(finalrentcost * 100) / 100).toLocaleString('en-US');
-    document.getElementById("netcostofbuying").innerHTML = "$" + (Math.round(finalbuycost * 100) / 100).toLocaleString('en-US');
+    document.getElementById("netcostofrenting").innerHTML = "$" + (Math.round(rentcost * 100) / 100).toLocaleString('en-US');
+    document.getElementById("netcostofbuying").innerHTML = "$" + (Math.round(buycost * 100) / 100).toLocaleString('en-US');
     document.getElementById("cashneededtobuy").innerHTML = "$" + (Math.round((down + closingcosts) * 100) / 100).toLocaleString('en-US');
     document.getElementById("cheaperoption").innerHTML = buyingwins ? "Buying" : "Renting";
 
-    myGraph.setPoints(points);
     myGraph.setStepSize(1);
+    myGraph.setxlabeloffset(1);
+    myGraph.setPoints(points);
 }
-calculate();
+drawGraph();
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `

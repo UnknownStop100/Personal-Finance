@@ -20,6 +20,7 @@ export class SuperGraph {
   constructor(options) {
     // Options: containerId, dataPoints array, labels, etc.
     this.options = options || {};
+    this.drawlinex = 0;
     this.divId = this.options.divId || 'my-graph-container';
 
     // Create the container div dynamically
@@ -61,7 +62,7 @@ export class SuperGraph {
     }
     return html;
   }
-//These still need to be initialized
+  //These still need to be initialized
   _initElements() {
     this.container = document.getElementById(this.divId);
     this.canvas = this.container.querySelector('canvas');
@@ -81,7 +82,7 @@ export class SuperGraph {
     // Initialize bounds
     this._calculateBounds();
   }
-//These events should still be fine
+  //These events should still be fine
   _bindEvents() {
     const self = this;
     window.addEventListener('resize', () => {
@@ -122,29 +123,29 @@ export class SuperGraph {
     const containerWidth = (document.getElementById('canvas-div')?.clientWidth - 100) * 0.9;
     const size = containerWidth;
     // Get the device pixel ratio
-   /* const dpr = window.devicePixelRatio || 1;
-
-    // Update canvas bitmap size (multiplied by DPR)
-    this.canvas.width = size * dpr;
-    this.canvas.height = size * dpr;
-
-    // Update canvas style size (CSS pixels)
-    this.canvas.style.width = `${size}px`;
-    this.canvas.style.height = `${size}px`;
-    
-    this.ctx = this.canvas.getContext('2d');
-    // Reset and apply the DPR scale
-    // (Crucial: setting width/height resets the canvas state, so scale must happen now)
-    this.ctx.scale(dpr, dpr);
-
-// 👇 FORCE THE CONTEXT TO TURN OFF BLURRY FILTERING
-this.ctx.imageSmoothingEnabled = false;
-this.ctx.webkitImageSmoothingEnabled = false;
-this.ctx.mozImageSmoothingEnabled = false;
-
-// 👇 FORCE THE BROWSER CSS ENGINE TO RENDER PIXEL-PERFECT
-this.canvas.style.imageRendering = 'pixelated'; 
-this.canvas.style.imageRendering = 'crisp-edges';*/
+    /* const dpr = window.devicePixelRatio || 1;
+ 
+     // Update canvas bitmap size (multiplied by DPR)
+     this.canvas.width = size * dpr;
+     this.canvas.height = size * dpr;
+ 
+     // Update canvas style size (CSS pixels)
+     this.canvas.style.width = `${size}px`;
+     this.canvas.style.height = `${size}px`;
+     
+     this.ctx = this.canvas.getContext('2d');
+     // Reset and apply the DPR scale
+     // (Crucial: setting width/height resets the canvas state, so scale must happen now)
+     this.ctx.scale(dpr, dpr);
+ 
+ // 👇 FORCE THE CONTEXT TO TURN OFF BLURRY FILTERING
+ this.ctx.imageSmoothingEnabled = false;
+ this.ctx.webkitImageSmoothingEnabled = false;
+ this.ctx.mozImageSmoothingEnabled = false;
+ 
+ // 👇 FORCE THE BROWSER CSS ENGINE TO RENDER PIXEL-PERFECT
+ this.canvas.style.imageRendering = 'pixelated'; 
+ this.canvas.style.imageRendering = 'crisp-edges';*/
     this.canvas.width = size;
     this.canvas.height = size;
 
@@ -162,7 +163,7 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
     this.xlabelDiv.style.top = `${50 + size + 20}px`;
     document.getElementById('xlabel').style.width = `${(document.getElementById('canvas-div')?.clientWidth - 100) * 0.9 + 100}px`;
   }
-//These should still be good
+  //These should still be good
   _handleMouseMove(e) {
     this.drawlinex = e.offsetX;
     if (this.drawlinex < 1) this.drawlinex = 1;
@@ -188,51 +189,55 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
     this._updateLabels();
     this.draw();
   }
-
+  setxlabeloffset(offset) {
+    this.options.xlabeloffset = offset;
+    this._updateLabels();
+    this.draw();
+  }
   setStepSize(stepsize) {
     this.options.stepsize = stepsize;
     this._calculateBounds();
     this._updateLabels();
     this.draw();
   }
-//updated to calculate based on a 3 levels of arrays  
+  //updated to calculate based on a 3 levels of arrays  
   _calculateBounds() {
     this.maxY = 0;
     this.minY = 0;
-    for(let i=0;i<this.points.length;i++){
-        for (let j=0;j<this.points[i].length;j++){
-            //if (!isFinite(this.points[i][j])) this.points[i][j] = 0;
-            for(let k=0;k<this.points[i][j].length;k++){
-                if(this.points[i][j][k]>this.maxY) this.maxY=this.points[i][j][k];
-                if(this.points[i][j][k]<this.minY) this.minY=this.points[i][j][k];
-            }
+    for (let i = 0; i < this.points.length; i++) {
+      for (let j = 0; j < this.points[i].length; j++) {
+        //if (!isFinite(this.points[i][j])) this.points[i][j] = 0;
+        for (let k = 0; k < this.points[i][j].length; k++) {
+          if (this.points[i][j][k] > this.maxY) this.maxY = this.points[i][j][k];
+          if (this.points[i][j][k] < this.minY) this.minY = this.points[i][j][k];
         }
+      }
     }
   }
-//Should work fine if it gives errors come back
+  //Should work fine if it gives errors come back
   _updateLabels() {
     // For simplicity, fill labels with placeholder or based on data
     const count = this.xpointsDiv.children.length;
     for (let i = 0; i < count; i++) {
-      this.xpointsDiv.children[i].innerHTML = Math.floor(i * this.points.length/this.options.stepsize/4)+this.options.xlabeloffset; // example
+      this.xpointsDiv.children[i].innerHTML = Math.floor(i * this.points.length / this.options.stepsize / 4) + this.options.xlabeloffset; // example
       this.ypointsDiv.children[i].innerHTML = `$${Math.round((this.maxY - this.minY) * i / count + this.minY)}`;
     }
     for (let i = 0; i < this.ypointsDiv.children.length; i++) {
-        let num = Math.abs(Math.round((this.maxY - this.minY) / 4 * i) + this.minY);
-        let point = 0;
-        while (num > 1000) {
-            num /= 1000;
-            point++;
-        }
-        if (point < characters.length) {
-            this.ypointsDiv.children[4-i].innerHTML = "";
-            if (((this.maxY - this.minY) / 4 * i + this.minY) < 0)
-                this.ypointsDiv.children[4-i].innerHTML += "-";
-            this.ypointsDiv.children[4-i].innerHTML += `$${Math.round(num * 10) / 10}${characters[point]}`;
-        }
-        else {
-            this.ypointsDiv.children[4-i].innerHTML = "NaN";
-        }
+      let num = Math.abs(Math.round((this.maxY - this.minY) / 4 * i) + this.minY);
+      let point = 0;
+      while (num > 1000) {
+        num /= 1000;
+        point++;
+      }
+      if (point < characters.length) {
+        this.ypointsDiv.children[4 - i].innerHTML = "";
+        if (((this.maxY - this.minY) / 4 * i + this.minY) < 0)
+          this.ypointsDiv.children[4 - i].innerHTML += "-";
+        this.ypointsDiv.children[4 - i].innerHTML += `$${Math.round(num * 10) / 10}${characters[point]}`;
+      }
+      else {
+        this.ypointsDiv.children[4 - i].innerHTML = "NaN";
+      }
     }
   }
   //nothing changed here
@@ -241,12 +246,12 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
 
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this._drawGraph();
-    if (this.drawline){
-        this.infobox.style.display = "revert";
-        this._drawCursor();
+    if (this.drawline) {
+      this.infobox.style.display = "revert";
+      this._drawCursor();
     }
-    else{
-        this.infobox.style.display = "none";
+    else {
+      this.infobox.style.display = "none";
     }
   }
   //Works with multiple graphs
@@ -258,27 +263,27 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
     const max = this.maxY;
     const min = this.minY;
     const ratio = canvas.height / (max - min);
-    const pixelsPerPoint =canvas.width / (this.points.length-1);
-    let points=[...this.points];
-    let linecolor=["black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black"];
-    let infillcolor = ["rgba(0, 123, 255, 0.3)","rgba(255, 0, 0, 0.3)","rgba(0, 255, 0, 0.3)","rgba(255, 255, 0, 0.3)","rgba(255, 0, 255, 0.3)","rgba(0, 255, 255, 0.3)","rgba(128, 0, 128, 0.3)","rgba(128, 128, 0, 0.3)","rgba(128, 128, 128, 0.3)","rgba(255, 165, 0, 0.3)","rgba(255, 192, 203, 0.3)","rgba(173, 216, 230, 0.3)","rgba(144,238,144 ,0.3)","rgba(255 ,228 ,181 ,0.3)","rgba(221 ,160 ,221 ,0.3)","rgba(240 ,230 ,140 ,0.3)","rgba(135 ,206 ,250 ,0.3)","rgba(152 ,251 ,152 ,0.3)","rgba(255 ,105 ,180 ,0.3)","rgba(255 ,20 ,147 ,0.3)","rgba(75 ,0 ,130 ,0.3)","rgba(123 ,104 ,238 ,0.3)","rgba(72 ,61 ,139 ,0.3)"];
+    const pixelsPerPoint = canvas.width / (this.points.length - 1);
+    let points = [...this.points];
+    let linecolor = ["black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black"];
+    let infillcolor = ["rgba(0, 123, 255, 0.3)", "rgba(255, 0, 0, 0.3)", "rgba(0, 255, 0, 0.3)", "rgba(255, 255, 0, 0.3)", "rgba(255, 0, 255, 0.3)", "rgba(0, 255, 255, 0.3)", "rgba(128, 0, 128, 0.3)", "rgba(128, 128, 0, 0.3)", "rgba(128, 128, 128, 0.3)", "rgba(255, 165, 0, 0.3)", "rgba(255, 192, 203, 0.3)", "rgba(173, 216, 230, 0.3)", "rgba(144,238,144 ,0.3)", "rgba(255 ,228 ,181 ,0.3)", "rgba(221 ,160 ,221 ,0.3)", "rgba(240 ,230 ,140 ,0.3)", "rgba(135 ,206 ,250 ,0.3)", "rgba(152 ,251 ,152 ,0.3)", "rgba(255 ,105 ,180 ,0.3)", "rgba(255 ,20 ,147 ,0.3)", "rgba(75 ,0 ,130 ,0.3)", "rgba(123 ,104 ,238 ,0.3)", "rgba(72 ,61 ,139 ,0.3)"];
 
 
 
     for (let i = 0; i < points.length; i++) {
-      for(let j=0;j<points[i].length;j++){
-        for(let k=0;k<points[i][j].length;k++){
+      for (let j = 0; j < points[i].length; j++) {
+        for (let k = 0; k < points[i][j].length; k++) {
           points[i][j][k] *= ratio;
           points[i][j][k] -= min * ratio;
         }
       }
-    } 
+    }
     ctx.setLineDash([5, 0]);
-    for(let j=0;j<points[0].length;j++){
+    for (let j = 0; j < points[0].length; j++) {
       ctx.beginPath();
       ctx.moveTo(0, canvas.height);
       for (let i = 0; i < points.length; i++) {
-        for(let k=0;k<points[i][j].length;k++){
+        for (let k = 0; k < points[i][j].length; k++) {
           ctx.lineTo(i * pixelsPerPoint, canvas.height - points[i][j][k]);
         }
       }
@@ -290,73 +295,73 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
       ctx.fill();
     }
 
-    
+
     for (let i = 0; i < points.length; i++) {
-      for(let j=0;j<points[i].length;j++){
-        for(let k=0;k<points[i][j].length;k++){
+      for (let j = 0; j < points[i].length; j++) {
+        for (let k = 0; k < points[i][j].length; k++) {
           points[i][j][k] /= ratio;
           points[i][j][k] += min;
         }
       }
-    } 
+    }
   }
   _drawCursor() {
     const ctx = this.ctx;
     const canvas = this.canvas;
     const ratio = canvas.height / (this.maxY - this.minY);
-    const pixelsPerPoint =canvas.width / (this.points.length-1);
+    const pixelsPerPoint = canvas.width / (this.points.length - 1);
     let mouseX = this.drawlinex;
     let trueindex = mouseX / pixelsPerPoint;
     let index = Math.round(trueindex);
-    if (index >= this.points.length) 
-        index = this.points.length - 1;
-    if(index<0)
-        index=0;
+    if (index >= this.points.length)
+      index = this.points.length - 1;
+    if (index < 0)
+      index = 0;
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.16)';
     ctx.beginPath();
     ctx.moveTo(pixelsPerPoint * index, 0);
     ctx.lineTo(pixelsPerPoint * index, canvas.height);
     ctx.stroke();
-    for(let i=0;i<this.points[index].length;i++){
-    ctx.beginPath();
-    if(trueindex<index){
-        ctx.arc(pixelsPerPoint * index, canvas.height - (this.points[index][i][0]-this.minY) * ratio, 5, 0, 2 * Math.PI);
-    }
-    else{
-        ctx.arc(pixelsPerPoint * (index), canvas.height - (this.points[index][i][this.points[index][i].length-1]-this.minY) * ratio, 5, 0, 2 * Math.PI);
-    }
-    //ctx.fillStyle = "rgba(0, 123, 255, 0.2)";
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-    ctx.fill();
+    for (let i = 0; i < this.points[index].length; i++) {
+      ctx.beginPath();
+      if (trueindex < index) {
+        ctx.arc(pixelsPerPoint * index, canvas.height - (this.points[index][i][0] - this.minY) * ratio, 5, 0, 2 * Math.PI);
+      }
+      else {
+        ctx.arc(pixelsPerPoint * (index), canvas.height - (this.points[index][i][this.points[index][i].length - 1] - this.minY) * ratio, 5, 0, 2 * Math.PI);
+      }
+      //ctx.fillStyle = "rgba(0, 123, 255, 0.2)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fill();
     }
     this._updateInfoBox(trueindex);
   }
   _updateInfoBox(theindex) {
-    let infillcolor = ["rgba(0, 123, 255, 0.3)","rgba(255, 0, 0, 0.3)","rgba(0, 255, 0, 0.3)","rgba(255, 255, 0, 0.3)","rgba(255, 0, 255, 0.3)","rgba(0, 255, 255, 0.3)","rgba(128, 0, 128, 0.3)","rgba(128, 128, 0, 0.3)","rgba(128, 128, 128, 0.3)","rgba(255, 165, 0, 0.3)","rgba(255, 192, 203, 0.3)","rgba(173, 216, 230, 0.3)","rgba(144,238,144 ,0.3)","rgba(255 ,228 ,181 ,0.3)","rgba(221 ,160 ,221 ,0.3)","rgba(240 ,230 ,140 ,0.3)","rgba(135 ,206 ,250 ,0.3)","rgba(152 ,251 ,152 ,0.3)","rgba(255 ,105 ,180 ,0.3)","rgba(255 ,20 ,147 ,0.3)","rgba(75 ,0 ,130 ,0.3)","rgba(123 ,104 ,238 ,0.3)","rgba(72 ,61 ,139 ,0.3)"];
+    let infillcolor = ["rgba(0, 123, 255, 0.3)", "rgba(255, 0, 0, 0.3)", "rgba(0, 255, 0, 0.3)", "rgba(255, 255, 0, 0.3)", "rgba(255, 0, 255, 0.3)", "rgba(0, 255, 255, 0.3)", "rgba(128, 0, 128, 0.3)", "rgba(128, 128, 0, 0.3)", "rgba(128, 128, 128, 0.3)", "rgba(255, 165, 0, 0.3)", "rgba(255, 192, 203, 0.3)", "rgba(173, 216, 230, 0.3)", "rgba(144,238,144 ,0.3)", "rgba(255 ,228 ,181 ,0.3)", "rgba(221 ,160 ,221 ,0.3)", "rgba(240 ,230 ,140 ,0.3)", "rgba(135 ,206 ,250 ,0.3)", "rgba(152 ,251 ,152 ,0.3)", "rgba(255 ,105 ,180 ,0.3)", "rgba(255 ,20 ,147 ,0.3)", "rgba(75 ,0 ,130 ,0.3)", "rgba(123 ,104 ,238 ,0.3)", "rgba(72 ,61 ,139 ,0.3)"];
 
     const info = this.infobox;
     const canvas = this.canvas;
     let index = Math.round(theindex);
     if (index >= this.points.length)
-        index = this.points.length - 1;
+      index = this.points.length - 1;
     const ratio = canvas.height / (this.maxY - this.minY);
-    const pixelsPerPoint =canvas.width / (this.points.length-1);
-    let maxtitlelength=0;
-    for(let i=0;i<this.points[index].length;i++){
-      if(this.options.graphtitles[i].length>maxtitlelength)
-        maxtitlelength=this.options.graphtitles[i].length;
+    const pixelsPerPoint = canvas.width / (this.points.length - 1);
+    let maxtitlelength = 0;
+    for (let i = 0; i < this.points[index].length; i++) {
+      if (this.options.graphtitles[i].length > maxtitlelength)
+        maxtitlelength = this.options.graphtitles[i].length;
     }
-    let inputvalue="<inline>";
-    for(let i=0;i<this.points[index].length;i++){
+    let inputvalue = "<inline>";
+    for (let i = 0; i < this.points[index].length; i++) {
       let value = Math.abs(this.points[index][i][0]);
-      if(theindex>=index){
-        value = Math.abs(this.points[index][i][this.points[index][i].length-1]);
+      if (theindex >= index) {
+        value = Math.abs(this.points[index][i][this.points[index][i].length - 1]);
       }
-      let pointratio=0;    
+      let pointratio = 0;
       while (value > 1000) {
-              value /= 1000;
-              pointratio++;
-          }
+        value /= 1000;
+        pointratio++;
+      }
       inputvalue += `<span style="background-color:${infillcolor[i]}">${this.options.graphtitles[i]}:`;
       /*if(maxtitlelength>this.options.graphtitles[i].length){
         for(let j=0;j<maxtitlelength-this.options.graphtitles[i].length;j++){
@@ -364,54 +369,64 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
         }
       }*/
       inputvalue += "</span>";
-      if (this.points[index][i][0] < 0)
-          inputvalue += "-";
+      if (this.points[index][i][0] < 0 && theindex < index) {
+        inputvalue += "-";
+      }
+      else if (this.points[index][i][this.points[index][i].length - 1] < 0 && theindex >= index) {
+        inputvalue += "-";
+      }
       inputvalue += "$" + Math.round(value * 100) / 100 + characters[pointratio];
-    inputvalue += "<br>";
+      inputvalue += "<br>";
     }
     inputvalue += "Y";
-    switch(this.options.stepsize){
-        case 12:
-            inputvalue += Math.floor(index / 12)
-            break;
-        case 4:
-            inputvalue += Math.floor(index / 4)
-            break;
-        case 1:
-            inputvalue += Math.floor(index / 1)
-            break;
-        default:
-            break;
+    switch (this.options.stepsize) {
+      case 12:
+        inputvalue += Math.floor(index / 12)
+        break;
+      case 4:
+        inputvalue += Math.floor(index / 4)
+        break;
+      case 1:
+        inputvalue += Math.floor(index / 1) + 1
+        break;
+      default:
+        break;
     }
-    if (theindex < index) {
+    if (this.options.stepsize > 1) {
+      if (theindex < index) {
         inputvalue += " End";
-    }
-    else {
+      }
+      let displayindex = index;
+      if (theindex < index) {
+        displayindex = index - 1;
+      }
+      else {
         inputvalue += " Start";
-    }
-    if (this.options.stepsize === 12) {
+      }
+      if (this.options.stepsize === 12) {
         inputvalue += " M";
-        inputvalue += Math.floor((index % 12)) + 1;
-    }
-    else if (this.options.stepsize === 4) {
+        inputvalue += Math.floor((displayindex % 12)) + 1;
+      }
+      else if (this.options.stepsize === 4) {
         inputvalue += " Q";
-        inputvalue += Math.floor((index % 4)) + 1;
+        inputvalue += Math.floor((displayindex % 4)) + 1;
 
+      }
     }
     info.innerHTML = inputvalue;
     // position info box
     const infoboxWidth = info.offsetWidth;
     let infoboxHeight = document.getElementById("infobox").offsetHeight;
     if (this.drawlinex <= canvas.width / 2) {
-        info.style.left = `${pixelsPerPoint*index + 50 + (canvas.width / 9)}px`;
+      info.style.left = `${pixelsPerPoint * index + 50 + (canvas.width / 9)}px`;
     } else {
-        info.style.left = `${pixelsPerPoint*index + 50 + (canvas.width / 9) - infoboxWidth}px`;
+      info.style.left = `${pixelsPerPoint * index + 50 + (canvas.width / 9) - infoboxWidth}px`;
     }
-    if(theindex<index){
-        info.style.top = `${canvas.height - (this.points[index][0][0]-this.minY)*ratio + 51 - infoboxHeight}px`;
+    if (theindex < index) {
+      info.style.top = `${canvas.height - (this.points[index][0][0] - this.minY) * ratio + 51 - infoboxHeight}px`;
     }
-    else{
-        info.style.top = `${canvas.height - (this.points[index][0][this.points[index][0].length-1]-this.minY)*ratio + 51 - infoboxHeight}px`;
+    else {
+      info.style.top = `${canvas.height - (this.points[index][0][this.points[index][0].length - 1] - this.minY) * ratio + 51 - infoboxHeight}px`;
     }
     info.style.display = 'block';
   }

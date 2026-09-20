@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,7 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -31,14 +30,7 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
-
-const monthlyIncome = numberInput(0, 1000000, inputs, "Monthly take-home pay", 5000, "$", "", calculate);
-const targetPct = numberInput(1, 50, inputs, "Target % of income for car payment", 15, "", "%", calculate);
-const downPayment = numberInput(0, 1000000, inputs, "Down payment", 3000, "$", "", calculate);
-const tradeIn = numberInput(0, 1000000, inputs, "Trade-in value", 0, "$", "", calculate);
-const loanTermMonths = numberInput(12, 96, inputs, "Loan term", 60, "", "mo", calculate);
-const interestRate = numberInput(0, 25, inputs, "Interest rate (APR)", 7, "", "%", calculate);
+const inputsContainer = document.getElementById("inputs");
 
 const maxCarPriceOut = output("Max Affordable Car Price");
 const maxMonthlyPayment = output("Max Monthly Payment");
@@ -50,19 +42,49 @@ outputvalues.append(maxMonthlyPayment);
 outputvalues.append(maxLoanAmount);
 outputvalues.append(downPlusTradeIn);
 
-let points = [];
-let value = 0;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Months', parent: document.getElementById("main-calculator"), stepsize: 1 });
+let monthlyIncome = new Input(0, 1000000, inputsContainer, "Monthly take-home pay", 5000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let targetPct = new Input(1, 50, inputsContainer, "Target % of income for car payment", 15, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let downPayment = new Input(0, 1000000, inputsContainer, "Down payment", 3000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let tradeIn = new Input(0, 1000000, inputsContainer, "Trade-in value", 0, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let loanTermMonths = new Input(12, 96, inputsContainer, "Loan term", 60, "", "mo", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let interestRate = new Input(0, 25, inputsContainer, "Interest rate (APR)", 7, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
 
-function calculate() {
-    let income = Number(monthlyIncome.value.replaceAll(",",""));
-    let targetpct = Number(targetPct.value.replaceAll(",",""));
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Remaining Balance", "Principal Paid", "Interest Paid"],
+    xLabel: 'Months',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 1,
+    xlabeloffset: 0
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+function drawGraph() {
+    let income = monthlyIncome.getValue();
+    let targetpct = targetPct.getValue();
     let maxpayment = income * (targetpct / 100);
-    let down = Number(downPayment.value.replaceAll(",",""));
-    let trade = Number(tradeIn.value.replaceAll(",",""));
-    let n = Number(loanTermMonths.value.replaceAll(",",""));
-    let interestrate = Number(interestRate.value.replaceAll(",",""));
+    let down = downPayment.getValue();
+    let trade = tradeIn.getValue();
+    let n = loanTermMonths.getValue();
+    let interestrate = interestRate.getValue();
     let monthlyrate = interestrate / 100 / 12;
 
     let maxloan;
@@ -80,18 +102,26 @@ function calculate() {
     document.getElementById("maxloanamount").innerHTML = "$" + (Math.round(maxloan * 100) / 100).toLocaleString('en-US');
     document.getElementById("downpaymentplustradein").innerHTML = "$" + (Math.round((down + trade) * 100) / 100).toLocaleString('en-US');
 
-    points = [];
+    let points = [];
     let balance = maxloan;
+    let cumulativeprincipal = 0;
+    let cumulativeinterest = 0;
     for (let m = 0; m <= n; m++) {
-        points.push(Math.max(balance, 0));
-        let interestportion = balance * monthlyrate;
-        let principalportion = Math.min(maxpayment - interestportion, balance);
-        balance -= principalportion;
+        points.push([[Math.max(balance, 0)], [cumulativeprincipal], [cumulativeinterest]]);
+        if (balance > 0) {
+            let interestportion = balance * monthlyrate;
+            let principalportion = Math.min(maxpayment - interestportion, balance);
+            balance -= principalportion;
+            cumulativeprincipal += principalportion;
+            cumulativeinterest += interestportion;
+        }
     }
-    myGraph.setPoints(points);
+
     myGraph.setStepSize(1);
+    myGraph.setxlabeloffset(0);
+    myGraph.setPoints(points);
 }
-calculate();
+drawGraph();
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `

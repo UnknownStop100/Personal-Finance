@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,7 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -31,12 +30,7 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
-
-const loanAmount = numberInput(0, 20000000, inputs, "Loan amount", 300000, "$", "", calculate);
-const interestRate = numberInput(0, 25, inputs, "Interest rate", 6.5, "", "%", calculate);
-const loanTerm = numberInput(1, 40, inputs, "Loan term", 30, "", "yrs", calculate);
-const extraPayment = numberInput(0, 100000, inputs, "Extra monthly payment", 0, "$", "", calculate);
+const inputsContainer = document.getElementById("inputs");
 
 const monthlyPayment = output("Monthly Payment");
 const payoffTime = output("Payoff Time");
@@ -48,16 +42,42 @@ outputvalues.append(payoffTime);
 outputvalues.append(totalInterestPaid);
 outputvalues.append(totalPaid);
 
-let points = [];
-let value = 300000;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 12 });
+let loanAmount = new Input(0, 20000000, inputsContainer, "Loan amount", 300000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let interestRate = new Input(0, 25, inputsContainer, "Interest rate", 6.5, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let loanTerm = new Input(1, 40, inputsContainer, "Loan term", 30, "", "yrs", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let extraPayment = new Input(0, 100000, inputsContainer, "Extra monthly payment", 0, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
 
-function calculate() {
-    let loanamount = Number(loanAmount.value.replaceAll(",",""));
-    let interestrate = Number(interestRate.value.replaceAll(",",""));
-    let loanterm = Number(loanTerm.value.replaceAll(",",""));
-    let extrapayment = Number(extraPayment.value.replaceAll(",",""));
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Remaining Balance", "Total Paid", "Principal Paid", "Interest Paid"],
+    xLabel: 'Years',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 12,
+    xlabeloffset: 0
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+function drawGraph() {
+    let loanamount = loanAmount.getValue();
+    let interestrate = interestRate.getValue();
+    let loanterm = loanTerm.getValue();
+    let extrapayment = extraPayment.getValue();
 
     let principal = loanamount;
     let monthlyrate = interestrate / 100 / 12;
@@ -74,11 +94,12 @@ function calculate() {
     if (!isFinite(basepayment)) basepayment = 0;
 
     let balance = principal;
-    let totalinterest = 0;
+    let cumulativeinterest = 0;
+    let cumulativeprincipal = 0;
     let month = 0;
 
-    points = [];
-    points.push(balance);
+    let points = [];
+    points.push([[balance], [cumulativeprincipal + cumulativeinterest], [cumulativeprincipal], [cumulativeinterest]]);
 
     while (balance > 0.005 && month < 1200) {
         month++;
@@ -86,10 +107,12 @@ function calculate() {
         let principalportion = basepayment - interestportion + extrapayment;
         if (principalportion > balance) principalportion = balance;
         balance -= principalportion;
-        totalinterest += interestportion;
+        cumulativeinterest += interestportion;
+        cumulativeprincipal += principalportion;
 
         if (month % 12 === 0 || balance <= 0.005) {
-            points.push(Math.max(balance, 0));
+            let displaybalance = Math.max(balance, 0);
+            points.push([[displaybalance], [cumulativeprincipal + cumulativeinterest], [cumulativeprincipal], [cumulativeinterest]]);
         }
     }
 
@@ -98,13 +121,14 @@ function calculate() {
 
     document.getElementById("monthlypayment").innerHTML = "$" + (Math.round(monthlypaymentdisplay * 100) / 100).toLocaleString('en-US');
     document.getElementById("payofftime").innerHTML = Math.floor(payoffmonths / 12) + " yr " + (payoffmonths % 12) + " mo";
-    document.getElementById("totalinterestpaid").innerHTML = "$" + (Math.round(totalinterest * 100) / 100).toLocaleString('en-US');
-    document.getElementById("totalpaid").innerHTML = "$" + (Math.round((principal + totalinterest) * 100) / 100).toLocaleString('en-US');
+    document.getElementById("totalinterestpaid").innerHTML = "$" + (Math.round(cumulativeinterest * 100) / 100).toLocaleString('en-US');
+    document.getElementById("totalpaid").innerHTML = "$" + (Math.round((principal + cumulativeinterest) * 100) / 100).toLocaleString('en-US');
 
-    myGraph.setPoints(points);
     myGraph.setStepSize(1);
+    myGraph.setxlabeloffset(0);
+    myGraph.setPoints(points);
 }
-calculate();
+drawGraph();
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `

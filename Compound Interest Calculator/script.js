@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput, valueInputs } from "../Modules/Input/input.js";
+import { Input, valueInputs } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,7 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -31,19 +30,7 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
-
-const principal = numberInput(0, 100000000, inputs, "Initial amount", 10000, "$", "", calculate);
-const monthlyContribution = numberInput(0, 1000000, inputs, "Monthly contribution", 200, "$", "", calculate);
-const rate = numberInput(0, 30, inputs, "Annual interest rate", 7, "", "%", calculate);
-const years = numberInput(1, 60, inputs, "Years to grow", 25, "", "yrs", calculate);
-const frequency = valueInputs(
-    "Compounding frequency",
-    ["Annually", "Monthly", "Daily"],
-    [1, 12, 365],
-    inputs,
-    calculate
-);
+const inputsContainer = document.getElementById("inputs");
 
 const futureValue = output("Future Value");
 const totalContributed = output("Total Contributed");
@@ -55,17 +42,51 @@ outputvalues.append(totalContributed);
 outputvalues.append(totalInterestEarned);
 outputvalues.append(interestPercentOfBalance);
 
-let points = [];
-let value = 10000;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 1 });
+let principal = new Input(0, 100000000, inputsContainer, "Initial amount", 10000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let monthlyContribution = new Input(0, 1000000, inputsContainer, "Monthly contribution", 200, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let rate = new Input(0, 30, inputsContainer, "Annual interest rate", 7, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let years = new Input(1, 60, inputsContainer, "Years to grow", 25, "", "yrs", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let frequency = valueInputs(
+    "Compounding frequency",
+    ["Annually", "Monthly", "Daily"],
+    [1, 12, 365],
+    inputsContainer,
+    updateFields
+);
+inputsContainer.appendChild(document.createElement("br"));
 
-function calculate() {
-    let P = Number(principal.value.replaceAll(",",""));
-    let monthly = Number(monthlyContribution.value.replaceAll(",",""));
-    let annualrate = Number(rate.value.replaceAll(",","")) / 100;
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Balance", "Total Contributed"],
+    xLabel: 'Years',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 1,
+    xlabeloffset: 0
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+function drawGraph() {
+    let P = principal.getValue();
+    let monthly = monthlyContribution.getValue();
+    let annualrate = rate.getValue() / 100;
     let n = Number(frequency.value);
-    let t = Number(years.value.replaceAll(",",""));
+    let t = years.getValue();
 
     let totalperiods = Math.round(n * t);
     let periodrate = annualrate / n;
@@ -74,14 +95,14 @@ function calculate() {
     let balance = P;
     let totalcontributed = P;
 
-    points = [];
-    points.push(balance);
+    let points = [];
+    points.push([[balance], [totalcontributed]]);
 
     for (let period = 1; period <= totalperiods; period++) {
         balance = balance * (1 + periodrate) + periodcontribution;
         totalcontributed += periodcontribution;
         if (period % n === 0 || period === totalperiods) {
-            points.push(balance);
+            points.push([[balance], [totalcontributed]]);
         }
     }
 
@@ -93,7 +114,8 @@ function calculate() {
     document.getElementById("totalinterestearned").innerHTML = "$" + (Math.round(totalinterest * 100) / 100).toLocaleString('en-US');
     document.getElementById("interestaspercentofbalance").innerHTML = ((totalinterest / finalbalance) * 100).toFixed(1) + "%";
 
-    myGraph.setPoints(points);
     myGraph.setStepSize(1);
+    myGraph.setxlabeloffset(0);
+    myGraph.setPoints(points);
 }
-calculate();
+drawGraph();

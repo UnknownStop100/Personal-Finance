@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,7 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -31,29 +30,14 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
+const inputsContainer = document.getElementById("inputs");
 
 function heading(text) {
     const h = document.createElement("p");
     h.className = "field-group-heading";
+    inputsContainer.appendChild(h);
     h.textContent = text;
-    inputs.appendChild(h);
 }
-
-heading("Assets");
-const cash = numberInput(0, 100000000, inputs, "Cash & bank accounts", 15000, "$", "", calculate);
-const investments = numberInput(0, 100000000, inputs, "Investment accounts", 25000, "$", "", calculate);
-const retirement = numberInput(0, 100000000, inputs, "Retirement accounts", 60000, "$", "", calculate);
-const realEstate = numberInput(0, 100000000, inputs, "Real estate value", 400000, "$", "", calculate);
-const vehicles = numberInput(0, 10000000, inputs, "Vehicles", 18000, "$", "", calculate);
-const otherAssets = numberInput(0, 100000000, inputs, "Other assets", 0, "$", "", calculate);
-
-heading("Liabilities");
-const mortgageBalance = numberInput(0, 100000000, inputs, "Mortgage balance", 280000, "$", "", calculate);
-const autoLoans = numberInput(0, 10000000, inputs, "Auto loans", 9000, "$", "", calculate);
-const studentLoans = numberInput(0, 10000000, inputs, "Student loans", 12000, "$", "", calculate);
-const creditCardDebt = numberInput(0, 10000000, inputs, "Credit card debt", 2500, "$", "", calculate);
-const otherLiabilities = numberInput(0, 100000000, inputs, "Other liabilities", 0, "$", "", calculate);
 
 const netWorthOut = output("Net Worth");
 const totalAssetsOut = output("Total Assets");
@@ -63,26 +47,69 @@ outputvalues.append(netWorthOut);
 outputvalues.append(totalAssetsOut);
 outputvalues.append(totalLiabilitiesOut);
 
-let points = [];
-let value = 0;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: '', parent: document.getElementById("main-calculator"), stepsize: 1 });
+heading("Assets");
+let cash = new Input(0, 100000000, inputsContainer, "Cash & bank accounts", 15000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let investments = new Input(0, 100000000, inputsContainer, "Investment accounts", 25000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let retirement = new Input(0, 100000000, inputsContainer, "Retirement accounts", 60000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let realEstate = new Input(0, 100000000, inputsContainer, "Real estate value", 400000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let vehicles = new Input(0, 10000000, inputsContainer, "Vehicles", 18000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let otherAssets = new Input(0, 100000000, inputsContainer, "Other assets", 0, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
 
-function calculate() {
+heading("Liabilities");
+let mortgageBalance = new Input(0, 100000000, inputsContainer, "Mortgage balance", 280000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let autoLoans = new Input(0, 10000000, inputsContainer, "Auto loans", 9000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let studentLoans = new Input(0, 10000000, inputsContainer, "Student loans", 12000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let creditCardDebt = new Input(0, 10000000, inputsContainer, "Credit card debt", 2500, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let otherLiabilities = new Input(0, 100000000, inputsContainer, "Other liabilities", 0, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Assets", "Liabilities"],
+    xLabel: '',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 1,
+    xlabeloffset: 0
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+function drawGraph() {
     let totalassets =
-        Number(cash.value.replaceAll(",","")) +
-        Number(investments.value.replaceAll(",","")) +
-        Number(retirement.value.replaceAll(",","")) +
-        Number(realEstate.value.replaceAll(",","")) +
-        Number(vehicles.value.replaceAll(",","")) +
-        Number(otherAssets.value.replaceAll(",",""));
+        cash.getValue() +
+        investments.getValue() +
+        retirement.getValue() +
+        realEstate.getValue() +
+        vehicles.getValue() +
+        otherAssets.getValue();
 
     let totalliabilities =
-        Number(mortgageBalance.value.replaceAll(",","")) +
-        Number(autoLoans.value.replaceAll(",","")) +
-        Number(studentLoans.value.replaceAll(",","")) +
-        Number(creditCardDebt.value.replaceAll(",","")) +
-        Number(otherLiabilities.value.replaceAll(",",""));
+        mortgageBalance.getValue() +
+        autoLoans.getValue() +
+        studentLoans.getValue() +
+        creditCardDebt.getValue() +
+        otherLiabilities.getValue();
 
     let networth = totalassets - totalliabilities;
 
@@ -90,11 +117,15 @@ function calculate() {
     document.getElementById("totalassets").innerHTML = "$" + (Math.round(totalassets * 100) / 100).toLocaleString('en-US');
     document.getElementById("totalliabilities").innerHTML = "$" + (Math.round(totalliabilities * 100) / 100).toLocaleString('en-US');
 
-    points = [totalliabilities, totalassets];
-    myGraph.setPoints(points);
+    // Two flat-line series so assets vs. liabilities are visually comparable
+    let points = [
+        [[totalassets], [totalliabilities]],
+        [[totalassets], [totalliabilities]]
+    ];
     myGraph.setStepSize(1);
+    myGraph.setPoints(points);
 }
-calculate();
+drawGraph();
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `

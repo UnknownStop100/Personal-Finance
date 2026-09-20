@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { Graph } from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,7 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -31,11 +30,7 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
-
-const currentAmount = numberInput(0, 1000000000, inputs, "Amount today", 10000, "$", "", calculate);
-const inflationRate = numberInput(0, 30, inputs, "Annual inflation rate", 3, "", "%", calculate);
-const years = numberInput(1, 60, inputs, "Years from now", 20, "", "yrs", calculate);
+const inputsContainer = document.getElementById("inputs");
 
 const purchasingPowerFuture = output("Purchasing Power In The Future");
 const purchasingPowerLostOut = output("Purchasing Power Lost");
@@ -47,15 +42,39 @@ outputvalues.append(purchasingPowerLostOut);
 outputvalues.append(percentLostOut);
 outputvalues.append(amountToMatchToday);
 
-let points = [];
-let value = 10000;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years', parent: document.getElementById("main-calculator"), stepsize: 1 });
+let currentAmount = new Input(0, 1000000000, inputsContainer, "Amount today", 10000, "$", "", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let inflationRate = new Input(0, 30, inputsContainer, "Annual inflation rate", 3, "", "%", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
+let years = new Input(1, 60, inputsContainer, "Years from now", 20, "", "yrs", updateFields);
+inputsContainer.appendChild(document.createElement("br"));
 
-function calculate() {
-    let amount = Number(currentAmount.value.replaceAll(",",""));
-    let rate = Number(inflationRate.value.replaceAll(",","")) / 100;
-    let t = Number(years.value.replaceAll(",",""));
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Real Purchasing Power", "Nominal Amount"],
+    xLabel: 'Years',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 1,
+    xlabeloffset: 0
+});
+
+function updateFields() {
+    drawGraph();
+}
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+function drawGraph() {
+    let amount = currentAmount.getValue();
+    let rate = inflationRate.getValue() / 100;
+    let t = years.getValue();
 
     let futureequivalent = amount / (1 + rate) ** t;
     let purchasingpowerlost = amount - futureequivalent;
@@ -67,14 +86,16 @@ function calculate() {
     document.getElementById("percentlost").innerHTML = percentlost.toFixed(1) + "%";
     document.getElementById("amountneededtomatchtoday").innerHTML = "$" + (Math.round(amounttomatchtoday * 100) / 100).toLocaleString('en-US');
 
-    points = [];
+    let points = [];
     for (let year = 0; year <= t; year++) {
-        points.push(amount / (1 + rate) ** year);
+        points.push([[amount / (1 + rate) ** year]]);
     }
-    myGraph.setPoints(points);
+
     myGraph.setStepSize(1);
+    myGraph.setxlabeloffset(0);
+    myGraph.setPoints(points);
 }
-calculate();
+drawGraph();
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `
