@@ -372,13 +372,13 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
     inputvalue += "Y";
     switch(this.options.stepsize){
         case 12:
-            inputvalue += Math.floor(theindex / 12)
+            inputvalue += Math.floor(index / 12)
             break;
         case 4:
-            inputvalue += Math.floor(theindex / 4)
+            inputvalue += Math.floor(index / 4)
             break;
         case 1:
-            inputvalue += Math.floor(theindex / 1)
+            inputvalue += Math.floor(index / 1)
             break;
         default:
             break;
@@ -391,11 +391,11 @@ this.canvas.style.imageRendering = 'crisp-edges';*/
     }
     if (this.options.stepsize === 12) {
         inputvalue += " M";
-        inputvalue += Math.floor((theindex % 12)) + 1;
+        inputvalue += Math.floor((index % 12)) + 1;
     }
     else if (this.options.stepsize === 4) {
         inputvalue += " Q";
-        inputvalue += Math.floor((theindex % 4)) + 1;
+        inputvalue += Math.floor((index % 4)) + 1;
 
     }
     info.innerHTML = inputvalue;

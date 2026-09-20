@@ -2,9 +2,9 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import { numberInput } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import {Graph} from "../Modules/Output/Graph/graph.js";
+import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -20,8 +20,6 @@ body.prepend(header);
 body.append(main);
 body.appendChild(footer);
 
-
-const maincontent = document.getElementById("maincontent");
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
                     <h3>Input Fields:</h3>
@@ -32,65 +30,121 @@ document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
             <!--button id="resolve">recalculate</button>-->
             </div>`;
 
-const inputs = document.getElementById("inputs");
-
-const homePrice = numberInput(0, 20000000, inputs, "Home price", 400000, "$", "", calculate);
-const downPayment = numberInput(0, 20000000, inputs, "Down payment", 80000, "$", "", calculate);
-const loanTerm = numberInput(1, 40, inputs, "Loan term", 30, "", "yrs", calculate);
-const interestRate = numberInput(0, 25, inputs, "Interest rate", 6.5, "", "%", calculate);
-const propertyTax = numberInput(0, 200000, inputs, "Annual property tax", 4000, "$", "", calculate);
-const homeInsurance = numberInput(0, 50000, inputs, "Annual home insurance", 1400, "$", "", calculate);
-const hoaDues = numberInput(0, 20000, inputs, "Monthly HOA dues", 0, "$", "", calculate);
-
+const inputsContainer = document.getElementById("inputs");
 
 const monthlypayment = output("Monthly Payment");
 const monthlyloanpayment = output("Monthly Loan Payment");
 const interestcost = output("Full-term Interest Cost");
 const fulltermcost = output("Full-term Cost");
-let outputvalues=document.getElementById("output");
-    outputvalues.append(monthlypayment);
-    outputvalues.append(monthlyloanpayment);
-    outputvalues.append(interestcost);
-    outputvalues.append(fulltermcost);
+let outputvalues = document.getElementById("output");
+outputvalues.append(monthlypayment);
+outputvalues.append(monthlyloanpayment);
+outputvalues.append(interestcost);
+outputvalues.append(fulltermcost);
 
-    
-    let points=[];
-    let value=320000;
+///////////////////////////
+//handles inputs
+///////////////////////////
 
-const myGraph = new Graph({ divId: 'canvas-div', points: points, xLabel: 'Years' ,parent: document.getElementById("main-calculator"), stepsize:12});
-function calculate(){
-    let homeprice=Number(homePrice.value.replaceAll(",",""));
-    let downpayment=Number(downPayment.value.replaceAll(",",""));
-    let loanterm=Number(loanTerm.value.replaceAll(",",""));
-    let interestrate=Number(interestRate.value.replaceAll(",",""));
-    let propertytax=Number(propertyTax.value.replaceAll(",",""));
-    let homeinsurance=Number(homeInsurance.value.replaceAll(",",""));
-    let hoadues=Number(hoaDues.value.replaceAll(",",""));
-    let loanprinciple=(homeprice-downpayment);
-    let monthlyinterestrate=(interestrate/1200);
-    let months=loanterm*12;
-    let monthlypropertytax=propertytax/12;
-    let monthlyinsurance=homeinsurance/12;
-    let monthlypayment=loanprinciple*(monthlyinterestrate*(1+monthlyinterestrate)**months)/((1+monthlyinterestrate)**months-1);
-    document.getElementById("monthlypayment").innerHTML="$"+(Math.round((monthlypayment+monthlyinsurance+monthlypropertytax)*100)/100).toLocaleString('en-US');
-    document.getElementById("monthlyloanpayment").innerHTML="$"+(Math.round(monthlypayment*100)/100).toLocaleString('en-US');
-    document.getElementById("full-terminterestcost").innerHTML="$"+(Math.round((monthlypayment*months-loanprinciple)*100)/100).toLocaleString('en-US');
-    document.getElementById("full-termcost").innerHTML="$"+(Math.round(((monthlypayment+monthlyinsurance+monthlypropertytax)*months+downpayment)*100)/100).toLocaleString('en-US');
+let homePrice = new Input(0, 20000000, inputsContainer, "Home price", 400000, "$", "", updateHomePrice);
+inputsContainer.appendChild(document.createElement("br"));
+let downPayment = new Input(0, 20000000, inputsContainer, "Down payment", 80000, "$", "", updateDownPayment);
+inputsContainer.appendChild(document.createElement("br"));
+let loanTerm = new Input(1, 40, inputsContainer, "Loan term", 30, "", "yrs", updateLoanTerm);
+inputsContainer.appendChild(document.createElement("br"));
+let interestRate = new Input(0, 25, inputsContainer, "Interest rate", 6.5, "", "%", updateInterestRate);
+inputsContainer.appendChild(document.createElement("br"));
+let propertyTax = new Input(0, 200000, inputsContainer, "Annual property tax", 4000, "$", "", updatePropertyTax);
+inputsContainer.appendChild(document.createElement("br"));
+let homeInsurance = new Input(0, 50000, inputsContainer, "Annual home insurance", 1400, "$", "", updateHomeInsurance);
+inputsContainer.appendChild(document.createElement("br"));
+let hoaDues = new Input(0, 20000, inputsContainer, "Monthly HOA dues", 0, "$", "", updateHoaDues);
+inputsContainer.appendChild(document.createElement("br"));
 
-    
-    points=[];
-    value=loanprinciple;
-    for(let i=0;i<loanterm*12;i++){
-    points.push(value);
-    value*=(1+monthlyinterestrate);
-    points.push(value);
-    value-=monthlypayment;
+let homeprice = homePrice.getValue(),
+    downpayment = downPayment.getValue(),
+    loanterm = loanTerm.getValue(),
+    interestrate = interestRate.getValue(),
+    propertytax = propertyTax.getValue(),
+    homeinsurance = homeInsurance.getValue(),
+    hoadues = hoaDues.getValue();
+
+const myGraph = new SuperGraph({
+    divId: 'canvas-div',
+    points: [],
+    graphtitles: ["Remaining Balance", "Total Paid", "Principal Paid", "Interest Paid"],
+    xLabel: 'Years',
+    parent: document.getElementById("main-calculator"),
+    stepsize: 12,
+    xlabeloffset: 0
+});
+
+function updateHomePrice() { homeprice = homePrice.getValue(); drawGraph(); }
+function updateDownPayment() { downpayment = downPayment.getValue(); drawGraph(); }
+function updateLoanTerm() { loanterm = loanTerm.getValue(); drawGraph(); }
+function updateInterestRate() { interestrate = interestRate.getValue(); drawGraph(); }
+function updatePropertyTax() { propertytax = propertyTax.getValue(); drawGraph(); }
+function updateHomeInsurance() { homeinsurance = homeInsurance.getValue(); drawGraph(); }
+function updateHoaDues() { hoadues = hoaDues.getValue(); drawGraph(); }
+
+///////////////////////////
+//handles graph point generation
+///////////////////////////
+
+let actualpoints = function (monthlyRate, months, principal, monthlyPayment) {
+    let points = [];
+    for (let i = 0; i < months + 1; i++) {
+        points.push([[], [], [], []]);
     }
-    points.push(value);
-    myGraph.setPoints(points);
+    let balance = principal;
+    let cumulativeInterest = 0;
+    let cumulativePrincipal = downpayment;
+    points[0][0].push(balance);
+    points[0][1].push(cumulativePrincipal + cumulativeInterest);
+    points[0][2].push(cumulativePrincipal);
+    points[0][3].push(cumulativeInterest);
+    for (let i = 0; i < months; i++) {
+        points[i + 1][0].push(balance);
+        points[i + 1][1].push(cumulativePrincipal + cumulativeInterest);
+        points[i + 1][2].push(cumulativePrincipal);
+        points[i + 1][3].push(cumulativeInterest);
+        let interestPortion = balance * monthlyRate;
+        let principalPortion = monthlyPayment - interestPortion;
+        balance -= principalPortion;
+        cumulativeInterest += interestPortion;
+        cumulativePrincipal += principalPortion;
+        points[i + 1][0].push(balance);
+        points[i + 1][1].push(cumulativePrincipal + cumulativeInterest);
+        points[i + 1][2].push(cumulativePrincipal);
+        points[i + 1][3].push(cumulativeInterest);
+    }
+    return points;
+};
+
+let drawGraph = function () {
+    let loanprinciple = homeprice - downpayment;
+    let monthlyinterestrate = interestrate / 1200;
+    let months = loanterm * 12;
+    let monthlypropertytax = propertytax / 12;
+    let monthlyinsurance = homeinsurance / 12;
+    let monthlyloanpaymentvalue =
+        (loanprinciple * (monthlyinterestrate * (1 + monthlyinterestrate) ** months)) /
+        ((1 + monthlyinterestrate) ** months - 1);
+
     myGraph.setStepSize(12);
-}
-calculate();
+    let points = actualpoints(monthlyinterestrate, months, loanprinciple, monthlyloanpaymentvalue);
+    myGraph.setPoints(points);
+
+document.getElementById("monthlypayment").innerHTML =
+    "$" + (Math.round((monthlyloanpaymentvalue + monthlyinsurance + monthlypropertytax + hoadues) * 100) / 100).toLocaleString('en-US');
+document.getElementById("monthlyloanpayment").innerHTML =
+    "$" + (Math.round(monthlyloanpaymentvalue * 100) / 100).toLocaleString('en-US');
+document.getElementById("full-terminterestcost").innerHTML =
+    "$" + (Math.round((monthlyloanpaymentvalue * months - loanprinciple) * 100) / 100).toLocaleString('en-US');
+document.getElementById("full-termcost").innerHTML =
+    "$" + (Math.round(((monthlyloanpaymentvalue + monthlyinsurance + monthlypropertytax + hoadues) * months + downpayment) * 100) / 100).toLocaleString('en-US');
+};
+drawGraph();
 
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `
