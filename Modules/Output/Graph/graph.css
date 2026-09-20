@@ -43,6 +43,7 @@ canvas {
   grid-auto-flow: row;
   text-align: right;
   z-index: 10;
+  direction: ltr;
 }
 
 #xlabel{
@@ -59,7 +60,7 @@ canvas {
   z-index: 100;
   pointer-events: none;
   white-space: nowrap;
-  height: 55px;
+  height: auto;
   direction: ltr;
 }
 

@@ -1,11 +1,12 @@
 import { numberInput } from "../Modules/Input/input.js";
 import { valueInputs } from "../Modules/Input/input.js";
+import { Input } from "../Modules/Input/input.js";
 import { createFooter } from "../Footer/script.js";
 import { createHeader } from "../Header/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { output } from "../Modules/Output/Output/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
-import {Graph} from "../Modules/Output/Graph/graph.js";
+import {SuperGraph} from "../Modules/Output/Graph/supergraph.js";
 const body = document.querySelector('body');
 const header = createHeader();
 const footer = createFooter();
@@ -38,31 +39,31 @@ outputarea.appendChild(totalmoney);
 //handles inputs
 ///////////////////////////
 
-let currentSavings = numberInput(0, 1000000000, document.getElementById("inputs"), "Current Savings", 0, "$", "", updateCurrentSavings, `<a href="#input-savings">&#x2139</a>`);
+let currentSavings = new Input(0, 1000000000, document.getElementById("inputs"), "Current Savings", 0, "$", "", updateCurrentSavings, `<a href="#input-savings">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 let contributionFrequency = valueInputs("Contribution Frequency", ["Monthly", "Quarterly", "Yearly"], [12, 4, 1], document.getElementById("inputs"), updateContributionFrequency, `<a href="#input-savings">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let contributionAmount = numberInput(-1000000, 1000000000, document.getElementById("inputs"), "Contribution Amount", 500, "$", "", updateContributionAmount, `<a href="#input-savings">&#x2139</a>`);
+let contributionAmount = new Input(-1000000, 1000000000, document.getElementById("inputs"), "Contribution Amount", 500, "$", "", updateContributionAmount, `<a href="#input-savings">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let returnOnInvestment = numberInput(0, 100, document.getElementById("inputs"), "Return on Investment (ROI)", 8, "", "%", updateReturnOnInvestment, `<a href="#roi-values">&#x2139</a>`);
+let returnOnInvestment = new Input(0, 100, document.getElementById("inputs"), "Return on Investment (ROI)", 8, "", "%", updateReturnOnInvestment, `<a href="#roi-values">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
-let investmentDuration = numberInput(0, 100, document.getElementById("inputs"), "Investment Duration", 20, "", "", updateInvestmentDuration, `<a href="#investment-duration">&#x2139</a>`);
+let investmentDuration = new Input(0, 100, document.getElementById("inputs"), "Investment Duration", 20, "", "", updateInvestmentDuration, `<a href="#investment-duration">&#x2139</a>`);
 document.getElementById("inputs").appendChild(document.createElement("br"));
 //const outputrange = valueInputs("Output Time Frame", ["Lifetime", "Yearly", "Monthly", "Weekly", "Daily"], [4, 3, 2, 1, 0], document.getElementById("inputs"), updateMoneyEarned, ``);
 //document.getElementById("inputs").appendChild(document.createElement("br"));
 document.getElementById("inputs").appendChild(document.createElement("br"));
 
 
-let roi = Number(returnOnInvestment.value.replaceAll(",", "")) / 100,
+let roi = returnOnInvestment.getValue() / 100,
     contributionfrequency = Number(contributionFrequency.value.replaceAll(",", "")),
-    contributionamount = Number(contributionAmount.value.replaceAll(",", "")),
-    currentsavings = Number(currentSavings.value.replaceAll(",", "")),
-    investmentduration = Number(investmentDuration.value.replaceAll(",", ""));
-const myGraph = new Graph({ divId: 'canvas-div', points: [], xLabel: 'Years' ,parent: document.getElementById("main-calculator"), stepsize:contributionfrequency});
+    contributionamount = contributionAmount.getValue(),
+    currentsavings = currentSavings.getValue(),
+    investmentduration = investmentDuration.getValue();
+const myGraph = new SuperGraph({ divId: 'canvas-div', points: [], graphtitles: ["Total Value", "Contributions", "Total Earnings"], xLabel: 'Years' ,parent: document.getElementById("main-calculator"), stepsize:contributionfrequency, xlabeloffset: 0});
 
 function updateCurrentSavings() {
-    currentsavings = Number(currentSavings.value.replaceAll(",", ""));
+    currentsavings = currentSavings.getValue();
     drawGraph();
 }
 function updateContributionFrequency() {
@@ -70,15 +71,15 @@ function updateContributionFrequency() {
     drawGraph();
 }
 function updateContributionAmount() {
-    contributionamount = Number(contributionAmount.value.replaceAll(",", ""));
+    contributionamount = contributionAmount.getValue();
     drawGraph();
 }
 function updateReturnOnInvestment() {
-    roi = Number(returnOnInvestment.value.replaceAll(",", "")) / 100;
+    roi = returnOnInvestment.getValue() / 100;
     drawGraph();
 }
 function updateInvestmentDuration() {
-    investmentduration = Number(investmentDuration.value.replaceAll(",", ""));
+    investmentduration = investmentDuration.getValue();
     if (investmentduration === 0) {
         investmentduration = 1;
     }
@@ -89,14 +90,26 @@ function updateInvestmentDuration() {
 ///////////////////////////
 let actualpoints = function (ROI, iterations, iterationsperyear, initalmoney, iterationcontribution) {
     let points = [];
+    for(let i=0;i<(iterations+1);i++){
+      points.push([[],[],[]]);
+    }
     let price = initalmoney;
+    let contribution = initalmoney;
     let iterationroi = (ROI + 1) ** (1 / iterationsperyear);
-    points.push(price);
+    points[0][0].push(price);
+    points[0][1].push(contribution);
+    points[0][2].push(price-contribution);
     for (let i = 0; i < iterations; i++) {
         price *= iterationroi;
-        points.push(price);
+        points[i+1][0].push(price);
+        points[i+1][1].push(contribution);
+        points[i+1][2].push(price-contribution);
         price += iterationcontribution;
-        points.push(price);
+        contribution += iterationcontribution;
+        points[i+1][0].push(price);
+        points[i+1][1].push(contribution);
+        points[i+1][2].push(price-contribution);
+
     }
     return points;
 }
@@ -105,7 +118,7 @@ myGraph.setStepSize(contributionfrequency);
 let points=actualpoints(roi, contributionfrequency * investmentduration, contributionfrequency, currentsavings, contributionamount);
 myGraph.setPoints(points);
 document.getElementById("moneyinput").innerHTML="$"+Math.round((currentsavings+contributionfrequency * investmentduration*contributionamount)).toLocaleString('en-US');
-document.getElementById("moneyearned").innerHTML="$"+Math.round((points[points.length-1]-(currentsavings+contributionfrequency * investmentduration*contributionamount))).toLocaleString('en-US');
+document.getElementById("moneyearned").innerHTML="$"+Math.round((points[points.length-1][0][1]-points[points.length-1][1][1])).toLocaleString('en-US');
 switch(contributionfrequency){
     case 12:
     moneyearnedfinalsegment.firstElementChild.innerHTML="Final Month Earnings";
@@ -119,8 +132,8 @@ switch(contributionfrequency){
     default:
     break;
 }
-document.getElementById("moneyearnedfinalmonth").innerHTML="$"+Math.round(points[points.length-1]*((roi + 1) ** (1 / contributionfrequency)-1)).toLocaleString('en-US');
-document.getElementById("totalmoney").innerHTML="$"+Math.round(points[points.length-1]).toLocaleString('en-US');
+document.getElementById("moneyearnedfinalmonth").innerHTML="$"+Math.round(points[points.length-1][0][1]*((roi + 1) ** (1 / contributionfrequency)-1)).toLocaleString('en-US');
+document.getElementById("totalmoney").innerHTML="$"+Math.round(points[points.length-1][0][1]).toLocaleString('en-US');
 }
 drawGraph();
 document.getElementById("mainarticle").innerHTML = `
