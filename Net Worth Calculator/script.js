@@ -4,7 +4,7 @@ import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 import { Input } from "../Modules/Input/input.js";
 import { output } from "../Modules/Output/Output/script.js";
-import { SuperGraph } from "../Modules/Output/Graph/supergraph.js";
+import { VerticalBar } from "../Modules/Output/Bar/bar.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -77,10 +77,10 @@ inputsContainer.appendChild(document.createElement("br"));
 let otherLiabilities = new Input(0, 100000000, inputsContainer, "Other liabilities", 0, "$", "", updateFields);
 inputsContainer.appendChild(document.createElement("br"));
 
-const myGraph = new SuperGraph({
+const myBar = new VerticalBar({
     divId: 'canvas-div',
     points: [],
-    graphtitles: ["Assets", "Liabilities"],
+    graphtitles: [["Assets", "Liabilities"]],
     xLabel: '',
     parent: document.getElementById("main-calculator"),
     stepsize: 1,
@@ -118,12 +118,8 @@ function drawGraph() {
     document.getElementById("totalliabilities").innerHTML = "$" + (Math.round(totalliabilities * 100) / 100).toLocaleString('en-US');
 
     // Two flat-line series so assets vs. liabilities are visually comparable
-    let points = [
-        [[totalassets], [totalliabilities]],
-        [[totalassets], [totalliabilities]]
-    ];
-    myGraph.setStepSize(1);
-    myGraph.setPoints(points);
+    let points = [[totalassets, totalliabilities]];
+    myBar.setPoints(points);
 }
 drawGraph();
 

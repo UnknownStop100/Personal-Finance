@@ -317,7 +317,8 @@ export class SuperGraph {
       index = this.points.length - 1;
     if (index < 0)
       index = 0;
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.16)';
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
     ctx.beginPath();
     ctx.moveTo(pixelsPerPoint * index, 0);
     ctx.lineTo(pixelsPerPoint * index, canvas.height);
