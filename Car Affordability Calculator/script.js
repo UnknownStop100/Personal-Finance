@@ -100,7 +100,7 @@ function drawGraph() {
     document.getElementById("maxaffordablecarprice").innerHTML = "$" + (Math.round(maxcarprice * 100) / 100).toLocaleString('en-US');
     document.getElementById("maxmonthlypayment").innerHTML = "$" + (Math.round(maxpayment * 100) / 100).toLocaleString('en-US');
     document.getElementById("maxloanamount").innerHTML = "$" + (Math.round(maxloan * 100) / 100).toLocaleString('en-US');
-    document.getElementById("downpaymentplustradein").innerHTML = "$" + (Math.round((down + trade) * 100) / 100).toLocaleString('en-US');
+    document.getElementById("downpaymentplustrade-in").innerHTML = "$" + (Math.round((down + trade) * 100) / 100).toLocaleString('en-US');
 
     let points = [];
     let balance = maxloan;
