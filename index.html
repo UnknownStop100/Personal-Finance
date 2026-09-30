@@ -9,24 +9,6 @@
   <link rel="stylesheet" href="/Header/style.css">
 </head>
 <body>
-  <!--<header class="site-header">
-    <div class="header-inner">
-      <a class="logo" href="#">Calc<span>Pilot</span></a>
-
-      <nav class="main-nav" aria-label="Main navigation">
-        <a href="#">Finance</a>
-        <a href="#">Construction</a>
-        <a href="#">Electrical</a>
-        <a href="#">Business</a>
-      </nav>W
-
-      <button class="search-button" aria-label="Search calculators">
-        <span class="search-icon">⌕</span>
-        <span>Search</span>
-      </button>
-    </div>
-  </header>-->
-
   <main>
     <section class="hero">
       <div class="hero-content">
@@ -112,27 +94,30 @@
       <span>ADVERTISEMENT</span>
     </div>
 
-    <section class="calculator-section section">
+    <section class="calculator-section section" id="calculators">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Browse all tools</p>
           <h2>Financial calculators</h2>
         </div>
-        <a class="view-all" href="#">View all →</a>
+        <a class="view-all" href="#calculators">View all →</a>
       </div>
 
       <div class="category-row">
-        <button class="category active">All</button>
-        <button class="category">Investing</button>
-        <button class="category">Loans</button>
-        <button class="category">Retirement</button>
-        <button class="category">Savings</button>
-        <button class="category">Debt</button>
-        <button class="category">Real Estate</button>
+        <button class="category active" data-filter="all">All</button>
+        <button class="category" data-filter="investing">Investing</button>
+        <button class="category" data-filter="loans">Loans</button>
+        <button class="category" data-filter="retirement">Retirement</button>
+        <button class="category" data-filter="savings">Savings</button>
+        <button class="category" data-filter="debt">Debt</button>
+        <button class="category" data-filter="real-estate">Real Estate</button>
       </div>
 
       <div class="calculator-grid">
-        <a class="calculator-card" href="Investment Calculator/index.html">
+        <!-- NOTE: links to "Investment Calculator/index.html" while the featured
+             card above for the same title links to "Compound%20Interest%20Calculator/".
+             Left as-is — check which folder is actually correct. -->
+        <a class="calculator-card" href="Investment Calculator/index.html" data-category="investing">
           <span class="mini-icon">$</span>
           <div>
             <h3>Compound Interest Calculator</h3>
@@ -141,7 +126,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Mortgage%20Payment%20Calculator/index.html">
+        <a class="calculator-card" href="Mortgage%20Payment%20Calculator/index.html" data-category="real-estate">
           <span class="mini-icon">⌂</span>
           <div>
             <h3>Mortgage Payment Calculator</h3>
@@ -150,7 +135,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Retirement%20Nest%20Egg%20Calculator/index.html">
+        <a class="calculator-card" href="Retirement%20Nest%20Egg%20Calculator/index.html" data-category="retirement">
           <span class="mini-icon">◎</span>
           <div>
             <h3>Retirement Nest Egg Calculator</h3>
@@ -159,7 +144,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Loan%20Amortization%20Schedule/index.html">
+        <a class="calculator-card" href="Loan%20Amortization%20Schedule/index.html" data-category="loans">
           <span class="mini-icon">%</span>
           <div>
             <h3>Loan Amortization Schedule</h3>
@@ -168,7 +153,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Debt%20Payoff%20Calculator/index.html">
+        <a class="calculator-card" href="Debt%20Payoff%20Calculator/index.html" data-category="debt">
           <span class="mini-icon">−</span>
           <div>
             <h3>Debt Payoff Calculator</h3>
@@ -177,7 +162,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Rent%20vs%20Buy%20Calculator/index.html">
+        <a class="calculator-card" href="Rent%20vs%20Buy%20Calculator/index.html" data-category="real-estate">
           <span class="mini-icon">↕</span>
           <div>
             <h3>Rent vs. Buy Calculator</h3>
@@ -186,7 +171,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Emergency%20Fund%20Calculator/index.html">
+        <a class="calculator-card" href="Emergency%20Fund%20Calculator/index.html" data-category="savings">
           <span class="mini-icon">★</span>
           <div>
             <h3>Emergency Fund Calculator</h3>
@@ -195,7 +180,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Net%20Worth%20Calculator/index.html">
+        <a class="calculator-card" href="Net%20Worth%20Calculator/index.html" data-category="investing">
           <span class="mini-icon">↗</span>
           <div>
             <h3>Net Worth Calculator</h3>
@@ -204,7 +189,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Car%20Affordability%20Calculator/index.html">
+        <a class="calculator-card" href="Car%20Affordability%20Calculator/index.html" data-category="loans">
           <span class="mini-icon">$</span>
           <div>
             <h3>Car Affordability Calculator</h3>
@@ -213,7 +198,7 @@
           <span class="grid-arrow">→</span>
         </a>
 
-        <a class="calculator-card" href="Inflation%20Impact%20Calculator/index.html">
+        <a class="calculator-card" href="Inflation%20Impact%20Calculator/index.html" data-category="investing">
           <span class="mini-icon">↕</span>
           <div>
             <h3>Inflation Impact Calculator</h3>

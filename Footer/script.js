@@ -18,9 +18,9 @@ export function createFooter() {
         </div>
         <div>
           <strong>Company</strong>
-          <a href="#">About</a>
-          <a href="#">Contact</a>
-          <a href="#">Privacy</a>
+          <a href="/about/index.html">About</a>
+          <a href="/contact/index.html">Contact</a>
+          <a href="/privacy/index.html">Privacy</a>
           <a href="#">Terms</a>
         </div>
       </div>

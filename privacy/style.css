@@ -1,0 +1,79 @@
+/* Privacy/index.html-specific styles. Shared tokens, .section, etc. come
+   from ../styles.css. .content-page here is a general long-form article
+   style — reuse it as-is for the Terms page too. */
+
+.page-hero {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.page-hero-content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px 24px 48px;
+  text-align: center;
+}
+
+.page-hero-content h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 44px);
+  letter-spacing: -1.5px;
+}
+
+.page-hero-content .hero-text {
+  margin: 16px auto 0;
+}
+
+.content-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 56px 24px 90px;
+}
+
+.content-page .updated {
+  margin: 0 0 32px;
+  color: #9a9fa7;
+  font-size: 13px;
+}
+
+.content-page h2 {
+  margin: 40px 0 14px;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+}
+
+.content-page h2:first-of-type {
+  margin-top: 0;
+}
+
+.content-page p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.content-page ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.content-page li {
+  margin-bottom: 6px;
+}
+
+.content-page a {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .page-hero-content {
+    padding: 40px 20px 36px;
+  }
+
+  .content-page {
+    padding: 40px 18px 60px;
+  }
+}
