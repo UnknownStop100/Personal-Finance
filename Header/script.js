@@ -3,13 +3,15 @@ export function createHeader() {
     header.classList.add('site-header');
   header.innerHTML = `
     <div class="header-inner">
-        <a class="logo" href="../index.html">Calc<span>Pilot</span></a>
+        <a class="logo" href="../index.html">Finance<span>Aviator</span></a>
 
         <nav class="main-nav" aria-label="Main navigation">
-        <a href="#">Finance</a>
-        <a href="#">Construction</a>
-        <a href="#">Electrical</a>
-        <a href="#">Business</a>
+        <a href="#">Loans</a>
+        <a href="#">Investing</a>
+        <a href="#">Retirement</a>
+        <a href="#">Savings</a>
+        <a href="#">Debt</a>
+        <a href="#">Real Estate</a>
         </nav>
 
         <button class="search-button" aria-label="Search calculators">

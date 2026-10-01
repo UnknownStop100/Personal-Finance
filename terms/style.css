@@ -1,6 +1,6 @@
-/* Privacy/index.html-specific styles. Shared tokens, .section, etc. come
-   from ../styles.css. .content-page here is a general long-form article
-   style — reuse it as-is for the Terms page too. */
+/* Terms/index.html-specific styles. Shared tokens, .section, etc. come
+   from ../styles.css. Same page-hero + content-wrap/content-page card
+   pattern as Privacy/style.css. */
 
 .page-hero {
   background: var(--surface);
