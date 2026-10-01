@@ -4,17 +4,19 @@ export function createFooter() {
   footer.innerHTML = `
     <div class="footer-inner">
       <div>
-        <a class="logo footer-logo" href="#">Calc<span>Pilot</span></a>
+        <a class="logo footer-logo" href="#">Finance<span>Aviator</span></a>
         <p>Simple tools for better decisions.</p>
       </div>
 
       <div class="footer-links">
         <div>
           <strong>Calculators</strong>
-          <a href="#">Finance</a>
-          <a href="#">Construction</a>
-          <a href="#">Electrical</a>
-          <a href="#">Business</a>
+          <a href="#">Loans</a>
+          <a href="#">Investing</a>
+          <a href="#">Retirement</a>
+          <a href="#">Savings</a>
+          <a href="#">Debt</a>
+          <a href="#">Real Estate</a>
         </div>
         <div>
           <strong>Company</strong>
@@ -27,7 +29,7 @@ export function createFooter() {
     </div>
 
     <div class="footer-bottom">
-      <span>© 2026 CalcPilot</span>
+      <span>© 2026 FinanceAviator</span>
       <span>All calculations are for informational purposes.</span>
     </div>`;
   return footer;
