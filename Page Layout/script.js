@@ -1,6 +1,7 @@
 export function createPageLayout() {
   const layout = document.createElement('div');
   layout.classList.add('page-layout');
+  layout.id = 'page-layout';
   layout.innerHTML = `
     <div class="top-section-layout">
       <aside class="side-ad ad-box">ADVERTISEMENT</aside>

@@ -3,10 +3,10 @@ export function createHeader() {
     header.classList.add('site-header');
   header.innerHTML = `
     <div class="header-inner">
-        <a class="logo" href="../index.html">Finance<span>Aviator</span></a>
+        <a class="logo" href="/index.html">Finance<span>Aviator</span></a>
 
         <nav class="main-nav" aria-label="Main navigation">
-        <a href="#">Loans</a>
+        <a href="/loans/index.html">Loans</a>
         <a href="#">Investing</a>
         <a href="#">Retirement</a>
         <a href="#">Savings</a>
