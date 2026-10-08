@@ -11,12 +11,12 @@ export function createFooter() {
       <div class="footer-links">
         <div>
           <strong>Calculators</strong>
-          <a href="#">Loans</a>
-          <a href="#">Investing</a>
-          <a href="#">Retirement</a>
-          <a href="#">Savings</a>
-          <a href="#">Debt</a>
-          <a href="#">Real Estate</a>
+        <a href="/loans/index.html">Loans</a>
+        <a href="/investing/index.html">Investing</a>
+        <a href="/retirement/index.html">Retirement</a>
+        <a href="/savings/index.html">Savings</a>
+        <a href="/debt/index.html">Debt</a>
+        <a href="/real estate/index.html">Real Estate</a>
         </div>
         <div>
           <strong>Company</strong>
