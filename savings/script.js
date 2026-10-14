@@ -20,22 +20,22 @@ body.appendChild(footer);
 const savingsCalculators = [
     {
         name: "Emergency Fund",
-        url: "/calculators/emergency fund calculator/index.html",
+        url: "/calculators/Emergency Fund Calculator/index.html",
         description: "Find your emergency fund target and how long it will take to reach it.",
     },
     {
         name: "Compound Interest",
-        url: "/calculators/compound interest calculator/index.html",
+        url: "/calculators/Investment Calculator/index.html",
         description: "See how a lump sum plus regular contributions grows over time with compound interest.",
     },
     {
         name: "Net Worth",
-        url: "/calculators/net worth calculator/index.html",
+        url: "/calculators/Net Worth Calculator/index.html",
         description: "Add up what you own and what you owe to see your total net worth.",
     },
     {
         name: "Inflation Impact",
-        url: "/calculators/inflation impact calculator/index.html",
+        url: "/calculators/Inflation Impact Calculator/index.html",
         description: "See how inflation erodes the value of cash sitting in savings over time.",
     },
 ];

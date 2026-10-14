@@ -14,9 +14,9 @@ export function createHeader() {
         <a href="/real estate/index.html">Real Estate</a>
         </nav>
 
-        <button class="search-button" aria-label="Search calculators">
-        <span class="search-icon">⌕</span>
-        <span>Search</span>
+        <button class="search-button" aria-label="Search calculators" style="content-visibility: hidden;">
+        <span class="search-icon" style="content-visibility: hidden;">⌕</span>
+        <span style="content-visibility: hidden;">Search</span>
         </button>
     </div>
   `;

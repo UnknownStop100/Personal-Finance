@@ -20,27 +20,27 @@ body.appendChild(footer);
 const loanCalculators = [
     {
         name: "Mortgage Payment",
-        url: "/calculators/mortgage payment calculator/index.html",
+        url: "/calculators/Mortgage Payment Calculator/index.html",
         description: "Estimate your monthly mortgage payment, including taxes, insurance, and HOA dues.",
     },
     {
         name: "Loan Amortization",
-        url: "/calculators/loan amortization schedule/index.html",
+        url: "/calculators/Loan Amortization Schedule/index.html",
         description: "See exactly how each payment splits between principal and interest over the life of your loan.",
     },
     {
         name: "Car Affordability",
-        url: "/calculators/car affordability calculator/index.html",
+        url: "/calculators/Car Affordability Calculator/index.html",
         description: "Figure out how much car you can afford based on your take-home pay and loan terms.",
     },
     {
         name: "Debt Payoff",
-        url: "/calculators/debt payoff calculator/index.html",
+        url: "/calculators/Debt Payoff Calculator/index.html",
         description: "Compare the snowball and avalanche methods to get debt-free faster and cheaper.",
     },
     {
         name: "Rent vs. Buy",
-        url: "/calculators/rent vs buy calculator/index.html",
+        url: "/calculators/Rent vs Buy Calculator/index.html",
         description: "Compare the total cost of renting versus buying a home over time.",
     },
 ];

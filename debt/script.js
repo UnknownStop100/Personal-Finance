@@ -20,22 +20,22 @@ body.appendChild(footer);
 const debtCalculators = [
     {
         name: "Debt Payoff",
-        url: "/calculators/debt payoff calculator/index.html",
+        url: "/calculators/Debt Payoff Calculator/index.html",
         description: "Compare the snowball and avalanche methods to get debt-free faster and cheaper.",
     },
     {
         name: "Loan Amortization",
-        url: "/calculators/loan amortization schedule/index.html",
+        url: "/calculators/Loan Amortization Schedule/index.html",
         description: "See exactly how each payment splits between principal and interest, and what extra payments save.",
     },
     {
         name: "Car Affordability",
-        url: "/calculators/car affordability calculator/index.html",
+        url: "/calculators/Car Affordability Calculator/index.html",
         description: "Figure out how much car you can afford before taking on a new loan.",
     },
     {
         name: "Net Worth",
-        url: "/calculators/net worth calculator/index.html",
+        url: "/calculators/Net Worth Calculator/index.html",
         description: "Add up what you own and what you owe to see where your debt fits in the bigger picture.",
     },
 ];

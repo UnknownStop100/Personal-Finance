@@ -21,45 +21,57 @@ const investingCalculators = [
     {
         tag: "GROWTH",
         name: "Investment Calculator",
-        url: "/calculators/investment calculator/index.html",
+        url: "/calculators/Investment Calculator/index.html",
         description: "Plot future investment growth using compound interest and regular contributions.",
     },
     {
         tag: "GROWTH",
         name: "Compound Interest",
-        url: "/calculators/compound interest calculator/index.html",
+        url: "/calculators/Investment Calculator/index.html",
         description: "See how a lump sum plus regular contributions grows over time with compound interest.",
     },
     {
         tag: "RETIREMENT",
         name: "Retirement Nest Egg",
-        url: "/calculators/retirement nest egg calculator/index.html",
+        url: "/calculators/Retirement Nest Egg Calculator/index.html",
         description: "Project your retirement savings and see if they'll cover your desired retirement income.",
     },
     {
         tag: "PLANNING",
         name: "Inflation Impact",
-        url: "/calculators/inflation impact calculator/index.html",
+        url: "/calculators/Inflation Impact Calculator/index.html",
         description: "See how inflation erodes purchasing power over time and what today's money will really be worth.",
     },
 ];
+document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;
 
-const ledger = document.createElement("div");
-ledger.className = "loan-ledger";
-document.getElementById("maincontent").appendChild(ledger);
+const grid = document.getElementById("calc-index");
+grid.className = "calc-index-grid";
 
-investingCalculators.forEach(({ tag, name, url, description }) => {
-    const row = document.createElement("a");
-    row.className = "ledger-row";
-    row.href = encodeURI(url);
-    row.innerHTML = `
-        <span class="ledger-tag">${tag}</span>
-        <span class="ledger-name">${name}</span>
-        <span class="ledger-desc">${description}</span>
-    `;
-    ledger.appendChild(row);
+investingCalculators.forEach((calc) => {
+    const card = document.createElement("a");
+    card.className = "calc-index-card";
+    card.href = calc.url;
+
+    const icon = document.createElement("div");
+    icon.className = "calc-index-icon";
+    icon.textContent = calc.name.charAt(0).toUpperCase();
+
+    const name = document.createElement("h3");
+    name.className = "calc-index-name";
+    name.textContent = calc.name;
+
+    const desc = document.createElement("p");
+    desc.className = "calc-index-desc";
+    desc.textContent = calc.description;
+
+    card.appendChild(icon);
+    card.appendChild(name);
+    card.appendChild(desc);
+    grid.appendChild(card);
 });
 
+const mainarticle = document.getElementById("mainarticle");
 document.getElementById("mainarticle").innerHTML = `
   <p class="eyebrow">About investing calculators</p>
   <h2>Plan how your money grows</h2>

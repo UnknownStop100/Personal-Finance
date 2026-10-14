@@ -20,22 +20,22 @@ body.appendChild(footer);
 const retirementCalculators = [
     {
         name: "Retirement Nest Egg",
-        url: "/calculators/retirement nest egg calculator/index.html",
+        url: "/calculators/Retirement Nest Egg Calculator/index.html",
         description: "Project your retirement savings and see if they'll cover your desired retirement income.",
     },
     {
         name: "Investment Calculator",
-        url: "/calculators/investment calculator/index.html",
+        url: "/calculators/Investment Calculator/index.html",
         description: "Plot future investment growth using compound interest and regular contributions.",
     },
     {
         name: "Compound Interest",
-        url: "/calculators/compound interest calculator/index.html",
+        url: "/calculators/Investment Calculator/index.html",
         description: "See how a lump sum plus regular contributions grows over time with compound interest.",
     },
     {
         name: "Inflation Impact",
-        url: "/calculators/inflation impact calculator/index.html",
+        url: "/calculators/Inflation Impact Calculator/index.html",
         description: "See how inflation erodes purchasing power and what today's money will really be worth.",
     },
 ];

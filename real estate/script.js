@@ -20,17 +20,17 @@ body.appendChild(footer);
 const realEstateCalculators = [
     {
         name: "Mortgage Payment",
-        url: "/calculators/mortgage payment calculator/index.html",
+        url: "/calculators/Mortgage Payment Calculator/index.html",
         description: "Estimate your monthly mortgage payment, including taxes, insurance, and HOA dues.",
     },
     {
         name: "Rent vs. Buy",
-        url: "/calculators/rent vs buy calculator/index.html",
+        url: "/calculators/Rent vs Buy Calculator/index.html",
         description: "Compare the total cost of renting versus buying a home over time.",
     },
     {
         name: "Loan Amortization",
-        url: "/calculators/loan amortization schedule/index.html",
+        url: "/calculators/Loan Amortization Schedule/index.html",
         description: "See how each mortgage payment splits between principal and interest over the life of the loan.",
     },
 ];
