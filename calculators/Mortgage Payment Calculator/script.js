@@ -6,6 +6,7 @@ import { Input } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { SuperGraph } from "../../Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -80,13 +81,20 @@ const myGraph = new SuperGraph({
     xlabeloffset: 0
 });
 
-function updateHomePrice() { homeprice = homePrice.getValue(); drawGraph(); }
-function updateDownPayment() { downpayment = downPayment.getValue(); drawGraph(); }
-function updateLoanTerm() { loanterm = loanTerm.getValue(); drawGraph(); }
-function updateInterestRate() { interestrate = interestRate.getValue(); drawGraph(); }
-function updatePropertyTax() { propertytax = propertyTax.getValue(); drawGraph(); }
-function updateHomeInsurance() { homeinsurance = homeInsurance.getValue(); drawGraph(); }
-function updateHoaDues() { hoadues = hoaDues.getValue(); drawGraph(); }
+function updateHomePrice() { homeprice = homePrice.getValue(); drawGraph(); 
+    saveData("MortgagePaymentCalculator");}
+function updateDownPayment() { downpayment = downPayment.getValue(); drawGraph(); 
+    saveData("MortgagePaymentCalculator");}
+function updateLoanTerm() { loanterm = loanTerm.getValue(); drawGraph(); 
+    saveData("MortgagePaymentCalculator");}
+function updateInterestRate() { interestrate = interestRate.getValue(); drawGraph(); 
+    saveData("MortgagePaymentCalculator");}
+function updatePropertyTax() { propertytax = propertyTax.getValue(); drawGraph(); 
+    saveData("MortgagePaymentCalculator");}
+function updateHomeInsurance() { homeinsurance = homeInsurance.getValue(); drawGraph(); 
+    saveData("MortgagePaymentCalculator");}
+function updateHoaDues() { hoadues = hoaDues.getValue(); drawGraph(); 
+    saveData("MortgagePaymentCalculator");}
 
 ///////////////////////////
 //handles graph point generation
@@ -170,3 +178,4 @@ mainarticle.innerHTML = `
   <h3>Fixed-rate vs. adjustable-rate</h3>
   <p>This calculator assumes a fixed interest rate for the full loan term. Adjustable-rate mortgages (ARMs) can change after an initial fixed period, which would change your monthly payment.</p>
 `;
+loadData("MortgagePaymentCalculator");

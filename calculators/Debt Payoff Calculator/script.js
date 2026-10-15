@@ -6,6 +6,7 @@ import { Input } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { SuperGraph } from "../../Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -76,6 +77,7 @@ const myGraph = new SuperGraph({
 
 function updateFields() {
     drawGraph();
+    saveData("DebtPayoffCalculator");
 }
 
 ///////////////////////////
@@ -191,3 +193,4 @@ mainarticle.innerHTML = `
   <h3>Which method should you choose</h3>
   <p>Avalanche usually saves more money mathematically, while snowball can be easier to stay motivated with. Many people choose based on which approach they're more likely to stick with consistently.</p>
 `;
+loadData("DebtPayoffCalculator");

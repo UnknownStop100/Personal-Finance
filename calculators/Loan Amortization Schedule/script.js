@@ -6,6 +6,7 @@ import { Input } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { SuperGraph } from "../../Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -68,6 +69,7 @@ const myGraph = new SuperGraph({
 
 function updateFields() {
     drawGraph();
+    saveData("LoanAmortizationSchedule");
 }
 
 ///////////////////////////
@@ -154,3 +156,4 @@ mainarticle.innerHTML = `
   <h3>Amortization schedules for different loan types</h3>
   <p>This same amortization logic applies to mortgages, auto loans, personal loans, and student loans, anywhere a fixed-rate loan is repaid in equal periodic installments.</p>
 `;
+loadData("LoanAmortizationSchedule");

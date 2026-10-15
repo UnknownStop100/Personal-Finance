@@ -47,6 +47,7 @@ export class Input {
 
         this.input.className = "input";
         inputdiv.id = "input-div";
+        inputdiv.className = "input-container";
         inputprefix.id = "input-prefix";
         inputsuffix.id = "input-suffix";
 

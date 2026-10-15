@@ -6,6 +6,7 @@ import { Input } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { SuperGraph } from "../../Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -72,6 +73,7 @@ const myGraph = new SuperGraph({
 
 function updateFields() {
     drawGraph();
+    saveData("CarAffordabilityCalculator");
 }
 
 ///////////////////////////
@@ -147,3 +149,4 @@ mainarticle.innerHTML = `
   <h3>Loan term trade-offs</h3>
   <p>A longer loan term lowers the monthly payment and raises the max price you can technically afford, but it also means paying more total interest and can leave you owing more than the car is worth for longer.</p>
 `;
+loadData("CarAffordabilityCalculator");

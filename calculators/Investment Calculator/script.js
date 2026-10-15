@@ -8,6 +8,7 @@ import { output } from "../../Modules/Output/Output/script.js";
 import { createPageLayout } from "/Page Layout/script.js";
 import {SuperGraph} from "/Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "/featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 const body = document.querySelector('body');
 const header = createHeader();
 const footer = createFooter();
@@ -66,18 +67,22 @@ const myGraph = new SuperGraph({ divId: 'canvas-div', points: [], graphtitles: [
 function updateCurrentSavings() {
     currentsavings = currentSavings.getValue();
     drawGraph();
+    saveData("InvestmentCalculator");
 }
 function updateContributionFrequency() {
     contributionfrequency = Number(contributionFrequency.value.replaceAll(",", ""));
     drawGraph();
+    saveData("InvestmentCalculator");
 }
 function updateContributionAmount() {
     contributionamount = contributionAmount.getValue();
     drawGraph();
+    saveData("InvestmentCalculator");
 }
 function updateReturnOnInvestment() {
     roi = returnOnInvestment.getValue() / 100;
     drawGraph();
+    saveData("InvestmentCalculator");
 }
 function updateInvestmentDuration() {
     investmentduration = investmentDuration.getValue();
@@ -85,6 +90,7 @@ function updateInvestmentDuration() {
         investmentduration = 1;
     }
     drawGraph();
+    saveData("InvestmentCalculator");
 }
 ///////////////////////////
 //handles inputs
@@ -190,3 +196,4 @@ document.getElementById("mainarticle").innerHTML = `
 
   <p>By leveraging principles like compound interest and asset-specific ROI assumptions, this calculator provides realistic projections of your investment growth, helping you make informed financial decisions for the future.</p>
 `;
+loadData("InvestmentCalculator");

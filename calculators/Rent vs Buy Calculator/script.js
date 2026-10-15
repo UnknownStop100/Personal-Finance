@@ -6,6 +6,7 @@ import { Input } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { SuperGraph } from "../../Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -84,6 +85,7 @@ const myGraph = new SuperGraph({
 
 function updateFields() {
     drawGraph();
+    saveData("RentVsBuyCalculator");
 }
 
 ///////////////////////////
@@ -182,3 +184,4 @@ mainarticle.innerHTML = `
   <h3>Renting isn't "wasting money"</h3>
   <p>Renting avoids maintenance costs, property taxes, and the risk of a declining home value, and can be the better financial choice for shorter time horizons or uncertain markets.</p>
 `;
+loadData("RentVsBuyCalculator");

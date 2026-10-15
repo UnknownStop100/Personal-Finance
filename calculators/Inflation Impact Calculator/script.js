@@ -6,6 +6,7 @@ import { Input } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { SuperGraph } from "../../Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -66,6 +67,7 @@ const myGraph = new SuperGraph({
 
 function updateFields() {
     drawGraph();
+    saveData("InflationImpactCalculator");
 }
 
 ///////////////////////////
@@ -121,3 +123,4 @@ mainarticle.innerHTML = `
   <h3>Historical inflation context</h3>
   <p>Inflation rates vary by year and country; this calculator lets you test different assumed rates to see how sensitive your long-term purchasing power is to higher or lower inflation.</p>
 `;
+loadData("InflationImpactCalculator");

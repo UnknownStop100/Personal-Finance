@@ -6,6 +6,7 @@ import { Input, valueInputs } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { SuperGraph } from "../../Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -74,6 +75,7 @@ const myGraph = new SuperGraph({
 
 function updateFields() {
     drawGraph();
+    saveData("EmergencyFundCalculator");
 }
 
 ///////////////////////////
@@ -134,3 +136,4 @@ mainarticle.innerHTML = `
   <h3>Building your fund over time</h3>
   <p>Setting a consistent monthly savings amount, even a small one, lets you reach a full emergency fund target gradually while still making progress on other financial goals.</p>
 `;
+loadData("EmergencyFundCalculator");

@@ -6,6 +6,7 @@ import { Input } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { SuperGraph } from "../../Modules/Output/Graph/supergraph.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -74,6 +75,7 @@ const myGraph = new SuperGraph({
 
 function updateFields() {
     drawGraph();
+    saveData("RetirementNestEggCalculator");
 }
 
 ///////////////////////////
@@ -155,3 +157,4 @@ mainarticle.innerHTML = `
   <h3>Closing a retirement savings gap</h3>
   <p>If your projected sustainable income falls short of your goal, the main levers are increasing monthly contributions, working and saving for additional years, or adjusting your target retirement income.</p>
 `;
+loadData("RetirementNestEggCalculator");

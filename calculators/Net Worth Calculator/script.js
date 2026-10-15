@@ -6,6 +6,7 @@ import { Input } from "../../Modules/Input/input.js";
 import { output } from "../../Modules/Output/Output/script.js";
 import { VerticalBar } from "../../Modules/Output/Bar/bar.js";
 import { FeatureList } from "../../featurelist/script.js";
+import { saveData, loadData } from "../../dataStorage/script.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -90,6 +91,7 @@ const myBar = new VerticalBar({
 
 function updateFields() {
     drawGraph();
+    saveData("NetWorthCalculator");
 }
 
 ///////////////////////////
@@ -148,3 +150,4 @@ mainarticle.innerHTML = `
   <h3>Why tracking net worth over time matters</h3>
   <p>A single net worth snapshot is useful, but tracking it monthly or yearly shows whether your overall financial position is improving, which can matter more than any one account balance.</p>
 `;
+loadData("NetWorthCalculator");
