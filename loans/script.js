@@ -3,6 +3,7 @@ import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
 
+
 const body = document.querySelector("body");
 const header = createHeader();
 const footer = createFooter();
@@ -16,66 +17,40 @@ body.prepend(title);
 body.prepend(header);
 body.append(main);
 body.appendChild(footer);
-
-const loanCalculators = [
-    {
-        name: "Mortgage Payment",
-        url: "/calculators/Mortgage Payment Calculator/index.html",
-        description: "Estimate your monthly mortgage payment, including taxes, insurance, and HOA dues.",
-    },
-    {
-        name: "Loan Amortization",
-        url: "/calculators/Loan Amortization Schedule/index.html",
-        description: "See exactly how each payment splits between principal and interest over the life of your loan.",
-    },
-    {
-        name: "Car Affordability",
-        url: "/calculators/Car Affordability Calculator/index.html",
-        description: "Figure out how much car you can afford based on your take-home pay and loan terms.",
-    },
-    {
-        name: "Debt Payoff",
-        url: "/calculators/Debt Payoff Calculator/index.html",
-        description: "Compare the snowball and avalanche methods to get debt-free faster and cheaper.",
-    },
-    {
-        name: "Rent vs. Buy",
-        url: "/calculators/Rent vs Buy Calculator/index.html",
-        description: "Compare the total cost of renting versus buying a home over time.",
-    },
-];
-
-document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;
-
-const grid = document.getElementById("calc-index");
-grid.className = "calc-index-grid";
-
-loanCalculators.forEach((calc) => {
-    const card = document.createElement("a");
-    card.className = "calc-index-card";
-    card.href = calc.url;
-
-    const icon = document.createElement("div");
-    icon.className = "calc-index-icon";
-    icon.textContent = calc.name.charAt(0).toUpperCase();
-
-    const name = document.createElement("h3");
-    name.className = "calc-index-name";
-    name.textContent = calc.name;
-
-    const desc = document.createElement("p");
-    desc.className = "calc-index-desc";
-    desc.textContent = calc.description;
-
-    card.appendChild(icon);
-    card.appendChild(name);
-    card.appendChild(desc);
-    grid.appendChild(card);
-});
-
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `
   <p class="eyebrow">About loan calculators</p>
   <h2>Everything related to borrowing money</h2>
   <p>Whether you're buying a home, financing a car, or paying down existing debt, these calculators help you understand what you'll actually pay, how long it will take, and what your options are.</p>
 `;
+let data = {};
+async function fetchData() {
+  try {
+    const response = await fetch('/referencedata/something.json');
+    data = await response.json();
+  }
+  catch (error) {
+    console.error('Error fetching data:', error);
+  }
+
+  
+document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;
+
+
+const grid = document.getElementById("calc-index");
+grid.className = "calc-index-grid";
+for(let i=0;i<data.Calculators.length;i++){
+    if(data.Calculators[i].category.includes("loans")) {
+        let element=`
+        <a class="calc-index-card" href=${data.Calculators[i].link}>
+            <div class="calc-index-icon">
+                ${data.Calculators[i].name[0].toUpperCase()}
+            </div>
+            <h3 class="calc-index-name">${data.Calculators[i].name}</h3>
+            <p class="calc-index-desc">${data.Calculators[i].description}</p>
+        </a>`;
+        grid.innerHTML+=element;
+    }
+}
+}
+fetchData();

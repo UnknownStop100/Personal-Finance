@@ -27,11 +27,10 @@
           Simple, accurate calculators for investing, loans, retirement,
           savings, debt, and everyday financial decisions.
         </p>
-
-        <label class="search-box" style="visibility: hidden;">
+        <!--<label class="search-box" style="visibility: hidden;">
           <span class="search-icon">⌕</span>
           <input type="search" placeholder="Search calculators..." aria-label="Search calculators">
-          <kbd>⌘ K</kbd>
+          <kbd>⌘ K</kbd>-->
         </label>
       </div>
     </section>
@@ -41,10 +40,6 @@
         <div>
           <p class="eyebrow">Popular tools</p>
           <h2>Featured calculators</h2>
-        </div>
-        <div class="carousel-controls" style="visibility: hidden;">
-          <button aria-label="Previous calculators">←</button>
-          <button aria-label="Next calculators">→</button>
         </div>
       </div>
 
@@ -109,112 +104,20 @@
           <p class="eyebrow">Browse all tools</p>
           <h2>Financial calculators</h2>
         </div>
-        <a class="view-all" href="#calculators">View all →</a>
+        <!--<a class="view-all" href="#calculators">View all →</a>-->
       </div>
 
       <div class="category-row">
-        <button class="category active" data-filter="all">All</button>
-        <button class="category" data-filter="investing">Investing</button>
+        <button class="category active" data-filter="">All</button>
         <button class="category" data-filter="loans">Loans</button>
+        <button class="category" data-filter="investments">Investing</button>
         <button class="category" data-filter="retirement">Retirement</button>
         <button class="category" data-filter="savings">Savings</button>
         <button class="category" data-filter="debt">Debt</button>
-        <button class="category" data-filter="real-estate">Real Estate</button>
+        <button class="category" data-filter="real estate">Real Estate</button>
       </div>
 
-      <div class="calculator-grid">
-        <!-- NOTE: links to "Investment Calculator/index.html" while the featured
-             card above for the same title links to "Compound%20Interest%20Calculator/".
-             Left as-is — check which folder is actually correct. -->
-        <a class="calculator-card" href="calculators/Investment Calculator/index.html" data-category="investing">
-          <span class="mini-icon">$</span>
-          <div>
-            <h3>Compound Interest Calculator</h3>
-            <p>Calculate compound growth and future value.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Mortgage%20Payment%20Calculator/index.html" data-category="real-estate">
-          <span class="mini-icon">⌂</span>
-          <div>
-            <h3>Mortgage Payment Calculator</h3>
-            <p>Estimate monthly payments, taxes, insurance & HOA.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Retirement%20Nest%20Egg%20Calculator/index.html" data-category="retirement">
-          <span class="mini-icon">◎</span>
-          <div>
-            <h3>Retirement Nest Egg Calculator</h3>
-            <p>Project retirement savings from contributions.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Loan%20Amortization%20Schedule/index.html" data-category="loans">
-          <span class="mini-icon">%</span>
-          <div>
-            <h3>Loan Amortization Schedule</h3>
-            <p>See how each payment splits between principal and interest.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Debt%20Payoff%20Calculator/index.html" data-category="debt">
-          <span class="mini-icon">−</span>
-          <div>
-            <h3>Debt Payoff Calculator</h3>
-            <p>Compare snowball vs. avalanche strategies.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Rent%20vs%20Buy%20Calculator/index.html" data-category="real-estate">
-          <span class="mini-icon">↕</span>
-          <div>
-            <h3>Rent vs. Buy Calculator</h3>
-            <p>Compare the total cost of renting vs. buying.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Emergency%20Fund%20Calculator/index.html" data-category="savings">
-          <span class="mini-icon">★</span>
-          <div>
-            <h3>Emergency Fund Calculator</h3>
-            <p>Find your target and time to reach it.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Net%20Worth%20Calculator/index.html" data-category="investing">
-          <span class="mini-icon">↗</span>
-          <div>
-            <h3>Net Worth Calculator</h3>
-            <p>Add up your assets and liabilities.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Car%20Affordability%20Calculator/index.html" data-category="loans">
-          <span class="mini-icon">$</span>
-          <div>
-            <h3>Car Affordability Calculator</h3>
-            <p>Find the max car price you can afford.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
-
-        <a class="calculator-card" href="calculators/Inflation%20Impact%20Calculator/index.html" data-category="investing">
-          <span class="mini-icon">↕</span>
-          <div>
-            <h3>Inflation Impact Calculator</h3>
-            <p>Compare purchasing power across time.</p>
-          </div>
-          <span class="grid-arrow">→</span>
-        </a>
+      <div class="calculator-grid" id="calculator-grid">
       </div>
     </section>
 

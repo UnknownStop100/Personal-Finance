@@ -1,6 +1,41 @@
 import { createHeader } from '/Header/script.js';
 import { createFooter } from '/Footer/script.js';
 
+// Fetch data and populate the calculator grid
+let data = {};
+async function fetchData(category = '') {
+  try {
+    const response = await fetch('/referencedata/something.json');
+    data = await response.json();
+  }
+  catch (error) {
+    console.error('Error fetching data:', error);
+  }
+
+
+  let calcgrid = document.getElementById("calculator-grid");
+  calcgrid.innerHTML = ''; // Clear existing content
+  for (let i = 0; i < data.Calculators.length; i++) {
+    if (data.Calculators[i].category.includes(category)|| category === '') {
+      let element = `<a class="calculator-card" href=${data.Calculators[i].link} data-category="real-estate">
+          <span class="mini-icon">${data.Calculators[i].keysymbol}</span>
+          <div>
+            <h3>${data.Calculators[i].name}</h3>
+            <p>${data.Calculators[i].description}</p>
+          </div>
+          <span class="grid-arrow">→</span>
+        </a>`
+      calcgrid.innerHTML += element;
+    }
+  }
+}
+fetchData('');
+
+
+
+
+
+
 const body = document.querySelector('body');
 body.prepend(createHeader());
 body.appendChild(createFooter());
@@ -34,12 +69,7 @@ function initCategoryFilter() {
     button.addEventListener('click', () => {
       buttons.forEach((b) => b.classList.remove('active'));
       button.classList.add('active');
-
-      const filter = button.dataset.filter;
-      cards.forEach((card) => {
-        const show = filter === 'all' || card.dataset.category === filter;
-        card.style.display = show ? '' : 'none';
-      });
+      fetchData(button.dataset.filter);
     });
   });
 }
@@ -55,9 +85,6 @@ function initCarousel() {
     const amount = (card?.offsetWidth || 280) + 16; // card width + column gap
     track.scrollBy({ left: amount * direction, behavior: 'smooth' });
   };
-
-  prevButton.addEventListener('click', () => scrollByCard(-1));
-  nextButton.addEventListener('click', () => scrollByCard(1));
 }
 
 // Makes the "⌘ K" hint already shown in the search box actually do something.

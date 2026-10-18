@@ -16,61 +16,42 @@ body.prepend(title);
 body.prepend(header);
 body.append(main);
 body.appendChild(footer);
-
-const debtCalculators = [
-    {
-        name: "Debt Payoff",
-        url: "/calculators/Debt Payoff Calculator/index.html",
-        description: "Compare the snowball and avalanche methods to get debt-free faster and cheaper.",
-    },
-    {
-        name: "Loan Amortization",
-        url: "/calculators/Loan Amortization Schedule/index.html",
-        description: "See exactly how each payment splits between principal and interest, and what extra payments save.",
-    },
-    {
-        name: "Car Affordability",
-        url: "/calculators/Car Affordability Calculator/index.html",
-        description: "Figure out how much car you can afford before taking on a new loan.",
-    },
-    {
-        name: "Net Worth",
-        url: "/calculators/Net Worth Calculator/index.html",
-        description: "Add up what you own and what you owe to see where your debt fits in the bigger picture.",
-    },
-];
-
-document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;
-
-const grid = document.getElementById("calc-index");
-grid.className = "calc-index-grid";
-
-debtCalculators.forEach((calc) => {
-    const card = document.createElement("a");
-    card.className = "calc-index-card";
-    card.href = calc.url;
-
-    const icon = document.createElement("div");
-    icon.className = "calc-index-icon";
-    icon.textContent = calc.name.charAt(0).toUpperCase();
-
-    const name = document.createElement("h3");
-    name.className = "calc-index-name";
-    name.textContent = calc.name;
-
-    const desc = document.createElement("p");
-    desc.className = "calc-index-desc";
-    desc.textContent = calc.description;
-
-    card.appendChild(icon);
-    card.appendChild(name);
-    card.appendChild(desc);
-    grid.appendChild(card);
-});
-
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `
   <p class="eyebrow">About debt calculators</p>
   <h2>Get out from under it</h2>
   <p>Paying off debt is a math problem with a motivation problem attached. These calculators show how different strategies change your payoff date and total interest, so you can pick the one you'll stick with.</p>
 `;
+
+
+let data = {};
+async function fetchData() {
+  try {
+    const response = await fetch('/referencedata/something.json');
+    data = await response.json();
+  }
+  catch (error) {
+    console.error('Error fetching data:', error);
+  }
+
+  
+document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;
+
+
+const grid = document.getElementById("calc-index");
+grid.className = "calc-index-grid";
+for(let i=0;i<data.Calculators.length;i++){
+    if(data.Calculators[i].category.includes("debt")) {
+        let element=`
+        <a class="calc-index-card" href=${data.Calculators[i].link}>
+            <div class="calc-index-icon">
+                ${data.Calculators[i].name[0].toUpperCase()}
+            </div>
+            <h3 class="calc-index-name">${data.Calculators[i].name}</h3>
+            <p class="calc-index-desc">${data.Calculators[i].description}</p>
+        </a>`;
+        grid.innerHTML+=element;
+    }
+}
+}
+fetchData();

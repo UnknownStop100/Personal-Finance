@@ -16,61 +16,42 @@ body.prepend(title);
 body.prepend(header);
 body.append(main);
 body.appendChild(footer);
-
-const savingsCalculators = [
-    {
-        name: "Emergency Fund",
-        url: "/calculators/Emergency Fund Calculator/index.html",
-        description: "Find your emergency fund target and how long it will take to reach it.",
-    },
-    {
-        name: "Compound Interest",
-        url: "/calculators/Investment Calculator/index.html",
-        description: "See how a lump sum plus regular contributions grows over time with compound interest.",
-    },
-    {
-        name: "Net Worth",
-        url: "/calculators/Net Worth Calculator/index.html",
-        description: "Add up what you own and what you owe to see your total net worth.",
-    },
-    {
-        name: "Inflation Impact",
-        url: "/calculators/Inflation Impact Calculator/index.html",
-        description: "See how inflation erodes the value of cash sitting in savings over time.",
-    },
-];
-
-document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;
-
-const grid = document.getElementById("calc-index");
-grid.className = "calc-index-grid";
-
-savingsCalculators.forEach((calc) => {
-    const card = document.createElement("a");
-    card.className = "calc-index-card";
-    card.href = calc.url;
-
-    const icon = document.createElement("div");
-    icon.className = "calc-index-icon";
-    icon.textContent = calc.name.charAt(0).toUpperCase();
-
-    const name = document.createElement("h3");
-    name.className = "calc-index-name";
-    name.textContent = calc.name;
-
-    const desc = document.createElement("p");
-    desc.className = "calc-index-desc";
-    desc.textContent = calc.description;
-
-    card.appendChild(icon);
-    card.appendChild(name);
-    card.appendChild(desc);
-    grid.appendChild(card);
-});
-
 const mainarticle = document.getElementById("mainarticle");
 mainarticle.innerHTML = `
   <p class="eyebrow">About savings calculators</p>
   <h2>Know what you have and what it's becoming</h2>
   <p>Savings work best with a target and a timeline. These calculators help you set an emergency fund goal, project how regular deposits compound, and track your overall net worth.</p>
 `;
+
+
+let data = {};
+async function fetchData() {
+  try {
+    const response = await fetch('/referencedata/something.json');
+    data = await response.json();
+  }
+  catch (error) {
+    console.error('Error fetching data:', error);
+  }
+
+  
+document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;
+
+
+const grid = document.getElementById("calc-index");
+grid.className = "calc-index-grid";
+for(let i=0;i<data.Calculators.length;i++){
+    if(data.Calculators[i].category.includes("savings")) {
+        let element=`
+        <a class="calc-index-card" href=${data.Calculators[i].link}>
+            <div class="calc-index-icon">
+                ${data.Calculators[i].name[0].toUpperCase()}
+            </div>
+            <h3 class="calc-index-name">${data.Calculators[i].name}</h3>
+            <p class="calc-index-desc">${data.Calculators[i].description}</p>
+        </a>`;
+        grid.innerHTML+=element;
+    }
+}
+}
+fetchData();
