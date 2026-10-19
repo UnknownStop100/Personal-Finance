@@ -113,6 +113,11 @@ input {
   color: #8b9098;
   font-size: 11px;
 }
+.search-submit-btn{
+  border:none;
+  cursor: pointer;
+  height:100%;
+}
 
 .section {
   max-width: var(--max-width);

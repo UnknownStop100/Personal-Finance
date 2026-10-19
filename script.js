@@ -15,7 +15,7 @@ async function fetchData(category = '') {
 
   let calcgrid = document.getElementById("calculator-grid");
   calcgrid.innerHTML = ''; // Clear existing content
-  for (let i = 0; i < data.Calculators.length; i++) {
+  for (let i = 0; i < (data.Calculators.length>20?20:data.Calculators.length); i++) {
     if (data.Calculators[i].category.includes(category)|| category === '') {
       let element = `<a class="calculator-card" href=${data.Calculators[i].link} data-category="real-estate">
           <span class="mini-icon">${data.Calculators[i].keysymbol}</span>
@@ -40,8 +40,24 @@ const body = document.querySelector('body');
 body.prepend(createHeader());
 body.appendChild(createFooter());
 
-initSearch();
+
 initCategoryFilter();
+
+function initCategoryFilter() {
+  const buttons = document.querySelectorAll('.category');
+  const cards = document.querySelectorAll('.calculator-card');
+  if (!buttons.length) return;
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      button.classList.add('active');
+      fetchData(button.dataset.filter);
+    });
+  });
+}
+
+/*initSearch();
 initCarousel();
 initSearchShortcut();
 
@@ -60,19 +76,6 @@ function initSearch() {
   });
 }
 
-function initCategoryFilter() {
-  const buttons = document.querySelectorAll('.category');
-  const cards = document.querySelectorAll('.calculator-card');
-  if (!buttons.length) return;
-
-  buttons.forEach((button) => {
-    button.addEventListener('click', () => {
-      buttons.forEach((b) => b.classList.remove('active'));
-      button.classList.add('active');
-      fetchData(button.dataset.filter);
-    });
-  });
-}
 
 function initCarousel() {
   const track = document.querySelector('.featured-track');
@@ -99,4 +102,4 @@ function initSearchShortcut() {
       input.focus();
     }
   });
-}
+}*/

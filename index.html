@@ -27,11 +27,18 @@
           Simple, accurate calculators for investing, loans, retirement,
           savings, debt, and everyday financial decisions.
         </p>
-        <!--<label class="search-box" style="visibility: hidden;">
+        <!--search box that can submit ia /search.index.html/search name-->
+        <form class="search-box" action="/Search/index.html" method="GET">
+          <button type="submit" class="search-submit-btn" aria-label="Submit search" style="font-size:20px">⌕</button>
+          <input type="search" name="search" id="global-search" placeholder="Search calculators..." aria-label="Search calculators">
+          <kbd class="shortcut-badge" style="content-visibility: hidden;">⌘ K</kbd>
+        </form>
+        <!--
+        <label class="search-box">
           <span class="search-icon">⌕</span>
           <input type="search" placeholder="Search calculators..." aria-label="Search calculators">
-          <kbd>⌘ K</kbd>-->
-        </label>
+          <kbd>⌘ K</kbd>
+        </label>-->
       </div>
     </section>
 
@@ -104,7 +111,7 @@
           <p class="eyebrow">Browse all tools</p>
           <h2>Financial calculators</h2>
         </div>
-        <!--<a class="view-all" href="#calculators">View all →</a>-->
+        <a class="view-all" href="/search/index.html?search=">View all →</a>
       </div>
 
       <div class="category-row">
