@@ -8,7 +8,7 @@ const header = createHeader();
 const footer = createFooter();
 let b=document.createElement("form");
 b.className="search-box";
-b.action="/Search/index.html";
+b.action="/search/index.html";
 b.method="GET";
 let a=`<button type="submit" class="search-submit-btn" aria-label="Submit search">⌕</button>
           <input type="search" name="search" id="global-search" placeholder="Search calculators..." aria-label="Search calculators">
