@@ -1,0 +1,88 @@
+#inputs {
+  margin-left: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+#output {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1200px) {
+  #output { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 700px) {
+  #output { grid-template-columns: repeat(1, 1fr); }
+}
+
+@media (min-width: 100px) {
+  #main-calculator { width: 100%; }
+  #main-content { text-align: center; }
+}
+
+@media (min-width: 700px) {
+  #main-calculator {
+    display: grid;
+    grid-template-columns: 4fr 7fr;
+  }
+  #main-calculator > * { min-width: 0; }
+  #main-content {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1400px) {
+  #main-calculator { grid-template-columns: 3fr 7fr; }
+}
+
+
+
+
+
+
+
+
+/* Widen the page-layout content column so the calculator takes ~80% width */
+@media screen and (min-width: 100px){
+    #main-calculator{
+        display: auto;
+        width: 100%;
+    }
+#main-content{
+    display: auto;
+    text-align: center;
+}
+}
+
+@media screen and (min-width: 700px){
+    #main-calculator{
+        display: grid;
+        grid-template-columns: 4fr 7fr;
+    }
+#main-calculator > * {
+    min-width: 0;
+  }
+#main-content{
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    text-align: center;
+}
+}
+@media screen and (min-width: 1400px){
+    #main-calculator{
+        display: grid;
+        grid-template-columns: 7fr 7fr;
+    }
+#main-calculator > * {
+    min-width: 0;
+  }
+#main-content{
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    text-align: center;
+}
+}
