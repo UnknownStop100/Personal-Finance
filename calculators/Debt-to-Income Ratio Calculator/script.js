@@ -23,7 +23,7 @@ body.append(createFooter());
 
 document.getElementById("maincontent").innerHTML = `
   <div id="main-calculator">
-    <div id="inputs"><h3>Input Fields:</h3></div>
+    <div id="inputs"><h2>Input Fields:</h2></div>
   </div>
   <div id="output"></div>
 `;

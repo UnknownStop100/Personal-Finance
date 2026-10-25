@@ -25,7 +25,7 @@ body.appendChild(footer);
 
 document.getElementById("maincontent").innerHTML = `<div id="main-calculator">
                 <div id="inputs">
-                    <h3>Input Fields:</h3>
+                    <h2>Input Fields:</h2>
                     <!--<button id="calculate-btn">Calculate</button>-->
                 </div>
             </div>

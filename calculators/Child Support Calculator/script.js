@@ -24,7 +24,7 @@ body.append(createFooter());
 document.getElementById("maincontent").innerHTML = `
   <div id="main-calculator">
     <div id="inputs">
-      <h3>Illustrative Inputs:</h3>
+      <h2>Illustrative Inputs:</h2>
       <p class="calculator-disclaimer">
         This is not an official child support calculation. Rules vary by location.
       </p>

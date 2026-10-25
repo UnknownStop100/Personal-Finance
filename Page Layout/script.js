@@ -4,12 +4,12 @@ export function createPageLayout() {
   layout.id = 'page-layout';
   layout.innerHTML = `
     <div class="top-section-layout">
-      <aside class="side-ad ad-box">ADVERTISEMENT</aside>
+      <aside class="side-ad ad-box"><!--ADVERTISEMENT--></aside>
       <section class="main-content" id="maincontent"></section>
       <aside></aside>
     </div>
     <div class="bottom-section-layout">
-      <aside class="side-ad ad-box">ADVERTISEMENT</aside>
+      <aside class="side-ad ad-box"><!--ADVERTISEMENT--></aside>
       <section class="main-article" id="mainarticle"></section>
       <aside></aside>
     </div>
@@ -22,6 +22,6 @@ export function createPageLayout() {
 export function createAdBox(className = 'ad-box') {
   const box = document.createElement('div');
   box.className = className;
-  box.textContent = 'ADVERTISEMENT';
+  box.textContent = '<!--ADVERTISEMENT-->';
   return box;
 }

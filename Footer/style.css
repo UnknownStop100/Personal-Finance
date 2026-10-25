@@ -38,7 +38,7 @@
 }
 
 .footer-links a {
-  color: #9ca1a9;
+  color: #a8adb6;
   font-size: 13px;
 }
 
@@ -54,7 +54,7 @@
   justify-content: space-between;
   gap: 20px;
   border-top: 1px solid #30333a;
-  color: #777d86;
+  color: #8d94a0;
   font-size: 11px;
 }
 @media (max-width: 950px){
