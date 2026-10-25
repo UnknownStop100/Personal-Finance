@@ -4,17 +4,17 @@ export function createHeader() {
     header.role="banner";
   header.innerHTML = `
     <div class="header-inner">
-        <a class="logo" href="/index.html">Finance<span>Aviator</span></a>
+        <a class="logo" href="/">Finance<span>Aviator</span></a>
 
         <nav class="main-nav" aria-label="Main navigation" role="navigation">
-        <a href="/loans/index.html">Loans</a>
-        <a href="/investing/index.html">Investing</a>
-        <a href="/retirement/index.html">Retirement</a>
-        <a href="/savings/index.html">Savings</a>
-        <a href="/debt/index.html">Debt</a>
-        <a href="/real estate/index.html">Real Estate</a>
+        <a href="/loans/">Loans</a>
+        <a href="/investing/">Investing</a>
+        <a href="/retirement/">Retirement</a>
+        <a href="/savings/">Savings</a>
+        <a href="/debt/">Debt</a>
+        <a href="/real estate/">Real Estate</a>
         </nav>
-        <a href="/search/index.html?search=">
+        <a href="/search/?search=">
         <button class="search-button" aria-label="Search calculators">
         <span class="search-icon">⌕</span>
         <span>Search</span>

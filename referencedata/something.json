@@ -6,7 +6,7 @@
       "keysymbol": "$",
       "description": "Calculate compound growth and future value.",
       "category": ["investments", "retirement", "savings"],
-      "link": "/calculators/Investment%20Calculator/index.html"
+      "link": "/calculators/Investment%20Calculator/"
     },
     {
       "name": "Mortgage Payment Calculator",
@@ -14,7 +14,7 @@
       "keysymbol": "⌂",
       "description": "Calculate monthly mortgage payments.",
       "category": ["loans", "real estate"],
-      "link": "/calculators/Mortgage%20Payment%20Calculator/index.html"
+      "link": "/calculators/Mortgage%20Payment%20Calculator/"
     },
     {
       "name": "Retirement Nest Egg Calculator",
@@ -22,7 +22,7 @@
       "keysymbol": "◎",
       "description": "Estimate retirement savings and sustainable income.",
       "category": ["retirement", "savings"],
-      "link": "/calculators/Retirement%20Nest%20Egg%20Calculator/index.html"
+      "link": "/calculators/Retirement%20Nest%20Egg%20Calculator/"
     },
     {
       "name": "Loan Amortization Calculator",
@@ -30,7 +30,7 @@
       "keysymbol": "%",
       "description": "Generate a loan amortization schedule.",
       "category": ["loans", "debt"],
-      "link": "/calculators/Loan%20Amortization%20Schedule/index.html"
+      "link": "/calculators/Loan%20Amortization%20Schedule/"
     },
     {
       "name": "Debt Payoff Calculator",
@@ -38,7 +38,7 @@
       "keysymbol": "−",
       "description": "Plan debt repayment and interest savings.",
       "category": ["loans", "debt"],
-      "link": "/calculators/Debt%20Payoff%20Calculator/index.html"
+      "link": "/calculators/Debt%20Payoff%20Calculator/"
     },
     {
       "name": "Rent vs Buy Calculator",
@@ -46,7 +46,7 @@
       "keysymbol": "↕",
       "description": "Compare renting vs buying a home.",
       "category": ["investments", "real estate"],
-      "link": "/calculators/Rent%20vs%20Buy%20Calculator/index.html"
+      "link": "/calculators/Rent%20vs%20Buy%20Calculator/"
     },
     {
       "name": "Emergency Fund Calculator",
@@ -54,7 +54,7 @@
       "keysymbol": "★",
       "description": "Determine the size of your emergency fund.",
       "category": ["investments", "savings", "retirement"],
-      "link": "/calculators/Emergency%20Fund%20Calculator/index.html"
+      "link": "/calculators/Emergency%20Fund%20Calculator/"
     },
     {
       "name": "Net Worth Calculator",
@@ -62,7 +62,7 @@
       "keysymbol": "↗",
       "description": "Calculate your net worth and track financial progress.",
       "category": ["investments", "savings", "retirement"],
-      "link": "/calculators/Net%20Worth%20Calculator/index.html"
+      "link": "/calculators/Net%20Worth%20Calculator/"
     },
     {
       "name": "Car Affordability Calculator",
@@ -70,7 +70,7 @@
       "keysymbol": "$",
       "description": "Estimate how much car you can afford based on your budget.",
       "category": ["loans", "investments", "debt"],
-      "link": "/calculators/Car%20Affordability%20Calculator/index.html"
+      "link": "/calculators/Car%20Affordability%20Calculator/"
     },
     {
       "name": "Inflation Impact Calculator",
@@ -78,7 +78,7 @@
       "keysymbol": "↕",
       "description": "Calculate the impact of inflation on your purchasing power.",
       "category": ["savings"],
-      "link": "/calculators/Inflation%20Impact%20Calculator/index.html"
+      "link": "/calculators/Inflation%20Impact%20Calculator/"
     },
     {
       "name": "Credit Card Payoff Calculator",
@@ -86,7 +86,7 @@
       "keysymbol": "💳",
       "description": "Estimate how long it will take to pay off credit card debt and the interest you may pay.",
       "category": ["loans", "debt"],
-      "link": "/calculators/Credit%20Card%20Payoff%20Calculator/index.html"
+      "link": "/calculators/Credit%20Card%20Payoff%20Calculator/"
     },
     {
       "name": "Savings Goal Calculator",
@@ -94,7 +94,7 @@
       "keysymbol": "◎",
       "description": "Estimate how long it will take to reach a savings goal based on your current balance, contributions, and expected return.",
       "category": ["savings", "investments"],
-      "link": "/calculators/Savings%20Goal%20Calculator/index.html"
+      "link": "/calculators/Savings%20Goal%20Calculator/"
     },
     {
       "name": "Tax Bracket Calculator",
@@ -102,7 +102,7 @@
       "keysymbol": "%",
       "description": "Estimate marginal and effective U.S. federal income tax rates based on taxable income and filing status.",
       "category": ["taxes", "income"],
-      "link": "/calculators/Tax%20Bracket%20Calculator/index.html"
+      "link": "/calculators/Tax%20Bracket%20Calculator/"
     },
     {
       "name": "Salary to Hourly Calculator",
@@ -110,7 +110,7 @@
       "keysymbol": "$",
       "description": "Convert an annual salary into estimated hourly, weekly, monthly, and biweekly gross pay.",
       "category": ["income", "salary"],
-      "link": "/calculators/Salary-to-Hourly%20Calculator/index.html"
+      "link": "/calculators/Salary-to-Hourly%20Calculator/"
     },
     {
       "name": "Debt-to-Income Ratio Calculator",
@@ -118,7 +118,7 @@
       "keysymbol": "%",
       "description": "Calculate your debt-to-income ratio from gross monthly income and debt payments.",
       "category": ["loans", "debt", "income"],
-      "link": "/calculators/Debt-to-Income%20Ratio%20Calculator/index.html"
+      "link": "/calculators/Debt-to-Income%20Ratio%20Calculator/"
     },
     {
       "name": "Mortgage Refinance Calculator",
@@ -126,7 +126,7 @@
       "keysymbol": "⌂",
       "description": "Compare estimated mortgage payments and interest for your current loan and a refinance.",
       "category": ["loans", "real estate"],
-      "link": "/calculators/Mortgage%20Refinance%20Calculator/index.html"
+      "link": "/calculators/Mortgage%20Refinance%20Calculator/"
     },
     {
       "name": "Home Equity Calculator",
@@ -134,7 +134,7 @@
       "keysymbol": "⌂",
       "description": "Estimate home equity, loan-to-value ratio, and potential borrowing room.",
       "category": ["real estate", "loans"],
-      "link": "/calculators/Home%20Equity%20Calculator/index.html"
+      "link": "/calculators/Home%20Equity%20Calculator/"
     },
     {
       "name": "APY Calculator",
@@ -142,7 +142,7 @@
       "keysymbol": "%",
       "description": "Estimate annual percentage yield from an interest rate and compounding frequency.",
       "category": ["savings", "investments"],
-      "link": "/calculators/APY%20Calculator/index.html"
+      "link": "/calculators/APY%20Calculator/"
     },
     {
       "name": "401(k) Match Calculator",
@@ -150,7 +150,7 @@
       "keysymbol": "$",
       "description": "Estimate employer matching contributions based on your salary and plan match formula.",
       "category": ["retirement", "savings"],
-      "link": "/calculators/401(k)%20Match%20Calculator/index.html"
+      "link": "/calculators/401(k)%20Match%20Calculator/"
     }
   ]
 }
