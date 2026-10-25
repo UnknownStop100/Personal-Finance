@@ -28,6 +28,11 @@
     height: 100%;
     width:100%;
 }
+main{
+display: block;
+    unicode-bidi: isolate;
+    background-color: rgba(0, 0, 0, 0);
+}
 .ad-box {
     min-height: 180px;
     display: flex;

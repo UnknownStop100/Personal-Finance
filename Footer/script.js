@@ -1,6 +1,7 @@
 export function createFooter() {
   const footer = document.createElement('footer');
   footer.classList.add('site-footer');
+  footer.role="contentinfo";
   footer.innerHTML = `
     <div class="footer-inner">
       <div>

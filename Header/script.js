@@ -1,11 +1,12 @@
 export function createHeader() {
   const header = document.createElement('header');
     header.classList.add('site-header');
+    header.role="banner";
   header.innerHTML = `
     <div class="header-inner">
         <a class="logo" href="/index.html">Finance<span>Aviator</span></a>
 
-        <nav class="main-nav" aria-label="Main navigation">
+        <nav class="main-nav" aria-label="Main navigation" role="navigation">
         <a href="/loans/index.html">Loans</a>
         <a href="/investing/index.html">Investing</a>
         <a href="/retirement/index.html">Retirement</a>
