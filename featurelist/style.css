@@ -97,7 +97,7 @@
 
 .featured-card p {
   margin: 0;
-  color: #7b818a;
+  color: var(--muted);
   font-size: 14px;
 }
 

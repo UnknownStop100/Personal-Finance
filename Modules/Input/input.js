@@ -408,7 +408,8 @@ export function numberInput(
 export function valueInputs(labeltext, inputvalues, outputvalues, parentelement, runfunction = () => { }, help = "") {
     const label = document.createElement("label");
     const select = document.createElement("select");
-    label.for = labeltext.toLowerCase().replaceAll(" ", "-") + "-label";
+    label.id ="input-label";
+    label.htmlFor=labeltext.toLowerCase().replaceAll(" ", "-") + "-select";
     select.id = labeltext.toLowerCase().replaceAll(" ", "-") + "-select";
     select.className = "select";
     label.innerHTML = labeltext;

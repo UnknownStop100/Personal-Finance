@@ -4,7 +4,7 @@ export function createFooter() {
   footer.innerHTML = `
     <div class="footer-inner">
       <div>
-        <a class="logo footer-logo" href="#">Finance<span>Aviator</span></a>
+        <a class="logo footer-logo" href="/index.html">Finance<span>Aviator</span></a>
         <p>Simple tools for better decisions.</p>
       </div>
 
