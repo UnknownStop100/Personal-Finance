@@ -47,7 +47,15 @@ document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`
 const grid = document.getElementById("calc-index");
 grid.className = "calc-index-grid";
 for(let i=0;i<data.Calculators.length;i++){
-    if(data.Calculators[i].keywords.includes(search)) {
+  let wholestring=""
+  let table=search.split(" ");
+  let found=false;
+    for(let j=0;j<table.length;j++){
+      if(data.Calculators[i].keywords.includes(table[j])){
+        found=true;
+      }
+    }
+    if(found) {
         let element=`
         <a class="calc-index-card" href=${data.Calculators[i].link}>
             <div class="calc-index-icon">
