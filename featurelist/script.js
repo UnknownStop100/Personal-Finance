@@ -50,7 +50,7 @@ parentDiv.innerHTML = `<div></div><section class="featured-section section">
       </div>
 
       <div class="featured-track">
-        <a class="featured-card" href="calculators/Mortgage Payment Calculator/index.html">
+        <a class="featured-card" href="/calculators/Mortgage Payment Calculator/">
           <div class="card-top">
             <span class="card-icon">$</span>
             <span class="card-arrow">↗</span>
@@ -62,7 +62,7 @@ parentDiv.innerHTML = `<div></div><section class="featured-section section">
           <span class="card-link">Open calculator →</span>
         </a>
 
-        <a class="featured-card" href="calculators/Compound%20Interest%20Calculator/index.html">
+        <a class="featured-card" href="/calculators/Investment%20Calculator/">
           <div class="card-top">
             <span class="card-icon">↗</span>
             <span class="card-arrow">↗</span>
@@ -74,7 +74,7 @@ parentDiv.innerHTML = `<div></div><section class="featured-section section">
           <span class="card-link">Open calculator →</span>
         </a>
 
-        <a class="featured-card" href="calculators/Retirement%20Nest%20Egg%20Calculator/index.html">
+        <a class="featured-card" href="/calculators/Retirement%20Nest%20Egg%20Calculator/">
           <div class="card-top">
             <span class="card-icon">◎</span>
             <span class="card-arrow">↗</span>
@@ -86,7 +86,7 @@ parentDiv.innerHTML = `<div></div><section class="featured-section section">
           <span class="card-link">Open calculator →</span>
         </a>
 
-        <a class="featured-card" href="calculators/Debt%20Payoff%20Calculator/index.html">
+        <a class="featured-card" href="/calculators/Debt%20Payoff%20Calculator/">
           <div class="card-top">
             <span class="card-icon">−</span>
             <span class="card-arrow">↗</span>
