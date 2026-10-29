@@ -2,6 +2,7 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
+import { Data } from "../referencedata/data.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -24,15 +25,15 @@ mainarticle.innerHTML = `
   <p>Retirement planning comes down to three questions: how much you'll save, how it will grow, and how much it will actually buy when you need it. These calculators cover each one.</p>
 `;
 
-let data = {};
-async function fetchData() {
-  try {
+let data = Data();
+function fetchData() {
+ /* try {
     const response = await fetch('/referencedata/something.json');
     data = await response.json();
   }
   catch (error) {
     console.error('Error fetching data:', error);
-  }
+  }*/
 
   
 document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;

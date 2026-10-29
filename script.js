@@ -1,16 +1,16 @@
 import { createHeader } from '/Header/script.js';
 import { createFooter } from '/Footer/script.js';
-
+import { Data } from '/referencedata/data.js';
 // Fetch data and populate the calculator grid
-let data = {};
-async function fetchData(category = '') {
-  try {
+let data = Data();
+function fetchData(category = '') {
+/*  try {
     const response = await fetch('/referencedata/something.json');
     data = await response.json();
   }
   catch (error) {
     console.error('Error fetching data:', error);
-  }
+  }*/
 
 
   let calcgrid = document.getElementById("calculator-grid");

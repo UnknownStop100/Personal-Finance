@@ -2,6 +2,7 @@ import { createHeader } from "../Header/script.js";
 import { createFooter } from "../Footer/script.js";
 import { titleGenerator } from "../Calculator Title/script.js";
 import { createPageLayout } from "../Page Layout/script.js";
+import { Data } from "../referencedata/data.js";
 
 const body = document.querySelector("body");
 const header = createHeader();
@@ -30,15 +31,15 @@ mainarticle.innerHTML = `
 `;
 
 
-let data = {};
-async function fetchData(search="") {
-  try {
+let data = Data();
+function fetchData(search="") {
+  /*try {
     const response = await fetch('/referencedata/something.json');
     data = await response.json();
   }
   catch (error) {
     console.error('Error fetching data:', error);
-  }
+  }*/
 
   
 document.getElementById("maincontent").innerHTML = `<div id="calc-index"></div>`;
