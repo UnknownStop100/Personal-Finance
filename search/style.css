@@ -109,6 +109,7 @@
   cursor: pointer;
   height:100%;
   font-size:20px;
+  background-color: #00000000;
 }
 #global-search{
     font-size:16px;

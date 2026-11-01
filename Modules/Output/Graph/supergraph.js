@@ -28,7 +28,7 @@ export class SuperGraph {
 
     // Initialize data points
     this.points = this.options.points || [[[]]]; // array of graph points and a array for each point for same positions multiple verticals
-
+    this.filllines=this.options.lines || [];
     // Call setup functions
     this._initElements();
     this._bindEvents();
@@ -266,7 +266,7 @@ export class SuperGraph {
     const pixelsPerPoint = canvas.width / (this.points.length - 1);
     let points = [...this.points];
     let linecolor = ["black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black"];
-    let infillcolor = ["rgba(0, 123, 255, 0.3)", "rgba(255, 0, 0, 0.3)", "rgba(0, 255, 0, 0.3)", "rgba(255, 255, 0, 0.3)", "rgba(255, 0, 255, 0.3)", "rgba(0, 255, 255, 0.3)", "rgba(128, 0, 128, 0.3)", "rgba(128, 128, 0, 0.3)", "rgba(128, 128, 128, 0.3)", "rgba(255, 165, 0, 0.3)", "rgba(255, 192, 203, 0.3)", "rgba(173, 216, 230, 0.3)", "rgba(144,238,144 ,0.3)", "rgba(255 ,228 ,181 ,0.3)", "rgba(221 ,160 ,221 ,0.3)", "rgba(240 ,230 ,140 ,0.3)", "rgba(135 ,206 ,250 ,0.3)", "rgba(152 ,251 ,152 ,0.3)", "rgba(255 ,105 ,180 ,0.3)", "rgba(255 ,20 ,147 ,0.3)", "rgba(75 ,0 ,130 ,0.3)", "rgba(123 ,104 ,238 ,0.3)", "rgba(72 ,61 ,139 ,0.3)"];
+    let infillcolor = ["rgba(0, 123, 255", "rgba(255, 0, 0", "rgba(0, 255, 0", "rgba(255, 255, 0", "rgba(255, 0, 255", "rgba(0, 255, 255", "rgba(128, 0, 128", "rgba(128, 128, 0", "rgba(128, 128, 128", "rgba(255, 165, 0", "rgba(255, 192, 203", "rgba(173, 216, 230", "rgba(144,238,144", "rgba(255 ,228 ,181", "rgba(221 ,160 ,221", "rgba(240 ,230 ,140", "rgba(135 ,206 ,250  ", "rgba(152 ,251 ,152  ", "rgba(255 ,105 ,180  ", "rgba(255 ,20 ,147  ", "rgba(75 ,0 ,130  ", "rgba(123 ,104 ,238  ", "rgba(72 ,61 ,139  "];
 
 
 
@@ -291,7 +291,19 @@ export class SuperGraph {
       ctx.closePath();
       ctx.strokeStyle = linecolor[j];
       ctx.stroke();
-      ctx.fillStyle = infillcolor[j];
+      let newcolor=infillcolor[j];
+      if(j<this.filllines.length){
+        if(this.filllines[j]===true){
+          newcolor+=", 0.3)";
+        }
+        else{
+          newcolor+=", 0.1)";
+        }
+      }
+      else{
+          newcolor+=", 0.3)";
+      }
+      ctx.fillStyle = newcolor;
       ctx.fill();
     }
 
@@ -338,7 +350,7 @@ export class SuperGraph {
     this._updateInfoBox(trueindex);
   }
   _updateInfoBox(theindex) {
-    let infillcolor = ["rgba(0, 123, 255, 0.3)", "rgba(255, 0, 0, 0.3)", "rgba(0, 255, 0, 0.3)", "rgba(255, 255, 0, 0.3)", "rgba(255, 0, 255, 0.3)", "rgba(0, 255, 255, 0.3)", "rgba(128, 0, 128, 0.3)", "rgba(128, 128, 0, 0.3)", "rgba(128, 128, 128, 0.3)", "rgba(255, 165, 0, 0.3)", "rgba(255, 192, 203, 0.3)", "rgba(173, 216, 230, 0.3)", "rgba(144,238,144 ,0.3)", "rgba(255 ,228 ,181 ,0.3)", "rgba(221 ,160 ,221 ,0.3)", "rgba(240 ,230 ,140 ,0.3)", "rgba(135 ,206 ,250 ,0.3)", "rgba(152 ,251 ,152 ,0.3)", "rgba(255 ,105 ,180 ,0.3)", "rgba(255 ,20 ,147 ,0.3)", "rgba(75 ,0 ,130 ,0.3)", "rgba(123 ,104 ,238 ,0.3)", "rgba(72 ,61 ,139 ,0.3)"];
+    let infillcolor = ["rgba(0, 123, 255, 0.3)", "rgba(255, 0, 0, 0.3)", "rgba(0, 255, 0, 0.3)", "rgba(255, 255, 0, 0.3)", "rgba(255, 0, 255, 0.3)", "rgba(0, 255, 255, 0.3)", "rgba(128, 0, 128, 0.3)", "rgba(128, 128, 0, 0.3)", "rgba(128, 128, 128, 0.3)", "rgba(255, 165, 0, 0.3)", "rgba(255, 192, 203, 0.3)", "rgba(173, 216, 230, 0.3)", "rgba(144,238,144  ", "rgba(255 ,228 ,181  ", "rgba(221 ,160 ,221  ", "rgba(240 ,230 ,140  ", "rgba(135 ,206 ,250  ", "rgba(152 ,251 ,152  ", "rgba(255 ,105 ,180 ", "rgba(255 ,20 ,147 ", "rgba(75 ,0 ,130 ", "rgba(123 ,104 ,238 ", "rgba(72 ,61 ,139 "];
 
     const info = this.infobox;
     const canvas = this.canvas;

@@ -52,6 +52,7 @@ addBreak();
 const graph = new SuperGraph({
   divId: "canvas-div",
   points: [],
+  lines:[true,false],
   graphtitles: ["Projected Savings", "Goal"],
   xLabel: "Months",
   parent: document.getElementById("main-calculator"),

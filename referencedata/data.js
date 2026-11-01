@@ -152,6 +152,14 @@ export function Data(){
       "description": "Estimate employer matching contributions based on your salary and plan match formula.",
       "category": ["retirement", "savings"],
       "link": "/calculators/401(k)%20Match%20Calculator/"
+    },
+    {
+      "name": "Commute Salary Increase Calculator",
+      "keywords": "commute cost calculator, salary increase after commute costs, commuting expenses, new job salary comparison, gas and vehicle costs, calculate commute costs",
+      "keysymbol": "$",
+      "description": "See whether a higher-paying job is still worth it after accounting for the extra costs of a longer commute.",
+      "category": ["Savings"],
+      "link": "/calculators/Commute%20Salary%20Increase%20Calculator/"
     }
   ]
 };

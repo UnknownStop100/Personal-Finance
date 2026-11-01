@@ -27,6 +27,8 @@ export class Graph {
     // Initialize data points
     this.points = this.options.points || [];
 
+    
+
     // Call setup functions
     this._initElements();
     this._bindEvents();

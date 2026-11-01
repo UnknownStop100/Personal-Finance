@@ -66,6 +66,7 @@ inputsContainer.appendChild(document.createElement("br"));
 const myGraph = new SuperGraph({
     divId: 'canvas-div',
     points: [],
+    lines: [true, false],
     graphtitles: ["Savings Balance", "Target"],
     xLabel: 'Years',
     parent: document.getElementById("main-calculator"),
