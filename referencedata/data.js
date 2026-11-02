@@ -158,7 +158,7 @@ export function Data(){
       "keywords": "commute cost calculator, salary increase after commute costs, commuting expenses, new job salary comparison, gas and vehicle costs, calculate commute costs",
       "keysymbol": "$",
       "description": "See whether a higher-paying job is still worth it after accounting for the extra costs of a longer commute.",
-      "category": ["Savings"],
+      "category": ["savings"],
       "link": "/calculators/Commute%20Salary%20Increase%20Calculator/"
     }
   ]
